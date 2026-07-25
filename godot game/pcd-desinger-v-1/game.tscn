@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://dk3yvefch2caj"]
+
+[ext_resource type="Script" uid="uid://devuriw2u3wm5" path="res://building_grid.gd" id="1_80nbo"]
+
+[node name="Game" type="Node2D" unique_id=1288097038]
+position = Vector2(1, 10)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=360243486]
+visible = false
+position = Vector2(954, 528)
+
+[node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
+position = Vector2(954, 528)
+script = ExtResource("1_80nbo")
+
+[node name="startScreen" type="Node2D" parent="." unique_id=1702086162]
+visible = false
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=743095973]
+visible = false
+
+[node name="ui" type="Control" parent="UI" unique_id=856846318]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -18.0
+offset_top = 4.0
+offset_right = 1908.0
+offset_bottom = 1081.0
