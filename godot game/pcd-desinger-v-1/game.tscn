@@ -8,9 +8,32 @@
 script = ExtResource("1_e2o6t")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=360243486]
-visible = false
-position = Vector2(954, 528)
+limit_enabled = false
 script = ExtResource("2_feb5d")
+
+[node name="UI" type="CanvasLayer" parent="Camera2D" unique_id=743095973]
+
+[node name="ui" type="Control" parent="Camera2D/UI" unique_id=856846318]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -18.0
+offset_top = 4.0
+offset_right = 1908.0
+offset_bottom = 1081.0
+
+[node name="OptionButton" type="OptionButton" parent="Camera2D/UI/ui" unique_id=1215917019]
+layout_mode = 0
+offset_left = 1834.0
+offset_top = 22.0
+offset_right = 1902.0
+offset_bottom = 71.0
+
+[node name="OptionButton2" type="OptionButton" parent="Camera2D/UI/ui" unique_id=728079131]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 18.0
+offset_right = 136.0
+offset_bottom = 67.0
 
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
 script = ExtResource("1_80nbo")
@@ -23,14 +46,3 @@ script = ExtResource("1_80nbo")
 
 [node name="startScreen" type="Node2D" parent="." unique_id=1702086162]
 visible = false
-
-[node name="UI" type="CanvasLayer" parent="." unique_id=743095973]
-visible = false
-
-[node name="ui" type="Control" parent="UI" unique_id=856846318]
-layout_mode = 3
-anchors_preset = 0
-offset_left = -18.0
-offset_top = 4.0
-offset_right = 1908.0
-offset_bottom = 1081.0
