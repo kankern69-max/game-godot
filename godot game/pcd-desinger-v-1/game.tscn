@@ -1,17 +1,25 @@
 [gd_scene format=3 uid="uid://dk3yvefch2caj"]
 
 [ext_resource type="Script" uid="uid://devuriw2u3wm5" path="res://building_grid.gd" id="1_80nbo"]
+[ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://game.gd" id="1_e2o6t"]
+[ext_resource type="Script" uid="uid://b8fybpj3pr1p1" path="res://camera_2d.gd" id="2_feb5d"]
 
 [node name="Game" type="Node2D" unique_id=1288097038]
-position = Vector2(1, 10)
+script = ExtResource("1_e2o6t")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=360243486]
 visible = false
 position = Vector2(954, 528)
+script = ExtResource("2_feb5d")
 
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
-position = Vector2(954, 528)
 script = ExtResource("1_80nbo")
+
+[node name="GridLines" type="Node2D" parent="BuildingGrid" unique_id=859323319]
+
+[node name="WireLayer" type="TileMapLayer" parent="BuildingGrid" unique_id=2020172895]
+
+[node name="Compoents" type="Node2D" parent="BuildingGrid" unique_id=113458643]
 
 [node name="startScreen" type="Node2D" parent="." unique_id=1702086162]
 visible = false
