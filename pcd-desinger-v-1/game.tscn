@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dk3yvefch2caj"]
 
 [ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://mainSystems/game.gd" id="1_e2o6t"]
+[ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://cables.gd" id="2_e2o6t"]
 
 [sub_resource type="GDScript" id="GDScript_80nbo"]
 script/source = "extends Camera2D
@@ -91,9 +92,8 @@ offset_bottom = 67.0
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
 script = SubResource("GDScript_e2o6t")
 
-[node name="GridLines" type="Node2D" parent="BuildingGrid" unique_id=859323319]
-
-[node name="WireLayer" type="TileMapLayer" parent="BuildingGrid" unique_id=2020172895]
+[node name="cables" type="Node2D" parent="BuildingGrid" unique_id=859323319]
+script = ExtResource("2_e2o6t")
 
 [node name="Compoents" type="Node2D" parent="BuildingGrid" unique_id=113458643]
 
