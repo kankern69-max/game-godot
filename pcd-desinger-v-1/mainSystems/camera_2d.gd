@@ -10,7 +10,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	zoom = Vector2.ONE * view
 
-func _unhandled_input(event):
+func _input(event):
+	_CamMovement(event)
 	if event is InputEventMouseButton and event.pressed:
 
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
@@ -24,10 +25,9 @@ func _unhandled_input(event):
 
 
 
-func _input(event):
-	_CamMovement(event)
+
 
 func _CamMovement(event):
 	if event is InputEventMouseMotion:
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			offset -= Vector2(event.relative.x, event.relative.y)/view
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE):
+			position -= Vector2(event.relative.x, event.relative.y)/view
