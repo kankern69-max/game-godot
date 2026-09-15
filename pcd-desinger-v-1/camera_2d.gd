@@ -8,7 +8,6 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	print(view)
 	zoom = Vector2.ONE * view
 
 func _unhandled_input(event):
