@@ -1,2 +1,2 @@
 # game-godot
-silly little game
+silly little game making PCB's
