@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Resistor" format=3 uid="uid://y6nv7ykuqe4r"]
+
+[ext_resource type="Script" uid="uid://c8whdp5g6pu5c" path="res://components/resource_scripts/resistor.gd" id="1_hfpc1"]
+
+[resource]
+script = ExtResource("1_hfpc1")
+resistance = 1000.0
+component_name = "1kΩ resistor"
+component_type = "resistor"
+discription = "A resistor that has 1000Ω resistor"
+metadata/_custom_type_script = "uid://c8whdp5g6pu5c"

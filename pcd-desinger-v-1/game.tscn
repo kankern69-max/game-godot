@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://dk3yvefch2caj"]
 
-<<<<<<< Updated upstream
 [ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://mainSystems/game.gd" id="1_e2o6t"]
 
 [sub_resource type="GDScript" id="GDScript_80nbo"]
@@ -57,12 +56,6 @@ func _draw() -> void:
 			draw_rect(Rect2(Vector2(x, y), Vector2(1, 1)), Color(0.47, 0.47, 0.47, 1.0))
 	pass
 "
-=======
-[ext_resource type="Script" uid="uid://devuriw2u3wm5" path="res://building_grid.gd" id="1_80nbo"]
-[ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://game.gd" id="1_e2o6t"]
-[ext_resource type="Script" uid="uid://b8fybpj3pr1p1" path="res://camera_2d.gd" id="2_feb5d"]
-[ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://cables.gd" id="4_fc0e3"]
->>>>>>> Stashed changes
 
 [node name="Game" type="Node2D" unique_id=1288097038]
 script = ExtResource("1_e2o6t")
@@ -98,8 +91,9 @@ offset_bottom = 67.0
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
 script = SubResource("GDScript_e2o6t")
 
-[node name="cables" type="Node2D" parent="BuildingGrid" unique_id=859323319]
-script = ExtResource("4_fc0e3")
+[node name="GridLines" type="Node2D" parent="BuildingGrid" unique_id=859323319]
+
+[node name="WireLayer" type="TileMapLayer" parent="BuildingGrid" unique_id=2020172895]
 
 [node name="Compoents" type="Node2D" parent="BuildingGrid" unique_id=113458643]
 
