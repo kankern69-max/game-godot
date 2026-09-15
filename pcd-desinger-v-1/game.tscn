@@ -1,15 +1,68 @@
 [gd_scene format=3 uid="uid://dk3yvefch2caj"]
 
-[ext_resource type="Script" uid="uid://devuriw2u3wm5" path="res://building_grid.gd" id="1_80nbo"]
-[ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://game.gd" id="1_e2o6t"]
-[ext_resource type="Script" uid="uid://b8fybpj3pr1p1" path="res://camera_2d.gd" id="2_feb5d"]
+[ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://mainSystems/game.gd" id="1_e2o6t"]
+
+[sub_resource type="GDScript" id="GDScript_80nbo"]
+script/source = "extends Camera2D
+
+var view: float = 1
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	zoom = Vector2.ONE * view
+
+func _unhandled_input(event):
+	if event is InputEventMouseButton and event.pressed:
+
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			if view <= 64:
+				view = ((view * 1.15)+0.05)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			if view >= 0.5:
+				view = (view / 1.15)
+			elif view <= 0.05:
+				pass
+
+
+
+func _input(event):
+	_CamMovement(event)
+
+func _CamMovement(event):
+	if event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			offset -= Vector2(event.relative.x, event.relative.y)/view
+"
+
+[sub_resource type="GDScript" id="GDScript_e2o6t"]
+script/source = "extends Node2D
+var dotDistance: int = 8
+const boardSize: Vector2i = Vector2i(1920,1080)
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+func _draw() -> void:
+	for x in range(0, boardSize.x, dotDistance):
+		for y in range(0,boardSize.y, dotDistance):
+			draw_rect(Rect2(Vector2(x, y), Vector2(1, 1)), Color(0.47, 0.47, 0.47, 1.0))
+	pass
+"
 
 [node name="Game" type="Node2D" unique_id=1288097038]
 script = ExtResource("1_e2o6t")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=360243486]
 limit_enabled = false
-script = ExtResource("2_feb5d")
+script = SubResource("GDScript_80nbo")
 
 [node name="UI" type="CanvasLayer" parent="Camera2D" unique_id=743095973]
 
@@ -36,7 +89,7 @@ offset_right = 136.0
 offset_bottom = 67.0
 
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
-script = ExtResource("1_80nbo")
+script = SubResource("GDScript_e2o6t")
 
 [node name="GridLines" type="Node2D" parent="BuildingGrid" unique_id=859323319]
 
