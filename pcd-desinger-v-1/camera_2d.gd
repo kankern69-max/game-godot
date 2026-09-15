@@ -1,6 +1,6 @@
 extends Camera2D
 
-var view: int = 1
+var view: float = 1
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -8,19 +8,19 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	print(view)
 	zoom = Vector2.ONE * view
-	pass
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
 
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			if view <= 64:
-				view = (view * 2)
+				view = ((view * 1.15)+0.05)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			if view >= 2:
-				view = (view / 2)
-			elif view == 1:
+			if view >= 0.5:
+				view = (view / 1.15)
+			elif view <= 0.05:
 				pass
 
 

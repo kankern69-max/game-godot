@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var grid_size = Vector2i(1920, 1080)
-@export var cell_size = 6
+@export var cell_size = 33
 
 var cells = {}  # Vector2i -> Cell
 
@@ -36,8 +36,8 @@ func _draw_grid_lines():
 	for x in range(grid_size.x + 1):
 		var from = Vector2(x * cell_size, 0)
 		var to = Vector2(x * cell_size, grid_size.y * cell_size)
-		draw_line(from, to, color, 1.0)
+		draw_line(from, to, color, 4.0)
 	for y in range(grid_size.y + 1):
 		var from = Vector2(0, y * cell_size)
 		var to = Vector2(grid_size.x * cell_size, y * cell_size)
-		draw_line(from, to, color, 1.0)
+		draw_line(from, to, color, 4.0)
