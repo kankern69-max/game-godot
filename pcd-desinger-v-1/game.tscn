@@ -33,7 +33,7 @@ func _input(event):
 func _CamMovement(event):
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			offset -= Vector2(event.relative.x, event.relative.y)/view
+			offset -= Vector2(event.relative.x*1.5, event.relative.y*1.5)/view
 "
 
 [sub_resource type="GDScript" id="GDScript_e2o6t"]
