@@ -5,18 +5,31 @@ extends Node2D
 
 var cableID: int = 0
 
-func setup_trace(startPosi: Vector2, endPosi: Vector2, id: int) -> void:
+func setup_trace(startPosi: Vector2, id: int) -> void:
 	cableID= id
 	line2d.clear_points()
 	line2d.add_point(startPosi)
-	line2d.add_point(endPosi)
+	line2d.add_point(startPosi)
 
-func update_end_point(endPosi: Vector2) -> void:
-	line2d.set_point_position(1,endPosi)
+func addCableSegment(newPos: Vector2) -> void:
+	var last_idx = line2d.get_point_count()-1
+	if last_idx >= 0:
+		line2d.set_point_position(last_idx, newPos)
+	line2d.add_point(newPos)
+
+func update_active_point(endPosi: Vector2) -> void:
+	var last_idx = line2d.get_point_count()-1
+	if last_idx >= 0:
+		line2d.set_point_position(last_idx,endPosi)
+
+func getCableCount() -> int:
+	return line2d.get_point_count()
 
 func getPointStart() -> Vector2:
 	return line2d.get_point_position(0)
 
+func getEndCable() -> Vector2:
+	return line2d.get_point_position(line2d.get_point_count() - 1)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
