@@ -2,40 +2,8 @@
 
 [ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://mainSystems/game.gd" id="1_e2o6t"]
 [ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://cables.gd" id="2_e2o6t"]
+[ext_resource type="Script" uid="uid://t4x632s6w7ug" path="res://mainSystems/camera_2d.gd" id="2_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://ofdnf06ntncc" path="res://ui/ui.tscn" id="3_feb5d"]
-
-[sub_resource type="GDScript" id="GDScript_80nbo"]
-script/source = "extends Camera2D
-
-var view: float = 1
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	zoom = Vector2.ONE * (pow(1.15,view))
-
-func _input(event):
-	_CamMovement(event)
-	if event is InputEventMouseButton and event.pressed:
-
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			if view <= 64:
-				view = (view +1)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			if view >= 2:
-				view = (view -1)
-				pass
-
-
-
-func _CamMovement(event):
-	if event is InputEventMouseMotion:
-		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-			offset -= Vector2(event.relative.x*1.5, event.relative.y*1.5)/view
-"
 
 [sub_resource type="GDScript" id="GDScript_e2o6t"]
 script/source = "extends Node2D
@@ -55,8 +23,9 @@ func _draw() -> void:
 script = ExtResource("1_e2o6t")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=360243486]
+position = Vector2(960, 540)
 limit_enabled = false
-script = SubResource("GDScript_80nbo")
+script = ExtResource("2_fc0e3")
 
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
 script = SubResource("GDScript_e2o6t")

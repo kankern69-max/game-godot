@@ -93,7 +93,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Component" type="Panel" parent="Control" unique_id=1102487387]
+[node name="ComponentUI" type="Panel" parent="Control" unique_id=1102487387]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -105,7 +105,7 @@ offset_bottom = 520.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ofb81")
 
-[node name="SearchBar" type="PanelContainer" parent="Control/Component" unique_id=518766399]
+[node name="SearchBar" type="PanelContainer" parent="Control/ComponentUI" unique_id=518766399]
 custom_minimum_size = Vector2(230, 30)
 layout_mode = 0
 offset_left = 10.0
@@ -113,11 +113,11 @@ offset_top = 20.0
 offset_right = 240.0
 offset_bottom = 51.0
 
-[node name="LineEdit" type="LineEdit" parent="Control/Component/SearchBar" unique_id=1855956409]
+[node name="LineEdit" type="LineEdit" parent="Control/ComponentUI/SearchBar" unique_id=1855956409]
 layout_mode = 2
 text = "Search"
 
-[node name="Filters" type="PanelContainer" parent="Control/Component" unique_id=1460596709]
+[node name="Filters" type="PanelContainer" parent="Control/ComponentUI" unique_id=1460596709]
 custom_minimum_size = Vector2(230, 0)
 layout_mode = 0
 offset_left = 10.0
@@ -126,14 +126,14 @@ offset_right = 240.0
 offset_bottom = 95.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_nb4k0")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/Component/Filters" unique_id=1712888528]
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/ComponentUI/Filters" unique_id=1712888528]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/Component/Filters/ScrollContainer" unique_id=772848746]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/ComponentUI/Filters/ScrollContainer" unique_id=772848746]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Sort" type="OptionButton" parent="Control/Component/Filters/ScrollContainer/HBoxContainer" unique_id=380554904]
+[node name="Sort" type="OptionButton" parent="Control/ComponentUI/Filters/ScrollContainer/HBoxContainer" unique_id=380554904]
 custom_minimum_size = Vector2(40, 30)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_ks8t7")
@@ -148,7 +148,7 @@ popup/item_1/id = 1
 popup/item_2/text = "type"
 popup/item_2/id = 2
 
-[node name="Type" type="OptionButton" parent="Control/Component/Filters/ScrollContainer/HBoxContainer" unique_id=1167080636]
+[node name="Type" type="OptionButton" parent="Control/ComponentUI/Filters/ScrollContainer/HBoxContainer" unique_id=1167080636]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_vkava")
@@ -159,25 +159,25 @@ item_count = 1
 popup/item_0/text = "type"
 popup/item_0/id = 0
 
-[node name="components" type="ScrollContainer" parent="Control/Component" unique_id=480508602]
+[node name="components" type="ScrollContainer" parent="Control/ComponentUI" unique_id=480508602]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 110.0
 offset_right = 240.0
 offset_bottom = 490.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/Component/components" unique_id=183747797]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/ComponentUI/components" unique_id=183747797]
 custom_minimum_size = Vector2(230, 100)
 layout_mode = 2
 
-[node name="ComponentTile" parent="Control/Component/components/VBoxContainer" unique_id=657139731 instance=ExtResource("1_nb4k0")]
+[node name="ComponentTile" parent="Control/ComponentUI/components/VBoxContainer" unique_id=657139731 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
 
-[node name="ComponentTile2" parent="Control/Component/components/VBoxContainer" unique_id=637803568 instance=ExtResource("1_nb4k0")]
+[node name="ComponentTile2" parent="Control/ComponentUI/components/VBoxContainer" unique_id=637803568 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
 
-[node name="ComponentTile3" parent="Control/Component/components/VBoxContainer" unique_id=1450275524 instance=ExtResource("1_nb4k0")]
+[node name="ComponentTile3" parent="Control/ComponentUI/components/VBoxContainer" unique_id=1450275524 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
 
-[node name="ComponentTile4" parent="Control/Component/components/VBoxContainer" unique_id=555848849 instance=ExtResource("1_nb4k0")]
+[node name="ComponentTile4" parent="Control/ComponentUI/components/VBoxContainer" unique_id=555848849 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
