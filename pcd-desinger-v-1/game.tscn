@@ -14,24 +14,21 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	zoom = Vector2.ONE * view
+	zoom = Vector2.ONE * (pow(1.15,view))
 
-func _unhandled_input(event):
+func _input(event):
+	_CamMovement(event)
 	if event is InputEventMouseButton and event.pressed:
 
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			if view <= 64:
-				view = ((view * 1.15)+0.05)
+				view = (view +1)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			if view >= 0.5:
-				view = (view / 1.15)
-			elif view <= 0.05:
+			if view >= 2:
+				view = (view -1)
 				pass
 
 
-
-func _input(event):
-	_CamMovement(event)
 
 func _CamMovement(event):
 	if event is InputEventMouseMotion:
