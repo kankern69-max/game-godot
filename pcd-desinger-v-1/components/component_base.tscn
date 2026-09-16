@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dodlmk41wfmqb"]
+
+[ext_resource type="Script" uid="uid://b5vy02vn7sva0" path="res://components/component_base.gd" id="1_3mhuv"]
+[ext_resource type="Texture2D" uid="uid://bxxegb575av00" path="res://components/component_atlas.tres" id="2_3mhuv"]
+
+[node name="ComponentBase" type="Node2D" unique_id=1039253454]
+script = ExtResource("1_3mhuv")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1606355850]
+texture = ExtResource("2_3mhuv")

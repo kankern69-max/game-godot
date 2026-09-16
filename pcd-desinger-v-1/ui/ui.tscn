@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://ofdnf06ntncc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="UI" type="CanvasLayer" unique_id=209732671]
+
+[node name="Control" type="Control" parent="." unique_id=765363962]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Component" type="Panel" parent="Control" unique_id=1102487387]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -270.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 520.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ofb81")
+
+[node name="SearchBar" type="PanelContainer" parent="Control/Component" unique_id=518766399]
+custom_minimum_size = Vector2(230, 30)
+layout_mode = 0
+offset_left = 10.0
+offset_top = 20.0
+offset_right = 240.0
+offset_bottom = 51.0
+
+[node name="LineEdit" type="LineEdit" parent="Control/Component/SearchBar" unique_id=1855956409]
+layout_mode = 2
+text = "Niggas in paris"
+
+[node name="VBoxContainer" type="ScrollContainer" parent="Control/Component" unique_id=480508602]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 100.0
+offset_right = 240.0
+offset_bottom = 480.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Component/VBoxContainer" unique_id=183747797]
+custom_minimum_size = Vector2(230, 100)
+layout_mode = 2

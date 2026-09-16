@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://mainSystems/game.gd" id="1_e2o6t"]
 [ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://cables.gd" id="2_e2o6t"]
+[ext_resource type="PackedScene" uid="uid://ofdnf06ntncc" path="res://ui/ui.tscn" id="3_feb5d"]
 
 [sub_resource type="GDScript" id="GDScript_80nbo"]
 script/source = "extends Camera2D
@@ -40,12 +41,7 @@ func _CamMovement(event):
 script/source = "extends Node2D
 var dotDistance: int = 8
 const boardSize: Vector2i = Vector2i(1920,1080)
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
 func _draw() -> void:
@@ -62,30 +58,6 @@ script = ExtResource("1_e2o6t")
 limit_enabled = false
 script = SubResource("GDScript_80nbo")
 
-[node name="UI" type="CanvasLayer" parent="Camera2D" unique_id=743095973]
-
-[node name="ui" type="Control" parent="Camera2D/UI" unique_id=856846318]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 1.0
-offset_top = -1.0
-offset_right = 1927.0
-offset_bottom = 1076.0
-
-[node name="OptionButton" type="OptionButton" parent="Camera2D/UI/ui" unique_id=1215917019]
-layout_mode = 0
-offset_left = 1834.0
-offset_top = 22.0
-offset_right = 1902.0
-offset_bottom = 71.0
-
-[node name="OptionButton2" type="OptionButton" parent="Camera2D/UI/ui" unique_id=728079131]
-layout_mode = 0
-offset_left = 68.0
-offset_top = 18.0
-offset_right = 136.0
-offset_bottom = 67.0
-
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
 script = SubResource("GDScript_e2o6t")
 
@@ -94,5 +66,4 @@ script = ExtResource("2_e2o6t")
 
 [node name="Compoents" type="Node2D" parent="BuildingGrid" unique_id=113458643]
 
-[node name="startScreen" type="Node2D" parent="." unique_id=1702086162]
-visible = false
+[node name="UI" parent="." unique_id=209732671 instance=ExtResource("3_feb5d")]
