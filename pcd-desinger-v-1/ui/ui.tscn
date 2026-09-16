@@ -1,11 +1,87 @@
 [gd_scene format=3 uid="uid://ofdnf06ntncc"]
 
+[ext_resource type="PackedScene" uid="uid://k3dpp7niy886" path="res://ui/component_tile.tscn" id="1_nb4k0"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
 bg_color = Color(0, 0, 0, 0.5)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nb4k0"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.3)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ks8t7"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1931151, 0.1931151, 0.1931151, 0.3)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wl5ax"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1931151, 0.1931151, 0.1931151, 0.5)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vkava"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1931151, 0.1931151, 0.1931151, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_obcwv"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1931151, 0.1931151, 0.1931151, 0.3)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tf0e0"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1931151, 0.1931151, 0.1931151, 0.5)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [node name="UI" type="CanvasLayer" unique_id=209732671]
 
@@ -39,15 +115,69 @@ offset_bottom = 51.0
 
 [node name="LineEdit" type="LineEdit" parent="Control/Component/SearchBar" unique_id=1855956409]
 layout_mode = 2
-text = "Niggas in paris"
+text = "Search"
 
-[node name="VBoxContainer" type="ScrollContainer" parent="Control/Component" unique_id=480508602]
+[node name="Filters" type="PanelContainer" parent="Control/Component" unique_id=1460596709]
+custom_minimum_size = Vector2(230, 0)
 layout_mode = 0
 offset_left = 10.0
-offset_top = 100.0
+offset_top = 55.0
 offset_right = 240.0
-offset_bottom = 480.0
+offset_bottom = 95.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_nb4k0")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/Component/VBoxContainer" unique_id=183747797]
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/Component/Filters" unique_id=1712888528]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/Component/Filters/ScrollContainer" unique_id=772848746]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Sort" type="OptionButton" parent="Control/Component/Filters/ScrollContainer/HBoxContainer" unique_id=380554904]
+custom_minimum_size = Vector2(40, 30)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ks8t7")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ks8t7")
+theme_override_styles/focus = SubResource("StyleBoxFlat_wl5ax")
+selected = 0
+item_count = 3
+popup/item_0/text = "price"
+popup/item_0/id = 0
+popup/item_1/text = "name"
+popup/item_1/id = 1
+popup/item_2/text = "type"
+popup/item_2/id = 2
+
+[node name="Type" type="OptionButton" parent="Control/Component/Filters/ScrollContainer/HBoxContainer" unique_id=1167080636]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_vkava")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_obcwv")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tf0e0")
+selected = 0
+item_count = 1
+popup/item_0/text = "type"
+popup/item_0/id = 0
+
+[node name="components" type="ScrollContainer" parent="Control/Component" unique_id=480508602]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 110.0
+offset_right = 240.0
+offset_bottom = 490.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Component/components" unique_id=183747797]
 custom_minimum_size = Vector2(230, 100)
+layout_mode = 2
+
+[node name="ComponentTile" parent="Control/Component/components/VBoxContainer" unique_id=657139731 instance=ExtResource("1_nb4k0")]
+layout_mode = 2
+
+[node name="ComponentTile2" parent="Control/Component/components/VBoxContainer" unique_id=637803568 instance=ExtResource("1_nb4k0")]
+layout_mode = 2
+
+[node name="ComponentTile3" parent="Control/Component/components/VBoxContainer" unique_id=1450275524 instance=ExtResource("1_nb4k0")]
+layout_mode = 2
+
+[node name="ComponentTile4" parent="Control/Component/components/VBoxContainer" unique_id=555848849 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
