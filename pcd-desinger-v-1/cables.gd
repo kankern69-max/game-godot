@@ -1,27 +1,36 @@
+
 extends Node2D
 const snapPoint: int = 8
-var cableStart: Vector2 = Vector2.ZERO
-var cableEnd: Vector2 = Vector2.ZERO
+var TraceScené: PackedScene = preload("res://trace.tscn")
+var SavedCables: Array[Node2D] = []
+var currentCable : Node2D = null
 var layingCable: bool = false
+var cableCounter: int = 0
 
-func _draw() -> void:
-	if layingCable or cableStart != cableEnd:
-		draw_line(cableStart,cableEnd,Color(1,1,1,1), 2.0)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
-			cableStart = snapToGrid(get_global_mouse_position())
-			cableEnd =cableStart
+			var startPos = snapToGrid(get_global_mouse_position())
+			
+			currentCable = TraceScené.instantiate()
+			add_child(currentCable)
+			cableCounter += 1
+			currentCable.setup_trace(startPos,startPos, cableCounter)
 			layingCable = true
-			queue_redraw()
 		elif layingCable:
-			cableEnd = snapToGrid(get_global_mouse_position())
+			var endPos = snapToGrid(get_global_mouse_position())
+			currentCable.update_end_point(endPos)
+			var startPos = currentCable.getPointStart()
+			if startPos != endPos:
+				SavedCables.append(currentCable)
+			else:
+				currentCable.queue_free()
 			layingCable = false
-			queue_redraw()
+			currentCable = null
 	elif event is InputEventMouseMotion and layingCable:
-		cableEnd = snapToGrid(get_global_mouse_position())
-		queue_redraw()
+		var currentPos = snapToGrid(get_global_mouse_position())
+		currentCable.update_end_point(currentPos)
 
 func snapToGrid(pos: Vector2) -> Vector2:
 	var localPos = to_local(pos)
