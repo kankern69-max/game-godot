@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Capacitor" format=3 uid="uid://chlw142pnkidq"]
+
+[ext_resource type="Script" uid="uid://c12dq3anjvj4k" path="res://components/resource_scripts/capacitor.gd" id="1_ncl54"]
+
+[resource]
+script = ExtResource("1_ncl54")
+tolerance = 20.0
+component_id = "0002"
+component_name = "Capacitor"
+component_type = "Capacitor"
+footprint = Vector2i(32, 32)
+atlas_coords = Vector2i(64, 0)
+metadata/_custom_type_script = "uid://c12dq3anjvj4k"
