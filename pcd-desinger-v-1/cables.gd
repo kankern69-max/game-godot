@@ -7,6 +7,11 @@ var currentCable : Node2D = null
 var layingCable: bool = false
 var cableCounter: int = 0
 var lastSnappedPos: Vector2 = Vector2.ZERO
+var dotDistance: int = 8
+var halfStep = dotDistance * 0.5
+
+const boardSize: Vector2i = Vector2i(640, 480)
+const boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 480) * 0.5)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
@@ -40,16 +45,26 @@ func _input(event: InputEvent) -> void:
 			var step = Vector2(stepX, stepY)
 			if step == Vector2.ZERO:
 				break
-			lastSnappedPos += step
+			var nextPos = lastSnappedPos + step
+			lastSnappedPos = clampToBoard(nextPos)
 			currentCable.addCableSegment(lastSnappedPos)
 			diff = realMousePos - lastSnappedPos
 			
 		currentCable.update_active_point(lastSnappedPos)
 
 func snapToGrid(pos: Vector2) -> Vector2:
-	var localPos = to_local(pos)
-	return (localPos / snapPoint).round() * snapPoint
+	var localPos = to_local(pos) - boardOffset
+	var clamped_x = clampf(localPos.x, halfStep, boardSize.x - halfStep)
+	var clamped_y = clampf(localPos.y, halfStep, boardSize.y - halfStep)
+	var snapped_x = (floor((clamped_x - halfStep) / snapPoint) * snapPoint) + halfStep
+	var snapped_y = (floor((clamped_y - halfStep) / snapPoint) * snapPoint) + halfStep
+	return boardOffset + Vector2(snapped_x, snapped_y)
 
+func clampToBoard(pos: Vector2) -> Vector2:
+	var localPos = pos - boardOffset
+	var clamped_x = clampf(localPos.x, halfStep, boardSize.x - halfStep)
+	var clamped_y = clampf(localPos.y, halfStep, boardSize.y - halfStep)
+	return boardOffset + Vector2(clamped_x, clamped_y)
 
 
 # Called when the node enters the scene tree for the first time.
