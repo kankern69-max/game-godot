@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dnee05fsbr2bb"]
 
-[ext_resource type="Script" uid="uid://c027orlywo7yq" path="res://trace.gd" id="1_h4eno"]
+[ext_resource type="Script" uid="uid://c027orlywo7yq" path="res://mainSystems/trace.gd" id="1_h4eno"]
 
 [node name="trace" type="Node2D" unique_id=578552324]
 script = ExtResource("1_h4eno")

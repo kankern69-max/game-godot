@@ -1,41 +1,9 @@
 [gd_scene format=3 uid="uid://dk3yvefch2caj"]
 
 [ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://mainSystems/game.gd" id="1_e2o6t"]
-[ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://cables.gd" id="2_e2o6t"]
+[ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://mainSystems/cables.gd" id="2_e2o6t"]
 [ext_resource type="Script" uid="uid://t4x632s6w7ug" path="res://mainSystems/camera_2d.gd" id="2_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://ofdnf06ntncc" path="res://ui/ui.tscn" id="3_feb5d"]
-
-[sub_resource type="GDScript" id="GDScript_e2o6t"]
-script/source = "extends Node2D
-var dotDistance: int = 8
-const windowSize: Vector2i = Vector2i(1920, 1080)
-const boardSize: Vector2i = Vector2i(640,400)
-const boardOffset: Vector2 = Vector2((1920-640) * 0.5, (1080-400) * 0.5)
-
-
-func _process(delta: float) -> void:
-	pass
-func _draw() -> void:
-	draw_rect(Rect2(Vector2.ZERO, Vector2(windowSize)), Color(0.667, 0.667, 0.667, 1.0))
-	var boardRect := Rect2(boardOffset, Vector2(boardSize))
-	draw_rect(boardRect, Color(0.0, 0.592, 0.0, 1.0))
-	for x in range(0, boardSize.x + 1, dotDistance):
-		var start_p := boardOffset + Vector2(x, 0)
-		var end_p := boardOffset + Vector2(x, boardSize.y)
-		draw_line(start_p, end_p, Color(0.0, 0.334, 0.0, 1.0), 1.0)
-		
-	for y in range(0, boardSize.y + 1, dotDistance):
-		var start_p := boardOffset + Vector2(0, y)
-		var end_p := boardOffset + Vector2(boardSize.x, y)
-		draw_line(start_p, end_p, Color(0.0, 0.334, 0.0, 1.0), 1.0)
-	var halfStep = dotDistance * 0.5
-	for x in range(0, boardSize.x + 1, dotDistance):
-		for y in range(0, boardSize.y + 1, dotDistance):
-			var dot_pos := boardOffset + Vector2(x + halfStep, y + halfStep)
-			draw_rect(Rect2(dot_pos, Vector2(1, 1)), Color(0.073, 0.073, 0.073, 1.0))
-	
-	pass
-"
 
 [node name="Game" type="Node2D" unique_id=1288097038]
 script = ExtResource("1_e2o6t")
@@ -46,7 +14,6 @@ limit_enabled = false
 script = ExtResource("2_fc0e3")
 
 [node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
-script = SubResource("GDScript_e2o6t")
 
 [node name="cables" type="Node2D" parent="BuildingGrid" unique_id=859323319]
 script = ExtResource("2_e2o6t")

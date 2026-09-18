@@ -1,7 +1,7 @@
 
 extends Node2D
 const snapPoint: int = 8
-var TraceScene: PackedScene = preload("res://trace.tscn")
+var TraceScene: PackedScene = preload("res://mainSystems/trace.tscn")
 var SavedCables: Array[Node2D] = []
 var currentCable : Node2D = null
 var layingCable: bool = false
@@ -65,13 +65,3 @@ func clampToBoard(pos: Vector2) -> Vector2:
 	var clamped_x = clampf(localPos.x, halfStep, boardSize.x - halfStep)
 	var clamped_y = clampf(localPos.y, halfStep, boardSize.y - halfStep)
 	return boardOffset + Vector2(clamped_x, clamped_y)
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
