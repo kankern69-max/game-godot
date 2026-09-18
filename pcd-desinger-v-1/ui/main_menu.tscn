@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://dhj2y5ytp777n"]
 
 [ext_resource type="Script" uid="uid://c27t5ucvcgikb" path="res://ui/scripts/main_menu.gd" id="1_06t4h"]
+[ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/Klikkerdeklik.mp3" id="2_0dkrt"]
+
+[sub_resource type="Theme" id="Theme_0dkrt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7vrkn"]
 bg_color = Color(0, 0.54901963, 0.2901961, 1)
@@ -42,7 +45,11 @@ expand_margin_right = 100.0
 
 [node name="Main Menu" type="Control" unique_id=1019774288]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_06t4h")
 
 [node name="Button_Manager" type="Control" parent="." unique_id=2058831974]
@@ -55,37 +62,63 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Start" type="Button" parent="." unique_id=488644684]
-layout_mode = 0
-offset_left = 653.0
-offset_top = 105.0
-offset_right = 1227.0
-offset_bottom = 330.0
+texture_filter = 3
+texture_repeat = 2
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -287.0
+offset_top = 100.0
+offset_right = 287.0
+offset_bottom = 325.0
+grow_horizontal = 2
+rotation = 6.2831855
+theme = SubResource("Theme_0dkrt")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7vrkn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
 text = "Start"
 
 [node name="Quit" type="Button" parent="." unique_id=1824048329]
-layout_mode = 0
-offset_left = 655.0
-offset_top = 745.0
-offset_right = 1230.0
-offset_bottom = 977.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -287.5
+offset_top = -320.0
+offset_right = 287.5
+offset_bottom = -88.0
+grow_horizontal = 2
+grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_fu7sn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
 text = "Quit"
 
 [node name="Credits" type="Button" parent="." unique_id=1210527748]
-layout_mode = 0
-offset_left = 654.0
-offset_top = 425.0
-offset_right = 1235.0
-offset_bottom = 672.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -290.5
+offset_top = -123.5
+offset_right = 290.5
+offset_bottom = 123.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_jix8l")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
 text = "Credits"
+
+[node name="Klikkerdeklik" type="AudioStreamPlayer2D" parent="." unique_id=1598779239]
+stream = ExtResource("2_0dkrt")
+volume_db = 24.0
 
 [connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]
