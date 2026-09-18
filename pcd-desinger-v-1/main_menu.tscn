@@ -16,13 +16,12 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Start" type="Button" parent="." unique_id=1362108435]
+[node name="Start" type="TextureButton" parent="." unique_id=358572145]
 layout_mode = 0
 offset_left = 653.0
 offset_top = 105.0
 offset_right = 1227.0
 offset_bottom = 330.0
-text = "Start de game nigga"
 
 [node name="Quit" type="Button" parent="." unique_id=1824048329]
 layout_mode = 0

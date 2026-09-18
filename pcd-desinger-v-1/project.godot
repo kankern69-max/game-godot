@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="pcd desinger v1"
-run/main_scene="uid://dk3yvefch2caj"
+run/main_scene="uid://dhj2y5ytp777n"
 config/features=PackedStringArray("4.6", "Forward Plus")
 
 [autoload]
