@@ -12,15 +12,20 @@ func setup_trace(startPosi: Vector2, id: int) -> void:
 	line2d.add_point(startPosi)
 
 func addCableSegment(newPos: Vector2) -> void:
+	if not newPos.is_finite():
+		return
+	
 	var last_idx = line2d.get_point_count()-1
 	if last_idx >= 0:
 		line2d.set_point_position(last_idx, newPos)
 	line2d.add_point(newPos)
 
-func update_active_point(endPosi: Vector2) -> void:
+func update_active_point(endPos: Vector2) -> void:
+	if not endPos.is_finite():
+		return
 	var last_idx = line2d.get_point_count()-1
 	if last_idx >= 0:
-		line2d.set_point_position(last_idx,endPosi)
+		line2d.set_point_position(last_idx,endPos)
 
 func getCableCount() -> int:
 	return line2d.get_point_count()
