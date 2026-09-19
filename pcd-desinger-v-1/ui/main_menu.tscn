@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c27t5ucvcgikb" path="res://ui/scripts/main_menu.gd" id="1_06t4h"]
 [ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/Klikkerdeklik.mp3" id="2_0dkrt"]
+[ext_resource type="Texture2D" uid="uid://4um82ikc3dq5" path="res://ui/PCB_Logo.png" id="3_wk0pr"]
 
 [sub_resource type="Theme" id="Theme_0dkrt"]
 
@@ -65,14 +66,14 @@ mouse_filter = 2
 texture_filter = 3
 texture_repeat = 2
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -287.0
-offset_top = 100.0
-offset_right = 287.0
-offset_bottom = 325.0
-grow_horizontal = 2
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 157.0
+offset_top = 64.0
+offset_right = 731.0
+offset_bottom = 289.0
+grow_vertical = 2
 rotation = 6.2831855
 theme = SubResource("Theme_0dkrt")
 theme_override_styles/normal = SubResource("StyleBoxFlat_7vrkn")
@@ -87,10 +88,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -287.5
-offset_top = -320.0
-offset_right = 287.5
-offset_bottom = -88.0
+offset_left = -290.0
+offset_top = -252.0
+offset_right = 285.0
+offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_fu7sn")
@@ -100,16 +101,16 @@ text = "Quit"
 
 [node name="Credits" type="Button" parent="." unique_id=1210527748]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 6
+anchor_left = 1.0
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -290.5
-offset_top = -123.5
-offset_right = 290.5
-offset_bottom = 123.5
-grow_horizontal = 2
+offset_left = -584.0
+offset_top = 8.0
+offset_right = -129.0
+offset_bottom = 200.5
+grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_jix8l")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
@@ -119,6 +120,11 @@ text = "Credits"
 [node name="Klikkerdeklik" type="AudioStreamPlayer2D" parent="." unique_id=1598779239]
 stream = ExtResource("2_0dkrt")
 volume_db = 8.0
+
+[node name="PcbLogo" type="Sprite2D" parent="." unique_id=1874034518]
+position = Vector2(901.5, 274.5)
+scale = Vector2(1.17125, 0.925)
+texture = ExtResource("3_wk0pr")
 
 [connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]
