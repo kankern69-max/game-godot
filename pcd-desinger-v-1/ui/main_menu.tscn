@@ -118,7 +118,7 @@ text = "Credits"
 
 [node name="Klikkerdeklik" type="AudioStreamPlayer2D" parent="." unique_id=1598779239]
 stream = ExtResource("2_0dkrt")
-volume_db = 24.0
+volume_db = 8.0
 
 [connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]

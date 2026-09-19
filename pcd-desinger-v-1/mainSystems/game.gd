@@ -18,7 +18,7 @@ func _draw() -> void:
 		var end_p := boardOffset + Vector2(boardSize.x, y)
 		draw_line(start_p, end_p, Color(0.0, 0.334, 0.0, 1.0), 1.0)
 	var halfStep = dotDistance * 0.5
-	for x in range(0, boardSize.x + 1, dotDistance):
-		for y in range(0, boardSize.y + 1, dotDistance):
+	for x in range(0, boardSize.x, dotDistance):
+		for y in range(0, boardSize.y, dotDistance):
 			var dot_pos := boardOffset + Vector2(x + halfStep - 0.5, y + halfStep - 0.5)
 			draw_rect(Rect2(dot_pos, Vector2(1, 1)), Color(0.073, 0.073, 0.073, 1.0))
