@@ -9,14 +9,11 @@ var cableCounter: int = 0
 var lastSnappedPos: Vector2 = Vector2.ZERO
 var dotDistance: int = 8
 var halfStep = dotDistance * 0.5
-
 enum DrawMode {Free, Line, Erase}
 var currentMode: DrawMode = DrawMode.Free
-
 var lineAxisLocked: bool = false
 var lockedAxis: String = ""
 var startPos: Vector2 = Vector2.ZERO
-
 const boardSize: Vector2i = Vector2i(640, 400)
 const boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
 
