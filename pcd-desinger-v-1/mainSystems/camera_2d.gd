@@ -16,13 +16,13 @@ func _input(event):
 
 func _CamMovement(event):
 	if Input.is_key_pressed(KEY_D):
-		position.x += 2
+		position.x += 4
 	if Input.is_key_pressed(KEY_A):
-		position.x -= 2
+		position.x -= 4
 	if Input.is_key_pressed(KEY_S):
-		position.y += 2
+		position.y += 4
 	if Input.is_key_pressed(KEY_W):
-		position.y -= 2
+		position.y -= 4
 	if event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_MIDDLE) :
 			position = clamp(position - event.relative / zoom.x, Vector2(0,0), Vector2(100000,100000))
