@@ -143,7 +143,7 @@ stream = ExtResource("2_0dkrt")
 volume_db = 8.0
 
 [node name="PcbLogo" type="Sprite2D" parent="." unique_id=1874034518]
-position = Vector2(925, 272)
+position = Vector2(966.99994, 316)
 rotation = -6.2831855
 scale = Vector2(1.2906717, 0.99655145)
 texture = ExtResource("3_wk0pr")
