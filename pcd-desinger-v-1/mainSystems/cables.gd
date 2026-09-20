@@ -111,8 +111,15 @@ func _input(event: InputEvent) -> void:
 			var nextPos = clampToBoard(lastSnappedPos + step)
 			if nextPos == lastSnappedPos:
 				break
-			lastSnappedPos = nextPos
-			currentCable.addCableSegment(lastSnappedPos)
+			if currentCable.has_method("getPenultimatePoint") and currentCable.getPenultimatePoint() == nextPos:
+				currentCable.removeLastCableSegment()
+				lastSnappedPos = nextPos
+			elif currentCable.has_method("checkPointsExists") and currentCable.checkPointExists(nextPos):
+				break
+			else:
+				lastSnappedPos = nextPos
+				currentCable.addCableSegment(lastSnappedPos)
+
 			diff = realMousePos - lastSnappedPos
 
 		currentCable.update_active_point(lastSnappedPos)
