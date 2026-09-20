@@ -215,10 +215,9 @@ offset_right = 343.0
 offset_bottom = 56.0
 text = "Erase"
 
-[node name="MenuButton" type="MenuButton" parent="Control/DrawingUI" unique_id=1991974868]
+[node name="OptionButton" type="OptionButton" parent="Control/DrawingUI" unique_id=2054386998]
 layout_mode = 0
-offset_left = 96.0
-offset_top = 12.0
-offset_right = 167.0
-offset_bottom = 53.0
-text = "color"
+offset_left = 86.0
+offset_top = 11.0
+offset_right = 163.0
+offset_bottom = 51.0

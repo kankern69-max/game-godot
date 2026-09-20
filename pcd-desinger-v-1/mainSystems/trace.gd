@@ -53,3 +53,6 @@ func checkPointExists(pos:Vector2) -> bool:
 		if line2d.get_point_position(i).distance_to(pos) < 1.0:
 			return true
 	return false
+
+func set_cable_color(new_color: Color) -> void:
+	line2d.default_color = new_color
