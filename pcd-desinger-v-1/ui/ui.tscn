@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://ofdnf06ntncc"]
 
+[ext_resource type="Script" uid="uid://bkxw3ht52pulb" path="res://ui/component_ui.gd" id="1_ks8t7"]
 [ext_resource type="PackedScene" uid="uid://k3dpp7niy886" path="res://ui/component_tile.tscn" id="1_nb4k0"]
 [ext_resource type="Script" uid="uid://yubuix3qvtwj" path="res://ui/drawing_ui.gd" id="2_ks8t7"]
 
@@ -105,6 +106,7 @@ offset_right = -20.0
 offset_bottom = 520.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ofb81")
+script = ExtResource("1_ks8t7")
 
 [node name="SearchBar" type="PanelContainer" parent="Control/ComponentUI" unique_id=518766399]
 custom_minimum_size = Vector2(230, 30)

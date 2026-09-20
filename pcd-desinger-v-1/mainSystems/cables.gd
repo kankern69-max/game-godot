@@ -21,7 +21,7 @@ const boardSize: Vector2i = Vector2i(640, 400)
 const boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
 
 func _ready() -> void:
-	global.toolChanged.connect(GlobalToolChange)
+	Global.toolChanged.connect(GlobalToolChange)
 
 func GlobalToolChange(toolName: String) -> void:
 	if layingCable:
