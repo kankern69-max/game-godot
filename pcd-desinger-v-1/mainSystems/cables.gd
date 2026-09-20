@@ -1,5 +1,5 @@
-
 extends Node2D
+
 const snapPoint: int = 8
 var TraceScene: PackedScene = preload("res://mainSystems/trace.tscn")
 var SavedCables: Array[Node2D] = []
@@ -10,13 +10,44 @@ var lastSnappedPos: Vector2 = Vector2.ZERO
 var dotDistance: int = 8
 var halfStep = dotDistance * 0.5
 
+enum DrawMode {Free, Line, Erase}
+var currentMode: DrawMode = DrawMode.Free
+
+var lineAxisLocked: bool = false
+var lockedAxis: String = ""
+var startPos: Vector2 = Vector2.ZERO
+
 const boardSize: Vector2i = Vector2i(640, 400)
 const boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
 
+func _ready() -> void:
+	global.toolChanged.connect(GlobalToolChange)
+
+func GlobalToolChange(toolName: String) -> void:
+	if layingCable:
+		if currentCable:
+			currentCable.queue_free()
+		layingCable = false
+		currentCable = null
+	match toolName:
+		"FREE":
+			currentMode = DrawMode.Free
+		"LINE":
+			currentMode = DrawMode.Line
+		"ERASE":
+			currentMode = DrawMode.Erase
+
 func _input(event: InputEvent) -> void:
+	if currentMode == DrawMode.Erase:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+			var mousePos = to_local(get_global_mouse_position())
+			eraseCableAt(mousePos)
+		return
+		
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
-			var startPos = snapToGrid(to_local(get_global_mouse_position()))
+			startPos = snapToGrid(to_local(get_global_mouse_position()))
+			lineAxisLocked = false
 			
 			currentCable = TraceScene.instantiate()
 			add_child(currentCable)
@@ -33,8 +64,25 @@ func _input(event: InputEvent) -> void:
 				currentCable.queue_free()
 			layingCable = false
 			currentCable = null
+			
 	elif event is InputEventMouseMotion and layingCable:
 		var realMousePos = clampToBoard(to_local(get_global_mouse_position()))
+		
+		if currentMode == DrawMode.Line:
+			if not lineAxisLocked:
+				var initial_diff = realMousePos - startPos
+				if initial_diff.length() >= snapPoint:
+					lineAxisLocked = true
+					if abs(initial_diff.x) > abs(initial_diff.y):
+						lockedAxis = "x"
+					else:
+						lockedAxis = "y"
+			if lineAxisLocked:
+				if lockedAxis == "x":
+					realMousePos.y = startPos.y
+				elif lockedAxis == "y":
+					realMousePos.x = startPos.x
+
 		var diff = realMousePos - lastSnappedPos
 
 		while abs(diff.x) >= snapPoint or abs(diff.y) >= snapPoint:
@@ -55,6 +103,24 @@ func _input(event: InputEvent) -> void:
 			diff = realMousePos - lastSnappedPos
 
 		currentCable.update_active_point(lastSnappedPos)
+
+func eraseCableAt(target_pos: Vector2) -> void:
+	var snapped_target = snapToGrid(target_pos)
+	
+	for i in range(SavedCables.size() - 1, -1, -1):
+		var cable = SavedCables[i]
+		if is_instance_valid(cable):
+			if cable.has_node("Line2D"):
+				var line = cable.get_node("Line2D") as Line2D
+				for pt in line.points:
+					if (cable.global_position + pt).distance_to(global_position + snapped_target) < 12.0:
+						cable.queue_free()
+						SavedCables.remove_at(i)
+						return
+			elif cable.position.distance_to(target_pos) < 24.0:
+				cable.queue_free()
+				SavedCables.remove_at(i)
+				return
 
 func snapToGrid(pos: Vector2) -> Vector2:
 	var localPos = pos - boardOffset

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://ofdnf06ntncc"]
 
 [ext_resource type="PackedScene" uid="uid://k3dpp7niy886" path="res://ui/component_tile.tscn" id="1_nb4k0"]
+[ext_resource type="Script" uid="uid://yubuix3qvtwj" path="res://ui/drawing_ui.gd" id="2_ks8t7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
 bg_color = Color(0, 0, 0, 0.5)
@@ -187,6 +188,7 @@ anchors_preset = 0
 offset_left = 470.0
 offset_right = 1579.0
 offset_bottom = 56.0
+script = ExtResource("2_ks8t7")
 
 [node name="DrawLine" type="Button" parent="Control/DrawingUI" unique_id=297591430]
 layout_mode = 0
@@ -194,6 +196,22 @@ offset_top = 11.0
 offset_right = 80.0
 offset_bottom = 55.0
 text = "line"
+
+[node name="DrawFree" type="Button" parent="Control/DrawingUI" unique_id=575049844]
+layout_mode = 0
+offset_left = 175.0
+offset_top = 15.0
+offset_right = 248.0
+offset_bottom = 56.0
+text = "free Draw"
+
+[node name="Erase" type="Button" parent="Control/DrawingUI" unique_id=2001067927]
+layout_mode = 0
+offset_left = 265.0
+offset_top = 17.0
+offset_right = 343.0
+offset_bottom = 56.0
+text = "Erase"
 
 [node name="MenuButton" type="MenuButton" parent="Control/DrawingUI" unique_id=1991974868]
 layout_mode = 0
