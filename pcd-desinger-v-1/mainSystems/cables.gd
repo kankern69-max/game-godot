@@ -48,6 +48,7 @@ func _input(event: InputEvent) -> void:
 			
 			currentCable = TraceScene.instantiate()
 			add_child(currentCable)
+			currentCable.set_cable_color(Global.CableColor)
 			cableCounter += 1
 			currentCable.setup_trace(startPos, cableCounter)
 			lastSnappedPos = startPos
