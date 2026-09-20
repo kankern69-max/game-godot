@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://dk3yvefch2caj"]
+
+[ext_resource type="Script" uid="uid://xpmra5s8bdt" path="res://mainSystems/game.gd" id="1_e2o6t"]
+[ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://mainSystems/cables.gd" id="2_e2o6t"]
+[ext_resource type="Script" uid="uid://t4x632s6w7ug" path="res://mainSystems/camera_2d.gd" id="2_fc0e3"]
+[ext_resource type="PackedScene" uid="uid://ofdnf06ntncc" path="res://ui/ui.tscn" id="3_feb5d"]
+
+[node name="Game" type="Node2D" unique_id=1288097038]
+script = ExtResource("1_e2o6t")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=360243486]
+position = Vector2(960, 540)
+limit_enabled = false
+script = ExtResource("2_fc0e3")
+
+[node name="BuildingGrid" type="Node2D" parent="." unique_id=214479926]
+
+[node name="cables" type="Node2D" parent="BuildingGrid" unique_id=859323319]
+script = ExtResource("2_e2o6t")
+
+[node name="Compoents" type="Node2D" parent="BuildingGrid" unique_id=113458643]
+
+[node name="UI" parent="." unique_id=209732671 instance=ExtResource("3_feb5d")]

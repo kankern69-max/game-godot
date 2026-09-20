@@ -7,3 +7,4 @@ enum TYPE {LED, normal}
 @export var reverse_breakdown_voltage: float	#peak inverse voltage
 @export var diode_type: TYPE					# "led" "normal"
 @export var color: Color						# if led else null
+@export var max_current: float					# A

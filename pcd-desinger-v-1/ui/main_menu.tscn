@@ -22,6 +22,7 @@ corner_radius_bottom_left = 28
 expand_margin_left = 100.0
 expand_margin_right = 100.0
 
+<<<<<<< HEAD
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p8ri8"]
 bg_color = Color(0.019607844, 0.4, 0.22352941, 1)
 corner_radius_top_left = 28
@@ -44,6 +45,8 @@ corner_radius_bottom_left = 28
 expand_margin_left = 100.0
 expand_margin_right = 100.0
 
+=======
+>>>>>>> db0d445ebf28297978b07eefe010ec4c67e1d327
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t7e0r"]
 bg_color = Color(0.020000005, 0.4, 0.22266665, 1)
 corner_radius_top_left = 28
@@ -51,6 +54,15 @@ corner_radius_top_right = 28
 corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
 corner_detail = 20
+expand_margin_left = 100.0
+expand_margin_right = 100.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
+bg_color = Color(0, 0.54901963, 0.2901961, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
 expand_margin_left = 100.0
 expand_margin_right = 100.0
 
@@ -97,8 +109,12 @@ offset_bottom = 227.5
 grow_vertical = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_wk0pr")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_rmr83")
+<<<<<<< HEAD
 theme_override_styles/hover = SubResource("StyleBoxFlat_p8ri8")
 theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_ei257")
+=======
+theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
+>>>>>>> db0d445ebf28297978b07eefe010ec4c67e1d327
 text = "Start"
 
 [node name="Quit" type="Button" parent="." unique_id=1824048329]

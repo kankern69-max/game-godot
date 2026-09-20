@@ -35,3 +35,21 @@ func getPointStart() -> Vector2:
 
 func getEndCable() -> Vector2:
 	return line2d.get_point_position(line2d.get_point_count() - 1)
+
+func getPenultimatePoint() -> Vector2:
+	var count = line2d.get_point_count()
+	if count >= 3:
+		return line2d.get_point_position(count-3)
+	return Vector2.INF
+
+func removeLastCableSegment() -> void:
+	var count = line2d.get_point_count()
+	if count >= 3:
+		line2d.remove_point(count - 2)
+
+func checkPointExists(pos:Vector2) -> bool:
+	var count = line2d.get_point_count()
+	for i in range(count - 1):
+		if line2d.get_point_position(i).distance_to(pos) < 1.0:
+			return true
+	return false
