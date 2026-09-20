@@ -4,8 +4,6 @@
 [ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/Klikkerdeklik.mp3" id="2_0dkrt"]
 [ext_resource type="Texture2D" uid="uid://4um82ikc3dq5" path="res://ui/PCB_Logo.png" id="3_wk0pr"]
 
-[sub_resource type="Theme" id="Theme_0dkrt"]
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0pr"]
 bg_color = Color(0, 0.54901963, 0.2901961, 1)
 corner_radius_top_left = 28
@@ -24,11 +22,18 @@ corner_radius_bottom_left = 28
 expand_margin_left = 100.0
 expand_margin_right = 100.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8uxxo"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p8ri8"]
 bg_color = Color(0.019607844, 0.4, 0.22352941, 1)
 corner_radius_top_left = 28
 corner_radius_top_right = 28
 corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+corner_detail = 20
+expand_margin_left = 100.0
+expand_margin_right = 100.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ei257"]
+bg_color = Color(0.019607844, 0.4, 0.22352941, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
 bg_color = Color(0, 0.54901963, 0.2901961, 1)
@@ -72,26 +77,28 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = -75.0
+offset_right = 18.0
+offset_bottom = -75.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
 [node name="Start" type="Button" parent="." unique_id=488644684]
-texture_filter = 3
-texture_repeat = 2
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 143.0
-offset_top = 4.0
-offset_right = 717.0
-offset_bottom = 229.0
+offset_left = 165.0
+offset_top = 35.0
+offset_right = 620.0
+offset_bottom = 227.5
 grow_vertical = 2
-theme = SubResource("Theme_0dkrt")
 theme_override_styles/normal = SubResource("StyleBoxFlat_wk0pr")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_rmr83")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_8uxxo")
+theme_override_styles/hover = SubResource("StyleBoxFlat_p8ri8")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_ei257")
 text = "Start"
 
 [node name="Quit" type="Button" parent="." unique_id=1824048329]
@@ -101,10 +108,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -290.0
-offset_top = -252.0
-offset_right = 285.0
-offset_bottom = -20.0
+offset_left = -227.5
+offset_top = -280.0
+offset_right = 227.5
+offset_bottom = -87.5
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_fu7sn")
@@ -119,12 +126,13 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -584.0
-offset_top = 8.0
-offset_right = -129.0
-offset_bottom = 200.5
+offset_left = -620.0
+offset_top = 35.0
+offset_right = -165.0
+offset_bottom = 227.5
 grow_horizontal = 0
 grow_vertical = 2
+pivot_offset_ratio = Vector2(0, 10)
 theme_override_styles/normal = SubResource("StyleBoxFlat_jix8l")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
@@ -135,7 +143,7 @@ stream = ExtResource("2_0dkrt")
 volume_db = 8.0
 
 [node name="PcbLogo" type="Sprite2D" parent="." unique_id=1874034518]
-position = Vector2(1028.6359, 249.02817)
+position = Vector2(1031.9999, 299)
 rotation = -6.2831855
 scale = Vector2(1.2906717, 0.99655145)
 texture = ExtResource("3_wk0pr")
