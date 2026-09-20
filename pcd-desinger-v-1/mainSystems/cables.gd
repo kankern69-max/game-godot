@@ -73,15 +73,28 @@ func _input(event: InputEvent) -> void:
 				var initial_diff = realMousePos - startPos
 				if initial_diff.length() >= snapPoint:
 					lineAxisLocked = true
-					if abs(initial_diff.x) > abs(initial_diff.y):
+					var absX = abs(initial_diff.x)
+					var absY = abs(initial_diff.y)
+					var maxVal = max(absX, absY)
+					var minVal = min(absX, absY)
+					if minVal > maxVal * 0.414:
+						lockedAxis = "d"
+					elif absX > absY:
 						lockedAxis = "x"
 					else:
 						lockedAxis = "y"
+					
 			if lineAxisLocked:
 				if lockedAxis == "x":
 					realMousePos.y = startPos.y
 				elif lockedAxis == "y":
 					realMousePos.x = startPos.x
+				elif lockedAxis == "d":
+					var initial_diff = realMousePos - startPos
+					var size = round((abs(initial_diff.x) + abs(initial_diff.y)) * 0.5 / snapPoint) * snapPoint
+					realMousePos.x = startPos.x + (sign(initial_diff.x) * size)
+					realMousePos.y = startPos.y + (sign(initial_diff.y) * size)
+
 
 		var diff = realMousePos - lastSnappedPos
 
