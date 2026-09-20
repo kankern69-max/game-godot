@@ -181,3 +181,24 @@ layout_mode = 2
 
 [node name="ComponentTile4" parent="Control/ComponentUI/components/VBoxContainer" unique_id=555848849 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
+
+[node name="DrawingUI" type="Control" parent="Control" unique_id=476007534]
+anchors_preset = 0
+offset_left = 470.0
+offset_right = 1579.0
+offset_bottom = 56.0
+
+[node name="DrawLine" type="Button" parent="Control/DrawingUI" unique_id=297591430]
+layout_mode = 0
+offset_top = 11.0
+offset_right = 80.0
+offset_bottom = 55.0
+text = "line"
+
+[node name="MenuButton" type="MenuButton" parent="Control/DrawingUI" unique_id=1991974868]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 12.0
+offset_right = 167.0
+offset_bottom = 53.0
+text = "color"
