@@ -6,13 +6,36 @@
 
 [sub_resource type="Theme" id="Theme_0dkrt"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7vrkn"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0pr"]
 bg_color = Color(0, 0.54901963, 0.2901961, 1)
 corner_radius_top_left = 28
 corner_radius_top_right = 28
 corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
-corner_detail = 20
+expand_margin_left = 100.0
+expand_margin_right = 100.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rmr83"]
+bg_color = Color(0, 0.54901963, 0.2901961, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+expand_margin_left = 100.0
+expand_margin_right = 100.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8uxxo"]
+bg_color = Color(0.019607844, 0.4, 0.22352941, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
+bg_color = Color(0, 0.54901963, 0.2901961, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
 expand_margin_left = 100.0
 expand_margin_right = 100.0
 
@@ -23,15 +46,6 @@ corner_radius_top_right = 28
 corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
 corner_detail = 20
-expand_margin_left = 100.0
-expand_margin_right = 100.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fu7sn"]
-bg_color = Color(0, 0.54901963, 0.2901961, 1)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
 expand_margin_left = 100.0
 expand_margin_right = 100.0
 
@@ -69,16 +83,15 @@ layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 157.0
-offset_top = 64.0
-offset_right = 731.0
-offset_bottom = 289.0
+offset_left = 143.0
+offset_top = 4.0
+offset_right = 717.0
+offset_bottom = 229.0
 grow_vertical = 2
-rotation = 6.2831855
 theme = SubResource("Theme_0dkrt")
-theme_override_styles/normal = SubResource("StyleBoxFlat_7vrkn")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
-theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
+theme_override_styles/normal = SubResource("StyleBoxFlat_wk0pr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_rmr83")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_8uxxo")
 text = "Start"
 
 [node name="Quit" type="Button" parent="." unique_id=1824048329]
@@ -122,8 +135,9 @@ stream = ExtResource("2_0dkrt")
 volume_db = 8.0
 
 [node name="PcbLogo" type="Sprite2D" parent="." unique_id=1874034518]
-position = Vector2(901.5, 274.5)
-scale = Vector2(1.17125, 0.925)
+position = Vector2(1028.6359, 249.02817)
+rotation = -6.2831855
+scale = Vector2(1.2906717, 0.99655145)
 texture = ExtResource("3_wk0pr")
 
 [connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
