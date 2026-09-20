@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://k3dpp7niy886"]
 
+[ext_resource type="Script" uid="uid://seisqnka4jbw" path="res://ui/component_tile.gd" id="1_cpmb0"]
 [ext_resource type="Texture2D" uid="uid://bxxegb575av00" path="res://components/component_atlas.tres" id="1_t3h7b"]
 
 [node name="ComponentTile" type="Panel" unique_id=657139731]
 custom_minimum_size = Vector2(230, 100)
+script = ExtResource("1_cpmb0")
 
 [node name="texture" type="Panel" parent="." unique_id=1928574583]
 layout_mode = 0
