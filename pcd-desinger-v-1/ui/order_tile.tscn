@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://cw4ihrxhwgc4o"]
+
+[ext_resource type="Script" uid="uid://seisqnka4jbw" path="res://ui/component_tile.gd" id="1_17jyr"]
+[ext_resource type="Texture2D" uid="uid://nmv1ysnygop0" path="res://ui/buyers.png" id="2_17jyr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7y3u3"]
+atlas = ExtResource("2_17jyr")
+region = Rect2(0, 0, 8, 16)
+
+[node name="ComponentTile" type="Panel" unique_id=657139731]
+custom_minimum_size = Vector2(230, 100)
+script = ExtResource("1_17jyr")
+
+[node name="buyerImg" type="Panel" parent="." unique_id=1928574583]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 90.0
+offset_bottom = 90.0
+
+[node name="TextureRect" type="TextureRect" parent="buyerImg" unique_id=1096578346]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 77.5
+offset_bottom = 77.5
+texture = SubResource("AtlasTexture_7y3u3")
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="." unique_id=1451725441]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 33.0
+text = "Order type"
+
+[node name="Label" type="Label" parent="." unique_id=165811197]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 0
+offset_left = 100.0
+offset_top = 38.0
+offset_right = 187.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 11
+text = "type: type
+payment: €30"
