@@ -17,3 +17,8 @@ func _ready():
 	texture.region = Rect2(component.atlas_coords, component.footprint)
 	img.texture = texture
 	specs.text = "type: %s \n price: €%s" % [component.component_type, component.cost]
+
+
+func _on_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		Global.selected_component = component

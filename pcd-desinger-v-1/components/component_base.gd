@@ -49,7 +49,7 @@ func _has_power_path(visited: Dictionary) -> bool:
 		return false
 	visited[self] = true
 	
-	if component_data.component_type == "battery":
+	if component_data.component_type == Component.type.battery:
 		return true
 	
 	for comp in connected_components:
@@ -73,7 +73,7 @@ func _update_visuals():
 	
 func _get_resistance() -> float:
 	match component_data.component_type:
-		"resistor":
+		Component.type.resistor:
 			return component_data.resistance
 		_:
 			return 0.0
@@ -82,6 +82,6 @@ func set_voltage(v: float):
 	voltage = v
 	
 func get_voltage() -> float:
-	if component_data.component_type == "battery":
+	if component_data.component_type == Component.type.battery:
 		return 5.0
 	return voltage
