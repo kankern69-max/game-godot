@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://seisqnka4jbw" path="res://ui/component_tile.gd" id="1_cpmb0"]
 [ext_resource type="Texture2D" uid="uid://bxxegb575av00" path="res://components/component_atlas.tres" id="1_t3h7b"]
-[ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/Klikkerdeklik.mp3" id="3_eov1h"]
 
 [node name="ComponentTile" type="Panel" unique_id=657139731]
 custom_minimum_size = Vector2(230, 100)
@@ -42,7 +41,3 @@ offset_bottom = 90.0
 theme_override_font_sizes/font_size = 11
 text = "type: type
 price: 100"
-
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1876853071]
-stream = ExtResource("3_eov1h")
-volume_db = 8.0
