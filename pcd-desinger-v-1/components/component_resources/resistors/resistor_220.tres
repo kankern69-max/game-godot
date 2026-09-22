@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Resistor" format=3 uid="uid://cq7y2uuufc3oo"]
+
+[ext_resource type="Script" uid="uid://c8whdp5g6pu5c" path="res://components/resource_scripts/resistor.gd" id="1_w4b2r"]
+
+[resource]
+script = ExtResource("1_w4b2r")
+resistance = 220.0
+tolerance = 0.05
+component_id = "resistor_220"
+component_name = "resistor 220"
+footprint = Vector2i(16, 8)
+cost = 0.05
+atlas_coords = Vector2i(252, 0)
+power_rating = 0.25
+metadata/_custom_type_script = "uid://c8whdp5g6pu5c"
