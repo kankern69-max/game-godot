@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://mef8qbjikaq3" path="res://mainSystems/cables.gd" id="2_e2o6t"]
 [ext_resource type="Script" uid="uid://t4x632s6w7ug" path="res://mainSystems/camera_2d.gd" id="2_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://ofdnf06ntncc" path="res://ui/ui.tscn" id="3_feb5d"]
-[ext_resource type="Script" uid="uid://b5lxce5uoy0ev" path="res://components.gd" id="4_7jktm"]
+[ext_resource type="Script" uid="uid://b5lxce5uoy0ev" path="res://mainSystems/components.gd" id="4_7jktm"]
 
 [node name="Game" type="Node2D" unique_id=1288097038]
 script = ExtResource("1_e2o6t")

@@ -8,6 +8,7 @@ const halfStep: float = dotDistance * 0.5
 @export var component_scene: PackedScene = preload("res://components/component_base.tscn")
 
 var placing: bool = false
+var erasing: bool = false
 var ghost: Base_component = null
 var occupied: Dictionary = {}
 var placed_components: Array[Base_component] = []
@@ -16,6 +17,7 @@ func _ready() -> void:
 	Global.toolChanged.connect(_on_tool_changed)
 
 func _on_tool_changed(toolName: String) -> void:
+	erasing = toolName == "ERASE"
 	if toolName == "PLACE" and Global.selected_component:
 		_start_placing()
 	else:
@@ -37,6 +39,12 @@ func _cancel_placing() -> void:
 	 
 
 func _input(event: InputEvent) -> void:
+	if erasing:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			var mousePos = to_local(get_global_mouse_position())
+			_erase_component_at(mousePos)
+		return
+	
 	if not placing:
 		return
 	
@@ -85,7 +93,14 @@ func remove_component(comp: Base_component) -> void:
 	placed_components.erase(comp)
 	comp.queue_free()
 	Global.componentPlaced.emit()
-	
+
+func _erase_component_at(pos: Vector2) -> void:
+	var localPos = pos - boardOffset
+	var clamped_x = clampf(localPos.x, 0, boardSize.x)
+	var clamped_y = clampf(localPos.y, 0, boardSize.y)
+	var cell := Vector2i(int(clamped_x / dotDistance), int(clamped_y / dotDistance))
+	if occupied.has(cell):
+		remove_component(occupied[cell])
 
 func _snap_to_grid(pos: Vector2, footprint: Vector2i) -> Vector2:
 	var localPos = pos - boardOffset
