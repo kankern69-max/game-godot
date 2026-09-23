@@ -44,4 +44,3 @@ func _on_gui_input(event):
 		await click.finished
 		Global.selected_component = component
 		Global.toolChanged.emit("PLACE")
-		print(Global.selected_component)
