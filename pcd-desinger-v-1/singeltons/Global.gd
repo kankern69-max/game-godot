@@ -1,6 +1,8 @@
 extends Node
 
 signal toolChanged(toolName: String)
+signal componentPlaced
+
 var CableColor: Color = Color(1.0, 0.0, 0.0, 1.0)
 enum MODE {ARCADE, SIMULATOR}
 

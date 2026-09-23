@@ -43,3 +43,5 @@ func _on_gui_input(event):
 		click.play()
 		await click.finished
 		Global.selected_component = component
+		Global.toolChanged.emit("PLACE")
+		print(Global.selected_component)

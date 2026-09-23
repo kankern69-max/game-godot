@@ -7,10 +7,11 @@ var batteries: Array[Base_component] = []
 var ground: Base_component
 
 func _ready():
+	Global.componentPlaced.connect(_rebuild_graph)
 	_rebuild_graph()
 
 func _rebuild_graph():
-#	components = get_tree().get_nodes_in_group("circuit_components")
+	components = get_tree().get_nodes_in_group("circuit_components")
 	batteries = components.filter(func(c): return c.component_data.component_type == "battery")
 	ground = components.filter(func(c): return c.component_data.component_type == "ground")[0] if components.any(func(c): return c.component_data.component_type == "ground") else null
 
@@ -28,7 +29,7 @@ func _solve_circuit():
 		var max_change = 0.0
 		
 		for comp in components:
-			if comp.component_data.component_type == "ground":
+			if comp.component_data.component_type == comp.component_data.type.ground:
 				comp.voltage = 0.0
 				continue
 			
