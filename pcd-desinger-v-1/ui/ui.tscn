@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bkxw3ht52pulb" path="res://ui/component_ui.gd" id="1_ks8t7"]
 [ext_resource type="PackedScene" uid="uid://k3dpp7niy886" path="res://ui/component_tile.tscn" id="1_nb4k0"]
 [ext_resource type="Script" uid="uid://yubuix3qvtwj" path="res://ui/drawing_ui.gd" id="2_ks8t7"]
+[ext_resource type="Script" uid="uid://c15itt636dald" path="res://ui/order_ui.gd" id="4_tf0e0"]
 [ext_resource type="PackedScene" uid="uid://cw4ihrxhwgc4o" path="res://ui/order_tile.tscn" id="4_vkava"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
@@ -85,6 +86,13 @@ corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bo1jx"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 
 [node name="UI" type="CanvasLayer" unique_id=209732671]
 
@@ -186,6 +194,27 @@ layout_mode = 2
 [node name="ComponentTile4" parent="Control/ComponentUI/components/VBoxContainer" unique_id=555848849 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
 
+[node name="open_closeButton" type="Panel" parent="Control/ComponentUI" unique_id=421970781]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -20.0
+offset_right = -10.0
+offset_bottom = 20.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bo1jx")
+
+[node name="Label" type="Label" parent="Control/ComponentUI/open_closeButton" unique_id=910103923]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 28
+text = ">"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="DrawingUI" type="Control" parent="Control" unique_id=476007534]
 anchors_preset = 0
 offset_left = 470.0
@@ -230,6 +259,7 @@ offset_top = 20.0
 offset_right = 270.0
 offset_bottom = 520.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ofb81")
+script = ExtResource("4_tf0e0")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/OrderUI" unique_id=345653316]
 layout_mode = 0
@@ -255,3 +285,30 @@ layout_mode = 2
 
 [node name="ComponentTile5" parent="Control/OrderUI/ScrollContainer/VBoxContainer" unique_id=204008041 instance=ExtResource("4_vkava")]
 layout_mode = 2
+
+[node name="open_closeButton" type="Panel" parent="Control/OrderUI" unique_id=1401115351]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -20.0
+offset_right = 50.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bo1jx")
+
+[node name="Label" type="Label" parent="Control/OrderUI/open_closeButton" unique_id=1003705441]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 28
+text = "<"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="gui_input" from="Control/ComponentUI/open_closeButton" to="Control/ComponentUI" method="_on_open_close_button_gui_input"]
+[connection signal="gui_input" from="Control/OrderUI/open_closeButton" to="Control/OrderUI" method="_on_open_close_button_gui_input"]

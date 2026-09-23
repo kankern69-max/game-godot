@@ -6,5 +6,5 @@
 script = ExtResource("1_h4eno")
 
 [node name="Line2D" type="Line2D" parent="." unique_id=1770303252]
-width = 2.0
+width = 1.0
 default_color = Color(1, 0, 0, 1)
