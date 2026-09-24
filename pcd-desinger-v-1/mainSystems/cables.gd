@@ -126,7 +126,7 @@ func _input(event: InputEvent) -> void:
 
 		elif layingCable:
 			var endPos = lastSnappedPos
-			if currentMode != DrawMode.Select and currentCable.has_method("update_active_point"):
+			if currentMode != DrawMode.Select and currentMode != DrawMode.ExtendedLine and currentCable.has_method("update_active_point"):
 				currentCable.update_active_point(endPos)
 			
 			var cable_length = 0
@@ -148,7 +148,7 @@ func _input(event: InputEvent) -> void:
 		var realMousePos = clampToBoard(to_local(get_global_mouse_position()))
 		var targetPos = snapToGrid(realMousePos)
 		
-		if targetPos == lastSnappedPos and (currentMode == DrawMode.Free or currentMode == DrawMode.Select):
+		if targetPos == lastSnappedPos and (currentMode == DrawMode.Free or currentMode == DrawMode.Select or currentMode == DrawMode.ExtendedLine):
 			return
 		
 		if currentMode == DrawMode.Select and currentCable:
@@ -197,6 +197,25 @@ func _input(event: InputEvent) -> void:
 				elif currentCable.has_node("Line2D"):
 					(currentCable.get_node("Line2D") as Line2D).add_point(local_pt)
 					
+			lastSnappedPos = targetPos
+		
+		elif currentMode == DrawMode.ExtendedLine:
+			var path: PackedVector2Array = generate_extendedLine_path(startPos, targetPos)
+			if currentCable.has_method("clearSegments"):
+				currentCable.clearSegments()
+			elif currentCable.has_node("Line2D"):
+				(currentCable.get_node("Line2D") as Line2D).clear_points()
+			
+			for pt in path:
+				var local_pt = currentCable.to_local(pt)
+				if currentCable.has_method("addCableSegment"):
+					currentCable.addCableSegment(local_pt)
+				elif currentCable.has_node("Line2D"):
+					(currentCable.get_node("Line2D") as Line2D).add_point(local_pt)
+					
+			if currentCable.has_method("update_active_point") and path.size() > 0:
+				currentCable.update_active_point(path[path.size() - 1])
+				
 			lastSnappedPos = targetPos
 		
 		elif currentMode == DrawMode.Line:
@@ -260,6 +279,104 @@ func _input(event: InputEvent) -> void:
 			if currentCable.has_method("update_active_point"):
 				currentCable.update_active_point(lastSnappedPos)
 
+func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVector2Array:
+	var raw_path: PackedVector2Array = []
+	raw_path.append(from_pos)
+	
+	var delta = to_pos - from_pos
+	
+	if abs(delta.y) >= abs(delta.x):
+		var step_y = sign(delta.y) * dotDistance
+		if step_y == 0:
+			return raw_path
+			
+		var total_rows = int(round(abs(delta.y) / dotDistance))
+		if total_rows < 2:
+			raw_path.append(clampToBoard(to_pos))
+			return raw_path
+			
+		var current_p = from_pos
+		var side_width = dotDistance * 2
+		var direction = 1
+		
+		current_p.y += step_y
+		raw_path.append(clampToBoard(current_p))
+		
+		current_p.x += side_width * direction
+		raw_path.append(clampToBoard(current_p))
+		
+		var rows_done = 1
+		
+		while rows_done < total_rows - 1:
+			current_p.x -= (side_width * 2) * direction
+			raw_path.append(clampToBoard(current_p))
+			
+			current_p.y += step_y
+			raw_path.append(clampToBoard(current_p))
+			
+			rows_done += 1
+			direction *= -1
+			
+		current_p.x += side_width * direction
+		raw_path.append(clampToBoard(current_p))
+		
+		current_p.y = to_pos.y
+		current_p.x = from_pos.x
+		raw_path.append(clampToBoard(current_p))
+
+	else:
+		var step_x = sign(delta.x) * dotDistance
+		if step_x == 0:
+			return raw_path
+			
+		var total_cols = int(round(abs(delta.x) / dotDistance))
+		if total_cols < 2:
+			raw_path.append(clampToBoard(to_pos))
+			return raw_path
+			
+		var current_p = from_pos
+		var side_height = dotDistance * 2
+		var direction = 1
+		
+		current_p.x += step_x
+		raw_path.append(clampToBoard(current_p))
+		
+		current_p.y += side_height * direction
+		raw_path.append(clampToBoard(current_p))
+		
+		var cols_done = 1
+		
+		while cols_done < total_cols - 1:
+			current_p.y -= (side_height * 2) * direction
+			raw_path.append(clampToBoard(current_p))
+			
+			current_p.x += step_x
+			raw_path.append(clampToBoard(current_p))
+			
+			cols_done += 1
+			direction *= -1
+			
+		current_p.y += side_height * direction
+		raw_path.append(clampToBoard(current_p))
+		
+		current_p.x = to_pos.x
+		current_p.y = from_pos.y
+		raw_path.append(clampToBoard(current_p))
+
+	var full_grid_path: PackedVector2Array = []
+	for i in range(raw_path.size() - 1):
+		var p1 = raw_path[i]
+		var p2 = raw_path[i + 1]
+		var dist = p1.distance_to(p2)
+		var steps = int(round(dist / dotDistance))
+		
+		for s in range(steps):
+			var interpolated = p1.lerp(p2, float(s) / max(steps, 1))
+			full_grid_path.append(snapToGrid(interpolated))
+			
+	full_grid_path.append(snapToGrid(to_pos))
+	return full_grid_path
+
 func findCableAt(target_pos: Vector2) -> Node2D:
 	var snapped_target = snapToGrid(target_pos)
 	for cable in SavedCables:
@@ -297,8 +414,8 @@ func snapToGrid(pos: Vector2) -> Vector2:
 	var clamped_y = clampf(localPos.y, 0, boardSize.y)
 
 	var snapped_x = floor(clamped_x / dotDistance) * dotDistance + halfStep
-	var snapped_y = clampf(snapped_x, halfStep, boardSize.x - halfStep)
-	snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep
+	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep
+	snapped_x = clampf(snapped_x, halfStep, boardSize.x - halfStep)
 	snapped_y = clampf(snapped_y, halfStep, boardSize.y - halfStep)
 
 	return boardOffset + Vector2(snapped_x, snapped_y)
