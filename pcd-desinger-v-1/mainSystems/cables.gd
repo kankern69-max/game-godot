@@ -35,19 +35,35 @@ func setup_astar_grid() -> void:
 			var point_id = get_point_id(x, y)
 			var world_pos = boardOffset + Vector2(x * dotDistance + halfStep, y * dotDistance + halfStep)
 			Astar.add_point(point_id, world_pos)
+
 	for x in range(cols):
 		for y in range(rows):
 			var current_id = get_point_id(x, y)
-			for dx in [-1,0,1]:
-				for dy in [-1,0,1]:
-					if dx == 0 and dy == 0:
-						continue
-					var nx = x + dx
-					var ny = y + dy
-					if nx >= 0 and nx < cols and ny >= 0 and ny < rows:
-						var neighbor_id = get_point_id(nx , ny)
-						if not Astar.are_points_connected(current_id, neighbor_id):
-							Astar.connect_points(current_id, neighbor_id, true)
+			
+			var orthogonals = [
+				Vector2i(x + 1, y),
+				Vector2i(x - 1, y),
+				Vector2i(x, y + 1),
+				Vector2i(x, y - 1)
+			]
+			for n in orthogonals:
+				if n.x >= 0 and n.x < cols and n.y >= 0 and n.y < rows:
+					var neighbor_id = get_point_id(n.x, n.y)
+					if not Astar.are_points_connected(current_id, neighbor_id):
+						Astar.connect_points(current_id, neighbor_id, true)
+						Astar.set_point_weight_scale(neighbor_id, 1.0)
+
+			var diagonals = [
+				Vector2i(x + 1, y + 1),
+				Vector2i(x - 1, y + 1),
+				Vector2i(x + 1, y - 1),
+				Vector2i(x - 1, y - 1)
+			]
+			for n in diagonals:
+				if n.x >= 0 and n.x < cols and n.y >= 0 and n.y < rows:
+					var neighbor_id = get_point_id(n.x, n.y)
+					if not Astar.are_points_connected(current_id, neighbor_id):
+						Astar.connect_points(current_id, neighbor_id, true)
 
 func get_point_id(x: int, y:int) -> int:
 	var cols = int(boardSize.x / dotDistance)
@@ -55,10 +71,11 @@ func get_point_id(x: int, y:int) -> int:
 
 func GlobalToolChange(toolName: String) -> void:
 	if layingCable:
-		if currentCable:
+		if currentCable and not editingCable:
 			currentCable.queue_free()
 		layingCable = false
 		currentCable = null
+		editingCable = null
 	match toolName:
 		"FREE":
 			currentMode = DrawMode.Free
@@ -86,12 +103,12 @@ func _input(event: InputEvent) -> void:
 					SavedCables.erase(editingCable)
 					
 					if editingCable.has_method("getPointStart") and editingCable.has_method("getPointEnd"):
-						fixedStartPos = editingCable.getPointStart()
-						fixedEndPos = editingCable.getPointEnd()
+						fixedStartPos = editingCable.to_global(editingCable.getPointStart())
+						fixedEndPos = editingCable.to_global(editingCable.getPointEnd())
 					elif editingCable.has_node("Line2D"):
 						var Line = editingCable.get_node("Line2D") as Line2D
-						fixedStartPos = editingCable.position + Line.points[0]
-						fixedEndPos = editingCable.position + Line.points[Line.points.size() - 1]
+						fixedStartPos = editingCable.to_global(Line.points[0])
+						fixedEndPos = editingCable.to_global(Line.points[Line.points.size() - 1])
 					currentCable = editingCable
 					lastSnappedPos = startPos
 					layingCable = true
@@ -107,7 +124,7 @@ func _input(event: InputEvent) -> void:
 
 		elif layingCable:
 			var endPos = lastSnappedPos
-			if currentCable.has_method("update_active_point"):
+			if currentMode != DrawMode.Select and currentCable.has_method("update_active_point"):
 				currentCable.update_active_point(endPos)
 			
 			var cable_length = 0
@@ -123,6 +140,7 @@ func _input(event: InputEvent) -> void:
 				
 			layingCable = false
 			currentCable = null
+			editingCable = null
 			
 	elif event is InputEventMouseMotion and layingCable:
 		var realMousePos = clampToBoard(to_local(get_global_mouse_position()))
@@ -132,34 +150,37 @@ func _input(event: InputEvent) -> void:
 			return
 		
 		if currentMode == DrawMode.Select and currentCable:
-			var StartID = Astar.get_closest_point(fixedStartPos)
-			var grabID = Astar.get_closest_point(targetPos)
-			var endID = Astar.get_closest_point(fixedEndPos)
-			var path1: PackedVector2Array = Astar.get_point_path(StartID, grabID)
-			var path2: PackedVector2Array = Astar.get_point_path(grabID, endID)
-			
-			if currentCable.has_method("clearSegment"):
-				currentCable.celarSegments()
+			var start_id = Astar.get_closest_point(fixedStartPos)
+			var grab_id = Astar.get_closest_point(to_global(targetPos))
+			var end_id = Astar.get_closest_point(fixedEndPos)
+
+			var leg1: PackedVector2Array = Astar.get_point_path(start_id, grab_id)
+			var leg2: PackedVector2Array = Astar.get_point_path(grab_id, end_id)
+
+			var rebuilt_path: PackedVector2Array = []
+			rebuilt_path.append_array(leg1)
+
+			if leg2.size() > 1:
+				for i in range(1, leg2.size()):
+					rebuilt_path.append(leg2[i])
+
+			if currentCable.has_method("clearSegments"):
+				currentCable.clearSegments()
 			elif currentCable.has_node("Line2D"):
 				(currentCable.get_node("Line2D") as Line2D).clear_points()
-			
-			for pt in path1:
+
+			for pt in rebuilt_path:
+				var local_pt = currentCable.to_local(pt)
 				if currentCable.has_method("addCableSegment"):
-					currentCable.addCableSegment(pt)
+					currentCable.addCableSegment(local_pt)
 				elif currentCable.has_node("Line2D"):
-					(currentCable.get_node("Line2D") as Line2D).add_poinnt(pt - currentCable.position)
-			
-			for i in range(1, path2.size()):
-				var pt = path2[i]
-				if currentCable.has_method("addCableSegment"):
-					currentCable.addCableSegment(pt)
-				elif currentCable.has_node("Line2D"):
-					(currentCable.get_node("Line2D") as Line2D).add_point(pt - currentCable.position)
+					(currentCable.get_node("Line2D") as Line2D).add_point(local_pt)
+
 			lastSnappedPos = targetPos
-		
-		if currentMode == DrawMode.Free:
-			var start_id = Astar.get_closest_point(startPos)
-			var target_id = Astar.get_closest_point(targetPos)
+
+		elif currentMode == DrawMode.Free:
+			var start_id = Astar.get_closest_point(to_global(startPos))
+			var target_id = Astar.get_closest_point(to_global(targetPos))
 			var path: PackedVector2Array = Astar.get_point_path(start_id, target_id)
 			
 			if currentCable.has_method("clearSegments"):
@@ -168,10 +189,11 @@ func _input(event: InputEvent) -> void:
 				(currentCable.get_node("Line2D") as Line2D).clear_points()
 			
 			for pt in path:
+				var local_pt = currentCable.to_local(pt)
 				if currentCable.has_method("addCableSegment"):
-					currentCable.addCableSegment(pt)
+					currentCable.addCableSegment(local_pt)
 				elif currentCable.has_node("Line2D"):
-					(currentCable.get_node("Line2D") as Line2D).add_point(pt - currentCable.position)
+					(currentCable.get_node("Line2D") as Line2D).add_point(local_pt)
 					
 			lastSnappedPos = targetPos
 		
@@ -206,10 +228,16 @@ func _input(event: InputEvent) -> void:
 			while abs(diff.x) >= snapPoint or abs(diff.y) >= snapPoint:
 				var stepX = 0
 				var stepY = 0
-				if abs(diff.x) >= snapPoint:
+				
+				if lockedAxis == "d":
 					stepX = sign(diff.x) * snapPoint
-				if abs(diff.y) >= snapPoint:
 					stepY = sign(diff.y) * snapPoint
+				else:
+					if abs(diff.x) >= snapPoint:
+						stepX = sign(diff.x) * snapPoint
+					if abs(diff.y) >= snapPoint:
+						stepY = sign(diff.y) * snapPoint
+
 				var step = Vector2(stepX, stepY)
 				if step == Vector2.ZERO:
 					break
@@ -237,7 +265,7 @@ func findCableAt(target_pos: Vector2) -> Node2D:
 			if cable.has_node("Line2D"):
 				var line = cable.get_node("Line2D") as Line2D
 				for pt in line.points:
-					if (cable.global_position + pt).distance_to(global_position + snapped_target) < 12.0:
+					if cable.to_global(pt).distance_to(to_global(snapped_target)) < 12.0:
 						return cable
 			elif cable.position.distance_to(target_pos) < 24.0:
 				return cable
@@ -252,7 +280,7 @@ func eraseCableAt(target_pos: Vector2) -> void:
 			if cable.has_node("Line2D"):
 				var line = cable.get_node("Line2D") as Line2D
 				for pt in line.points:
-					if (cable.global_position + pt).distance_to(global_position + snapped_target) < 12.0:
+					if cable.to_global(pt).distance_to(to_global(snapped_target)) < 12.0:
 						cable.queue_free()
 						SavedCables.remove_at(i)
 						return
@@ -267,8 +295,8 @@ func snapToGrid(pos: Vector2) -> Vector2:
 	var clamped_y = clampf(localPos.y, 0, boardSize.y)
 
 	var snapped_x = floor(clamped_x / dotDistance) * dotDistance + halfStep
-	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep
-	snapped_x = clampf(snapped_x, halfStep, boardSize.x - halfStep)
+	var snapped_y = clampf(snapped_x, halfStep, boardSize.x - halfStep)
+	snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep
 	snapped_y = clampf(snapped_y, halfStep, boardSize.y - halfStep)
 
 	return boardOffset + Vector2(snapped_x, snapped_y)
