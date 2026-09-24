@@ -127,7 +127,7 @@ offset_bottom = 51.0
 
 [node name="LineEdit" type="LineEdit" parent="Control/ComponentUI/SearchBar" unique_id=1855956409]
 layout_mode = 2
-text = "Search"
+placeholder_text = "Search"
 
 [node name="Filters" type="PanelContainer" parent="Control/ComponentUI" unique_id=1460596709]
 custom_minimum_size = Vector2(230, 0)
@@ -138,14 +138,11 @@ offset_right = 240.0
 offset_bottom = 95.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_nb4k0")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/ComponentUI/Filters" unique_id=1712888528]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/ComponentUI/Filters/ScrollContainer" unique_id=772848746]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/ComponentUI/Filters" unique_id=772848746]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Sort" type="OptionButton" parent="Control/ComponentUI/Filters/ScrollContainer/HBoxContainer" unique_id=380554904]
+[node name="Sort" type="OptionButton" parent="Control/ComponentUI/Filters/HBoxContainer" unique_id=380554904]
 custom_minimum_size = Vector2(40, 30)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_ks8t7")
@@ -160,7 +157,7 @@ popup/item_1/id = 1
 popup/item_2/text = "type"
 popup/item_2/id = 2
 
-[node name="Type" type="OptionButton" parent="Control/ComponentUI/Filters/ScrollContainer/HBoxContainer" unique_id=1167080636]
+[node name="Type" type="OptionButton" parent="Control/ComponentUI/Filters/HBoxContainer" unique_id=1167080636]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_vkava")
@@ -310,5 +307,8 @@ text = "<"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[connection signal="text_changed" from="Control/ComponentUI/SearchBar/LineEdit" to="Control/ComponentUI" method="_on_line_edit_text_changed"]
+[connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Sort" to="Control/ComponentUI" method="_on_sort_sort_selected"]
+[connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Type" to="Control/ComponentUI" method="_on_type_type_selected"]
 [connection signal="gui_input" from="Control/ComponentUI/open_closeButton" to="Control/ComponentUI" method="_on_open_close_button_gui_input"]
 [connection signal="gui_input" from="Control/OrderUI/open_closeButton" to="Control/OrderUI" method="_on_open_close_button_gui_input"]
