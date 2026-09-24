@@ -32,20 +32,23 @@ func draw_components() -> void:
 		child.queue_free()
 	
 	var search_text := searchbar.text.strip_edges().to_lower()
-	var selected_type_id: int = filterType.get_selected_id()
+	var selected_index: int = filterType.get_selected()
 	
 	var filtered_list: Array[Component] = []
-	for component in Global.unlocked_components:
+	for component_id in Global.unlocked_components:
+		var component: Component = Global.components[component_id]
+		
 		if search_text != "":
-			var name_match := component.component_name.to_lower().contains(search_text)
-			var id_match := component.component_id.to_lower().contains(search_text)
+			var name_match: bool = component.component_name.to_lower().contains(search_text)
+			var id_match: bool = component.component_id.to_lower().contains(search_text)
 			if not (name_match or id_match):
 				continue
-			
-		if selected_type_id != -1 and component.component_type != selected_type_id:
+		
+		if selected_index > 0 and component.component_type != (selected_index - 1):
 			continue
-			
+		
 		filtered_list.append(component)
+
 		
 	match filterSort.selected:
 		0:
@@ -63,7 +66,6 @@ func draw_components() -> void:
 
 func _on_line_edit_text_changed(_new_text):
 	draw_components()
-
 
 func _on_sort_sort_selected(_index):
 	draw_components()

@@ -1,8 +1,8 @@
 extends Panel
 
 @onready var img: TextureRect = $texture/TextureRect
-@onready var comp_name : Label = $Name
-@onready var specs : Label = $Label
+@onready var comp_name : Label = $VBoxContainer/Name
+@onready var specs : Label = $VBoxContainer/Label
 @onready var click: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 var atlas := preload("res://components/component_atlas.tres")

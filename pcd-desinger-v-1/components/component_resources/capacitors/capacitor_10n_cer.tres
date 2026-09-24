@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Capacitor" format=3 uid="uid://qo6oj3r4rjed"]
+
+[ext_resource type="Script" uid="uid://c12dq3anjvj4k" path="res://components/resource_scripts/capacitor.gd" id="1_r426s"]
+
+[resource]
+script = ExtResource("1_r426s")
+capacitance = 10.0
+tolerance = 0.1
+component_id = "capacitor_10n_cer"
+component_name = "10nF Ceramic Capacitor"
+component_type = 1
+footprint = Vector2i(11, 24)
+cost = 0.15
+atlas_coords = Vector2i(373, 0)
+power_rating = 0.25
+metadata/_custom_type_script = "uid://c12dq3anjvj4k"
