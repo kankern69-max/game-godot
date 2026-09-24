@@ -382,6 +382,23 @@ offset_right = 145.0
 offset_bottom = 70.0
 text = "layer: 1"
 
+[node name="line2" type="Panel" parent="Control/ToolUI" unique_id=606679520]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 186.0
+offset_right = 45.0
+offset_bottom = 226.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/ToolUI/line2" unique_id=849562394]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 37.0
+offset_bottom = 37.0
+texture = ExtResource("6_bo1jx")
+expand_mode = 1
+stretch_mode = 5
+
 [connection signal="text_changed" from="Control/ComponentUI/SearchBar/LineEdit" to="Control/ComponentUI" method="_on_line_edit_text_changed"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Sort" to="Control/ComponentUI" method="_on_sort_sort_selected"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Type" to="Control/ComponentUI" method="_on_type_type_selected"]
@@ -391,3 +408,4 @@ text = "layer: 1"
 [connection signal="gui_input" from="Control/ToolUI/freeDraw" to="Control/ToolUI" method="_on_free_draw_gui_input"]
 [connection signal="gui_input" from="Control/ToolUI/move" to="Control/ToolUI" method="_on_move_gui_input"]
 [connection signal="gui_input" from="Control/ToolUI/Erase" to="Control/ToolUI" method="_on_erase_gui_input"]
+[connection signal="gui_input" from="Control/ToolUI/line2" to="Control/ToolUI" method="_on_line2_gui_input"]

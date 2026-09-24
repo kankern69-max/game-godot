@@ -9,7 +9,7 @@ var cableCounter: int = 0
 var lastSnappedPos: Vector2 = Vector2.ZERO
 var dotDistance: int = 8
 var halfStep = dotDistance * 0.5
-enum DrawMode {Free, Line, Erase, Select}
+enum DrawMode {Free, Line, Erase, Select, ExtendedLine}
 var currentMode: DrawMode = DrawMode.Free
 var lineAxisLocked: bool = false
 var lockedAxis: String = ""
@@ -85,6 +85,8 @@ func GlobalToolChange(toolName: String) -> void:
 			currentMode = DrawMode.Erase
 		"SELECT":
 			currentMode = DrawMode.Select
+		"EXTENDEDLINE":
+			currentMode = DrawMode.ExtendedLine
 
 func _input(event: InputEvent) -> void:
 	if currentMode == DrawMode.Erase:

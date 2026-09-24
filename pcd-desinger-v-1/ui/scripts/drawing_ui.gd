@@ -58,3 +58,7 @@ func _on_move_gui_input(event):
 func _on_erase_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		Global.toolChanged.emit("ERASE")
+
+func _on_line2_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		Global.toolChanged.emit("EXTENDEDLINE")
