@@ -3,6 +3,7 @@ extends Control
 @onready var LineBTN = $DrawLine
 @onready var FreeBTN = $DrawFree
 @onready var EraseBTN = $Erase
+@onready var SelectBTN = $Select
 @onready var ColorSelector = $OptionButton
 
 var current_color_index: int = 0
@@ -11,6 +12,7 @@ func _ready() -> void:
 	LineBTN.pressed.connect(func(): Global.toolChanged.emit("LINE"))
 	FreeBTN.pressed.connect(func(): Global.toolChanged.emit("FREE"))
 	EraseBTN.pressed.connect(func(): Global.toolChanged.emit("ERASE"))
+	SelectBTN.pressed.connect(func(): Global.toolChanged.emit("SELECT"))
 	
 	ColorSelector.clear()
 	ColorSelector.add_item("red")

@@ -9,11 +9,14 @@ var cableCounter: int = 0
 var lastSnappedPos: Vector2 = Vector2.ZERO
 var dotDistance: int = 8
 var halfStep = dotDistance * 0.5
-enum DrawMode {Free, Line, Erase}
+enum DrawMode {Free, Line, Erase, Select}
 var currentMode: DrawMode = DrawMode.Free
 var lineAxisLocked: bool = false
 var lockedAxis: String = ""
 var startPos: Vector2 = Vector2.ZERO
+var editingCable: Node2D = null
+var fixedStartPos: Vector2 = Vector2.ZERO
+var fixedEndPos: Vector2 = Vector2.ZERO
 const boardSize: Vector2i = Vector2i(640, 400)
 const boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
 var Astar: AStar2D = AStar2D.new()
@@ -63,6 +66,8 @@ func GlobalToolChange(toolName: String) -> void:
 			currentMode = DrawMode.Line
 		"ERASE":
 			currentMode = DrawMode.Erase
+		"SELECT":
+			currentMode = DrawMode.Select
 
 func _input(event: InputEvent) -> void:
 	if currentMode == DrawMode.Erase:
@@ -74,15 +79,32 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
 		if event.pressed:
 			startPos = snapToGrid(to_local(get_global_mouse_position()))
-			lineAxisLocked = false
-			
-			currentCable = TraceScene.instantiate()
-			add_child(currentCable)
-			currentCable.set_cable_color(Global.CableColor)
-			cableCounter += 1
-			currentCable.setup_trace(startPos, cableCounter)
-			lastSnappedPos = startPos
-			layingCable = true
+			if currentMode == DrawMode.Select:
+				var cableToEdit = findCableAt(startPos)
+				if cableToEdit:
+					editingCable = cableToEdit
+					SavedCables.erase(editingCable)
+					
+					if editingCable.has_method("getPointStart") and editingCable.has_method("getPointEnd"):
+						fixedStartPos = editingCable.getPointStart()
+						fixedEndPos = editingCable.getPointEnd()
+					elif editingCable.has_node("Line2D"):
+						var Line = editingCable.get_node("Line2D") as Line2D
+						fixedStartPos = editingCable.position + Line.points[0]
+						fixedEndPos = editingCable.position + Line.points[Line.points.size() - 1]
+					currentCable = editingCable
+					lastSnappedPos = startPos
+					layingCable = true
+			else:
+				lineAxisLocked = false
+				currentCable = TraceScene.instantiate()
+				add_child(currentCable)
+				currentCable.set_cable_color(Global.CableColor)
+				cableCounter += 1
+				currentCable.setup_trace(startPos, cableCounter)
+				lastSnappedPos = startPos
+				layingCable = true
+
 		elif layingCable:
 			var endPos = lastSnappedPos
 			if currentCable.has_method("update_active_point"):
@@ -106,9 +128,35 @@ func _input(event: InputEvent) -> void:
 		var realMousePos = clampToBoard(to_local(get_global_mouse_position()))
 		var targetPos = snapToGrid(realMousePos)
 		
-		if targetPos == lastSnappedPos and currentMode == DrawMode.Free:
+		if targetPos == lastSnappedPos and (currentMode == DrawMode.Free or currentMode == DrawMode.Select):
 			return
-
+		
+		if currentMode == DrawMode.Select and currentCable:
+			var StartID = Astar.get_closest_point(fixedStartPos)
+			var grabID = Astar.get_closest_point(targetPos)
+			var endID = Astar.get_closest_point(fixedEndPos)
+			var path1: PackedVector2Array = Astar.get_point_path(StartID, grabID)
+			var path2: PackedVector2Array = Astar.get_point_path(grabID, endID)
+			
+			if currentCable.has_method("clearSegment"):
+				currentCable.celarSegments()
+			elif currentCable.has_node("Line2D"):
+				(currentCable.get_node("Line2D") as Line2D).clear_points()
+			
+			for pt in path1:
+				if currentCable.has_method("addCableSegment"):
+					currentCable.addCableSegment(pt)
+				elif currentCable.has_node("Line2D"):
+					(currentCable.get_node("Line2D") as Line2D).add_poinnt(pt - currentCable.position)
+			
+			for i in range(1, path2.size()):
+				var pt = path2[i]
+				if currentCable.has_method("addCableSegment"):
+					currentCable.addCableSegment(pt)
+				elif currentCable.has_node("Line2D"):
+					(currentCable.get_node("Line2D") as Line2D).add_point(pt - currentCable.position)
+			lastSnappedPos = targetPos
+		
 		if currentMode == DrawMode.Free:
 			var start_id = Astar.get_closest_point(startPos)
 			var target_id = Astar.get_closest_point(targetPos)
@@ -181,6 +229,19 @@ func _input(event: InputEvent) -> void:
 
 			if currentCable.has_method("update_active_point"):
 				currentCable.update_active_point(lastSnappedPos)
+
+func findCableAt(target_pos: Vector2) -> Node2D:
+	var snapped_target = snapToGrid(target_pos)
+	for cable in SavedCables:
+		if is_instance_valid(cable):
+			if cable.has_node("Line2D"):
+				var line = cable.get_node("Line2D") as Line2D
+				for pt in line.points:
+					if (cable.global_position + pt).distance_to(global_position + snapped_target) < 12.0:
+						return cable
+			elif cable.position.distance_to(target_pos) < 24.0:
+				return cable
+	return null
 
 func eraseCableAt(target_pos: Vector2) -> void:
 	var snapped_target = snapToGrid(target_pos)
