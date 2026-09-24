@@ -1,14 +1,17 @@
 [gd_scene format=3 uid="uid://ofdnf06ntncc"]
 
-[ext_resource type="Script" uid="uid://bkxw3ht52pulb" path="res://ui/component_ui.gd" id="1_ks8t7"]
+[ext_resource type="Script" uid="uid://bkxw3ht52pulb" path="res://ui/scripts/component_ui.gd" id="1_ks8t7"]
 [ext_resource type="PackedScene" uid="uid://k3dpp7niy886" path="res://ui/component_tile.tscn" id="1_nb4k0"]
-[ext_resource type="Script" uid="uid://yubuix3qvtwj" path="res://ui/drawing_ui.gd" id="2_ks8t7"]
-[ext_resource type="Script" uid="uid://c15itt636dald" path="res://ui/order_ui.gd" id="4_tf0e0"]
+[ext_resource type="Script" uid="uid://yubuix3qvtwj" path="res://ui/scripts/drawing_ui.gd" id="2_ks8t7"]
+[ext_resource type="Script" uid="uid://c15itt636dald" path="res://ui/scripts/order_ui.gd" id="4_tf0e0"]
 [ext_resource type="PackedScene" uid="uid://cw4ihrxhwgc4o" path="res://ui/order_tile.tscn" id="4_vkava"]
+[ext_resource type="Texture2D" uid="uid://yrtfkwabgdfc" path="res://ui/assets/slash-solid.png" id="6_bo1jx"]
+[ext_resource type="Texture2D" uid="uid://dkix88lyaytl4" path="res://ui/assets/eraser-solid.png" id="7_gycre"]
+[ext_resource type="Texture2D" uid="uid://8o8qcvyjplj6" path="res://ui/assets/stairs-solid.png" id="7_pa1oa"]
+[ext_resource type="Texture2D" uid="uid://dhfjni1dnp6j6" path="res://ui/assets/hand-pointer-solid.png" id="8_pa1oa"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
-bg_color = Color(0, 0, 0, 0.5)
-corner_radius_top_left = 10
+bg_color = Color(0, 0.7176471, 0.35686275, 1)
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
@@ -29,7 +32,7 @@ content_margin_left = 8.0
 content_margin_top = 4.0
 content_margin_right = 8.0
 content_margin_bottom = 4.0
-bg_color = Color(0.1931151, 0.1931151, 0.1931151, 0.3)
+bg_color = Color(0, 0, 0, 0.4)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -55,7 +58,7 @@ content_margin_left = 8.0
 content_margin_top = 4.0
 content_margin_right = 8.0
 content_margin_bottom = 4.0
-bg_color = Color(0.1931151, 0.1931151, 0.1931151, 0.5)
+bg_color = Color(0, 0, 0, 0.4)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -87,12 +90,34 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gycre"]
+bg_color = Color(0, 0.71870965, 0.35686705, 1)
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bo1jx"]
-bg_color = Color(0, 0, 0, 0.5)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+bg_color = Color(0.89686066, 0.46799225, 9.62615e-07, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pa1oa"]
+bg_color = Color(0.89686066, 0.46799225, 9.62615e-07, 1)
+corner_radius_top_left = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ay4pc"]
+bg_color = Color(1, 0, 0, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="UI" type="CanvasLayer" unique_id=209732671]
 
@@ -109,9 +134,8 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -270.0
 offset_top = 20.0
-offset_right = -20.0
+offset_right = 250.0
 offset_bottom = 520.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ofb81")
@@ -191,71 +215,33 @@ layout_mode = 2
 [node name="ComponentTile4" parent="Control/ComponentUI/components/VBoxContainer" unique_id=555848849 instance=ExtResource("1_nb4k0")]
 layout_mode = 2
 
-[node name="open_closeButton" type="Panel" parent="Control/ComponentUI" unique_id=421970781]
+[node name="tab" type="Panel" parent="Control/ComponentUI" unique_id=1121936176]
+z_index = -1
 layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -20.0
-offset_right = -10.0
-offset_bottom = 20.0
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_bo1jx")
+offset_left = -30.0
+offset_bottom = 120.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gycre")
 
-[node name="Label" type="Label" parent="Control/ComponentUI/open_closeButton" unique_id=910103923]
+[node name="Label" type="Label" parent="Control/ComponentUI/tab" unique_id=495912997]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_font_sizes/font_size = 28
-text = ">"
+offset_top = 120.0
+offset_right = 120.0
+offset_bottom = 150.0
+rotation = -1.5707964
+text = "components"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DrawingUI" type="Control" parent="Control" unique_id=476007534]
-anchors_preset = 0
-offset_left = 470.0
-offset_right = 1579.0
-offset_bottom = 56.0
-script = ExtResource("2_ks8t7")
-
-[node name="DrawLine" type="Button" parent="Control/DrawingUI" unique_id=297591430]
-layout_mode = 0
-offset_top = 11.0
-offset_right = 80.0
-offset_bottom = 55.0
-text = "line"
-
-[node name="DrawFree" type="Button" parent="Control/DrawingUI" unique_id=575049844]
-layout_mode = 0
-offset_left = 175.0
-offset_top = 15.0
-offset_right = 248.0
-offset_bottom = 56.0
-text = "free Draw"
-
-[node name="Erase" type="Button" parent="Control/DrawingUI" unique_id=2001067927]
-layout_mode = 0
-offset_left = 265.0
-offset_top = 17.0
-offset_right = 343.0
-offset_bottom = 56.0
-text = "Erase"
-
-[node name="OptionButton" type="OptionButton" parent="Control/DrawingUI" unique_id=2054386998]
-layout_mode = 0
-offset_left = 86.0
-offset_top = 11.0
-offset_right = 163.0
-offset_bottom = 51.0
-
 [node name="OrderUI" type="Panel" parent="Control" unique_id=74893875]
 layout_mode = 1
-offset_left = 20.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
 offset_top = 20.0
-offset_right = 270.0
+offset_right = 250.0
 offset_bottom = 520.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_ofb81")
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bo1jx")
 script = ExtResource("4_tf0e0")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/OrderUI" unique_id=345653316]
@@ -283,32 +269,125 @@ layout_mode = 2
 [node name="ComponentTile5" parent="Control/OrderUI/ScrollContainer/VBoxContainer" unique_id=204008041 instance=ExtResource("4_vkava")]
 layout_mode = 2
 
-[node name="open_closeButton" type="Panel" parent="Control/OrderUI" unique_id=1401115351]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = 10.0
-offset_top = -20.0
-offset_right = 50.0
-offset_bottom = 20.0
-grow_horizontal = 0
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_bo1jx")
-
-[node name="Label" type="Label" parent="Control/OrderUI/open_closeButton" unique_id=1003705441]
+[node name="tab" type="Panel" parent="Control/OrderUI" unique_id=559196444]
+z_index = -1
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_font_sizes/font_size = 28
-text = "<"
+offset_left = -30.0
+offset_top = 125.0
+offset_bottom = 199.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pa1oa")
+
+[node name="Label" type="Label" parent="Control/OrderUI/tab" unique_id=1435565764]
+layout_mode = 0
+offset_top = 74.0
+offset_right = 74.0
+offset_bottom = 104.0
+rotation = -1.5707964
+text = "orders"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ToolUI" type="Panel" parent="Control" unique_id=612969793]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 5.0
+offset_top = -150.0
+offset_right = 55.0
+offset_bottom = 150.0
+grow_vertical = 2
+script = ExtResource("2_ks8t7")
+
+[node name="line" type="Panel" parent="Control/ToolUI" unique_id=1763009447]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 45.0
+offset_bottom = 45.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/ToolUI/line" unique_id=344247662]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 37.5
+offset_bottom = 37.5
+texture = ExtResource("6_bo1jx")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="freeDraw" type="Panel" parent="Control/ToolUI" unique_id=610588891]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 50.0
+offset_right = 45.0
+offset_bottom = 90.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/ToolUI/freeDraw" unique_id=1248520473]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 37.5
+offset_bottom = 37.5
+texture = ExtResource("7_pa1oa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="move" type="Panel" parent="Control/ToolUI" unique_id=1931273617]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 95.0
+offset_right = 45.0
+offset_bottom = 135.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/ToolUI/move" unique_id=1141301753]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 37.5
+offset_bottom = 37.5
+texture = ExtResource("8_pa1oa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Erase" type="Panel" parent="Control/ToolUI" unique_id=922778371]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 140.0
+offset_right = 45.0
+offset_bottom = 180.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/ToolUI/Erase" unique_id=862595255]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 37.5
+offset_bottom = 37.5
+texture = ExtResource("7_gycre")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="color" type="Panel" parent="Control/ToolUI" unique_id=2071330432]
+layout_mode = 0
+offset_left = 15.0
+offset_top = -370.0
+offset_right = 85.0
+offset_bottom = -300.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ay4pc")
+
+[node name="Label" type="Label" parent="Control/ToolUI/color" unique_id=273618382]
+layout_mode = 0
+offset_left = 75.0
+offset_right = 145.0
+offset_bottom = 70.0
+text = "layer: 1"
 
 [connection signal="text_changed" from="Control/ComponentUI/SearchBar/LineEdit" to="Control/ComponentUI" method="_on_line_edit_text_changed"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Sort" to="Control/ComponentUI" method="_on_sort_sort_selected"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Type" to="Control/ComponentUI" method="_on_type_type_selected"]
-[connection signal="gui_input" from="Control/ComponentUI/open_closeButton" to="Control/ComponentUI" method="_on_open_close_button_gui_input"]
-[connection signal="gui_input" from="Control/OrderUI/open_closeButton" to="Control/OrderUI" method="_on_open_close_button_gui_input"]
+[connection signal="gui_input" from="Control/ComponentUI/tab" to="Control/ComponentUI" method="_on_tab_gui_input"]
+[connection signal="gui_input" from="Control/OrderUI/tab" to="Control/OrderUI" method="_on_tab_gui_input"]
+[connection signal="gui_input" from="Control/ToolUI/line" to="Control/ToolUI" method="_on_line_gui_input"]
+[connection signal="gui_input" from="Control/ToolUI/freeDraw" to="Control/ToolUI" method="_on_free_draw_gui_input"]
+[connection signal="gui_input" from="Control/ToolUI/move" to="Control/ToolUI" method="_on_move_gui_input"]
+[connection signal="gui_input" from="Control/ToolUI/Erase" to="Control/ToolUI" method="_on_erase_gui_input"]

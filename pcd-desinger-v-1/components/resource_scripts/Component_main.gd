@@ -1,7 +1,7 @@
 extends Resource
 class_name Component
 
-enum type {resistor, capacitor, inductor, diode, led, transistor, ic, switch, battery, ground, potentiometer, fuse, buzzer, motor}
+enum type {resistor, capacitor, inductor, diode, led, transistor, ic, switch, battery, ground, fuse, buzzer, motor}
 
 @export var component_id: String
 @export var component_name: String

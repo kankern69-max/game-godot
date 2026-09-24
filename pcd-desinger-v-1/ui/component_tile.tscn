@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://k3dpp7niy886"]
 
-[ext_resource type="Script" uid="uid://seisqnka4jbw" path="res://ui/component_tile.gd" id="1_cpmb0"]
+[ext_resource type="Script" uid="uid://seisqnka4jbw" path="res://ui/scripts/component_tile.gd" id="1_cpmb0"]
 [ext_resource type="Texture2D" uid="uid://bxxegb575av00" path="res://components/component_atlas.tres" id="1_t3h7b"]
-[ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/Klikkerdeklik.mp3" id="3_eov1h"]
+[ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/assets/Klikkerdeklik.mp3" id="3_eov1h"]
 
 [node name="ComponentTile" type="Panel" unique_id=657139731]
 custom_minimum_size = Vector2(230, 100)

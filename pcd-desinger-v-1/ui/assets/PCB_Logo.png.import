@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://nmv1ysnygop0"
-path="res://.godot/imported/buyers.png-7ad6a74bb08dcccf457977d24ecc8989.ctex"
+uid="uid://dbcok3cbmavsa"
+path="res://.godot/imported/PCB_Logo.png-8d0f6f035163600ea4c6076de1bb3a6d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/buyers.png"
-dest_files=["res://.godot/imported/buyers.png-7ad6a74bb08dcccf457977d24ecc8989.ctex"]
+source_file="res://ui/assets/PCB_Logo.png"
+dest_files=["res://.godot/imported/PCB_Logo.png-8d0f6f035163600ea4c6076de1bb3a6d.ctex"]
 
 [params]
 

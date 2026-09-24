@@ -4,7 +4,6 @@ var componentTile := preload("res://ui/component_tile.tscn")
 
 @onready var panel: Panel = $"."
 @onready var Vbox : VBoxContainer = $components/VBoxContainer
-@onready var openCloseLabel: Label = $open_closeButton/Label
 @onready var searchbar: LineEdit = $SearchBar/LineEdit
 @onready var filterSort: OptionButton = $Filters/HBoxContainer/Sort
 @onready var filterType: OptionButton = $Filters/HBoxContainer/Type
@@ -62,26 +61,6 @@ func draw_components() -> void:
 		Vbox.add_child(tile)
 
 
-func _on_open_close_button_gui_input(event):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var target_position: Vector2
-		
-		if openCloseLabel.text == ">":
-			target_position = Vector2(1920, 20)
-			openCloseLabel.text = "<"
-		elif openCloseLabel.text == "<":
-			target_position = Vector2(1650, 20)
-			openCloseLabel.text = ">"
-		else:
-			push_error("Component ui open close broken!")
-			return
-		
-		var tween = create_tween()
-		tween.set_trans(Tween.TransitionType.TRANS_QUAD)
-		tween.set_ease(Tween.EaseType.EASE_OUT)
-		tween.tween_property(panel, "position", target_position, 0.4)
-
-
 func _on_line_edit_text_changed(_new_text):
 	draw_components()
 
@@ -91,3 +70,22 @@ func _on_sort_sort_selected(_index):
 
 func _on_type_type_selected(_index):
 	draw_components()
+
+var open: bool
+func _on_tab_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var target_position: Vector2
+		
+		if open:
+			target_position = position + Vector2(250, 0)
+			open = false
+			print("close", open)
+		else:
+			target_position = position - Vector2(250, 0)
+			open = true
+			print("open", open)
+		
+		var tween = create_tween()
+		tween.set_trans(Tween.TransitionType.TRANS_QUAD)
+		tween.set_ease(Tween.EaseType.EASE_OUT)
+		tween.tween_property(panel, "position", target_position, 0.4)

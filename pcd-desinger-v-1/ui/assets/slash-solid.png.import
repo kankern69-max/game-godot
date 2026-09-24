@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dbcok3cbmavsa"
-path="res://.godot/imported/PCB_Logo.png-f72f72858f0dfbaeaf61d32c4224827a.ctex"
+uid="uid://yrtfkwabgdfc"
+path="res://.godot/imported/slash-solid.png-81d164b39ad65459bd1ead27a344e16e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/PCB_Logo.png"
-dest_files=["res://.godot/imported/PCB_Logo.png-f72f72858f0dfbaeaf61d32c4224827a.ctex"]
+source_file="res://ui/assets/slash-solid.png"
+dest_files=["res://.godot/imported/slash-solid.png-81d164b39ad65459bd1ead27a344e16e.ctex"]
 
 [params]
 
