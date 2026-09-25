@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_grv8o")
 forward_voltage = 2.0
+color = Color(1, 0, 0, 1)
 max_current = 0.2
 component_id = "led_red_5mm"
 component_name = "Red LED (5mm)"
@@ -12,6 +13,6 @@ component_type = 4
 footprint = Vector2i(8, 16)
 atlas_coords = Vector2i(515, 0)
 pin_footprint = Vector2i(1, 8)
-pin_offset = Vector2i(15, 0)
+pin_offset = Vector2i(0, 15)
 cost = 0.15
 metadata/_custom_type_script = "uid://cwlgjsamcb2ni"

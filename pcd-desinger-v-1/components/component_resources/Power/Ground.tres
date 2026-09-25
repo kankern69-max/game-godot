@@ -6,4 +6,7 @@
 script = ExtResource("1_l2c53")
 component_id = "ground"
 component_name = "Ground"
+component_type = 9
+footprint = Vector2i(3, 5)
+atlas_coords = Vector2i(588, 0)
 metadata/_custom_type_script = "uid://bnxftrcdufl8l"
