@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://dkix88lyaytl4" path="res://ui/assets/eraser-solid.png" id="7_gycre"]
 [ext_resource type="Texture2D" uid="uid://8o8qcvyjplj6" path="res://ui/assets/stairs-solid.png" id="7_pa1oa"]
 [ext_resource type="Texture2D" uid="uid://dhfjni1dnp6j6" path="res://ui/assets/hand-pointer-solid.png" id="8_pa1oa"]
+[ext_resource type="Texture2D" uid="uid://2v7mbncj5s5g" path="res://ui/assets/aquarius-solid.png" id="10_ay4pc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
 bg_color = Color(0, 0.7176471, 0.35686275, 1)
@@ -381,7 +382,7 @@ offset_left = 2.0
 offset_top = 2.0
 offset_right = 37.0
 offset_bottom = 37.0
-texture = ExtResource("6_bo1jx")
+texture = ExtResource("10_ay4pc")
 expand_mode = 1
 stretch_mode = 5
 

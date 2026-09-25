@@ -109,7 +109,7 @@ func _snap_to_grid(pos: Vector2, footprint: Vector2i) -> Vector2:
 	var clamped_x = clampf(localPos.x, 0, boardSize.x)
 	var clamped_y = clampf(localPos.y, 0, boardSize.y)
 	var snapped_x = floor(clamped_x / dotDistance) * dotDistance + halfStep
-	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep +0.5
+	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep -0.5
 	return boardOffset + Vector2(snapped_x, snapped_y)
 
 func _to_cell(worldPos: Vector2) -> Vector2i:

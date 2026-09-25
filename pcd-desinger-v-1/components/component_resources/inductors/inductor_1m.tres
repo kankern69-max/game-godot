@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Inductor" format=3 uid="uid://cx3cf166lxubn"]
+
+[ext_resource type="Script" uid="uid://qj6tqglxpjl2" path="res://components/resource_scripts/inductor.gd" id="1_wxko0"]
+
+[resource]
+script = ExtResource("1_wxko0")
+inductance = 1000.0
+resistance = 10.0
+inductance_tolerance = 0.1
+component_id = "inductor_1m"
+component_name = "1mH Inductor"
+component_type = 2
+footprint = Vector2i(16, 21)
+atlas_coords = Vector2i(444, 0)
+pin_footprint = Vector2i(8, 1)
+pin_offset = Vector2i(4, 20)
+metadata/_custom_type_script = "uid://qj6tqglxpjl2"
