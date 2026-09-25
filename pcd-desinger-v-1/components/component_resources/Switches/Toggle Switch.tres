@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="Switch" format=3 uid="uid://bx078hlv12ir8"]
+
+[ext_resource type="Script" uid="uid://7tn7m6pl3n38" path="res://components/resource_scripts/Switch.gd" id="1_o6se5"]
+
+[resource]
+script = ExtResource("1_o6se5")
+switch_type = "Toggle"
+component_id = "switch_toggle"
+component_name = "Toggle Switch"
+component_type = 7
+footprint = Vector2i(16, 9)
+atlas_coords = Vector2i(547, 0)
+cost = 1.5
+metadata/_custom_type_script = "uid://7tn7m6pl3n38"

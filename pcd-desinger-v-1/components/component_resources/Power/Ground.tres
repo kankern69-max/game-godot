@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Battery" format=3 uid="uid://7k1kejk654j0"]
+
+[ext_resource type="Script" uid="uid://bnxftrcdufl8l" path="res://components/resource_scripts/battery.gd" id="1_l2c53"]
+
+[resource]
+script = ExtResource("1_l2c53")
+component_id = "ground"
+component_name = "Ground"
+metadata/_custom_type_script = "uid://bnxftrcdufl8l"

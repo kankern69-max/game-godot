@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="Transistor" format=3 uid="uid://df17ctm0flmnw"]
+
+[ext_resource type="Script" uid="uid://dqsvova5go3w8" path="res://components/resource_scripts/transistor.gd" id="1_rlm0x"]
+
+[resource]
+script = ExtResource("1_rlm0x")
+transistor_type = "NPN"
+configuration = "single"
+hFE = 200.0
+v_threshold = 0.7
+component_id = "transistor_bc547"
+component_name = "BC547 Transistor (NPN)"
+component_type = 5
+footprint = Vector2i(8, 16)
+atlas_coords = Vector2i(539, 0)
+metadata/_custom_type_script = "uid://dqsvova5go3w8"

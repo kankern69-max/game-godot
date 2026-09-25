@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="IC" format=3 uid="uid://78dcmjrskl37"]
+
+[ext_resource type="Script" uid="uid://07e08nk60237" path="res://components/resource_scripts/IC.gd" id="1_i8i6v"]
+
+[resource]
+script = ExtResource("1_i8i6v")
+metadata/_custom_type_script = "uid://07e08nk60237"

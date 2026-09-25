@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Switch" format=3 uid="uid://dvjh1g0w25to6"]
+
+[ext_resource type="Script" uid="uid://7tn7m6pl3n38" path="res://components/resource_scripts/Switch.gd" id="1_qp0kk"]
+
+[resource]
+script = ExtResource("1_qp0kk")
+switch_type = "PushButton"
+component_id = "switch_pushbutton"
+component_name = "Pushbutton Switch"
+footprint = Vector2i(8, 6)
+atlas_coords = Vector2i(563, 2)
+cost = 1.5
+metadata/_custom_type_script = "uid://7tn7m6pl3n38"
