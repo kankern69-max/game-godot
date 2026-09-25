@@ -8,6 +8,8 @@ enum type {resistor, capacitor, inductor, diode, led, transistor, ic, switch, ba
 @export var component_type: type
 @export var description: String
 @export var footprint: Vector2i
-@export var cost: float
 @export var atlas_coords: Vector2i
+@export var pin_footprint: Vector2i
+@export var pin_offset: Vector2i
+@export var cost: float
 @export var power_rating: float #w
