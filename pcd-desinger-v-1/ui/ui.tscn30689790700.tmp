@@ -165,7 +165,6 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_nb4k0")
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/ComponentUI/Filters" unique_id=772848746]
 layout_mode = 2
 theme_override_constants/separation = 8
-alignment = 1
 
 [node name="Sort" type="OptionButton" parent="Control/ComponentUI/Filters/HBoxContainer" unique_id=380554904]
 custom_minimum_size = Vector2(40, 30)

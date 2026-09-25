@@ -8,6 +8,7 @@ const halfStep: float = dotDistance * 0.5
 @export var component_scene: PackedScene = preload("res://components/component_base.tscn")
 
 var placing: bool = false
+var erasing: bool = false
 var ghost: Base_component = null
 var occupied: Dictionary = {}
 var placed_components: Array[Base_component] = []
@@ -16,6 +17,7 @@ func _ready() -> void:
 	Global.toolChanged.connect(_on_tool_changed)
 
 func _on_tool_changed(toolName: String) -> void:
+	erasing = toolName == "ERASE"
 	if toolName == "PLACE" and Global.selected_component:
 		_start_placing()
 	else:
@@ -37,6 +39,12 @@ func _cancel_placing() -> void:
 	 
 
 func _input(event: InputEvent) -> void:
+	if erasing:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			var mousePos = to_local(get_global_mouse_position())
+			_erase_component_at(mousePos)
+		return
+	
 	if not placing:
 		return
 	
@@ -52,17 +60,19 @@ func _input(event: InputEvent) -> void:
 
 func _update_ghost_position() -> void:
 	var mousePos = to_local(get_global_mouse_position())
-	var gridPos = _snap_to_grid(mousePos, ghost.component_data.footprint)
+	var pinSize = ghost.get_pin_footprint()
+	var gridPos = _snap_to_grid(mousePos, pinSize)
 	ghost.position = gridPos
 	var cell = _to_cell(gridPos)
-	if _cell_free(cell, ghost.component_data.footprint):
+	if _cell_free(cell, pinSize):
 		ghost.modulate = Color(1,1,1, 0.5)
 	else:
 		ghost.modulate = Color(1, 0.3, 0.3, 0.5)
 
 func _try_place() -> void:
 	var cell = _to_cell(ghost.position)
-	if not _cell_free(cell, ghost.component_data.footprint):
+	var pinSize = ghost.get_pin_footprint()
+	if not _cell_free(cell, pinSize):
 		return
 	
 	var comp: Base_component = component_scene.instantiate()
@@ -72,7 +82,7 @@ func _try_place() -> void:
 	self.add_child(comp)
 	
 	placed_components.append(comp)
-	_mark_occupied(cell, comp.component_data.footprint, comp)
+	_mark_occupied(cell, comp.get_pin_footprint(), comp)
 	
 	Global.componentPlaced.emit()
 	
@@ -85,14 +95,21 @@ func remove_component(comp: Base_component) -> void:
 	placed_components.erase(comp)
 	comp.queue_free()
 	Global.componentPlaced.emit()
-	
+
+func _erase_component_at(pos: Vector2) -> void:
+	var localPos = pos - boardOffset
+	var clamped_x = clampf(localPos.x, 0, boardSize.x)
+	var clamped_y = clampf(localPos.y, 0, boardSize.y)
+	var cell := Vector2i(int(clamped_x / dotDistance), int(clamped_y / dotDistance))
+	if occupied.has(cell):
+		remove_component(occupied[cell])
 
 func _snap_to_grid(pos: Vector2, footprint: Vector2i) -> Vector2:
 	var localPos = pos - boardOffset
 	var clamped_x = clampf(localPos.x, 0, boardSize.x)
 	var clamped_y = clampf(localPos.y, 0, boardSize.y)
-	var snapped_x = floor(clamped_x / dotDistance) * dotDistance + halfStep -0.5
-	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep -0.5
+	var snapped_x = floor(clamped_x / dotDistance) * dotDistance + halfStep
+	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep +0.5
 	return boardOffset + Vector2(snapped_x, snapped_y)
 
 func _to_cell(worldPos: Vector2) -> Vector2i:
@@ -101,7 +118,7 @@ func _to_cell(worldPos: Vector2) -> Vector2i:
 
 func _footprint_cells(originCell: Vector2i, footprint: Vector2i) -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
-	var cellSpan := Vector2i(max(1, footprint.x / dotDistance), max(1, footprint.y / dotDistance))
+	var cellSpan := Vector2i(max(1, int(ceil(float(footprint.x) / dotDistance))), max(1, int(ceil(float(footprint.x) / dotDistance))))
 	for x in range(cellSpan.x):
 		for y in range(cellSpan.y):
 			cells.append(originCell + Vector2i(x,y))

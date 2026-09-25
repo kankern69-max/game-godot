@@ -1,11 +1,13 @@
 [gd_scene format=3 uid="uid://k3dpp7niy886"]
 
-[ext_resource type="Script" uid="uid://seisqnka4jbw" path="res://ui/component_tile.gd" id="1_cpmb0"]
+[ext_resource type="Script" uid="uid://seisqnka4jbw" path="res://ui/scripts/component_tile.gd" id="1_cpmb0"]
 [ext_resource type="Texture2D" uid="uid://bxxegb575av00" path="res://components/component_atlas.tres" id="1_t3h7b"]
-[ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/Klikkerdeklik.mp3" id="3_eov1h"]
+[ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/assets/Klikkerdeklik.mp3" id="3_eov1h"]
 
 [node name="ComponentTile" type="Panel" unique_id=657139731]
 custom_minimum_size = Vector2(230, 100)
+offset_right = 230.0
+offset_bottom = 100.0
 script = ExtResource("1_cpmb0")
 
 [node name="texture" type="Panel" parent="." unique_id=1928574583]
@@ -14,6 +16,7 @@ offset_left = 10.0
 offset_top = 10.0
 offset_right = 90.0
 offset_bottom = 90.0
+mouse_filter = 1
 
 [node name="TextureRect" type="TextureRect" parent="texture" unique_id=1096578346]
 layout_mode = 0
@@ -24,21 +27,22 @@ offset_bottom = 77.5
 texture = ExtResource("1_t3h7b")
 stretch_mode = 5
 
-[node name="Name" type="Label" parent="." unique_id=1451725441]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=106854760]
 layout_mode = 0
 offset_left = 100.0
 offset_top = 10.0
-offset_right = 140.0
-offset_bottom = 33.0
-text = "Component"
-
-[node name="Label" type="Label" parent="." unique_id=165811197]
-custom_minimum_size = Vector2(0, 52)
-layout_mode = 0
-offset_left = 100.0
-offset_top = 38.0
-offset_right = 187.0
+offset_right = 220.0
 offset_bottom = 90.0
+
+[node name="Name" type="Label" parent="VBoxContainer" unique_id=1451725441]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Component"
+autowrap_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=165811197]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "type: type
 price: 100"

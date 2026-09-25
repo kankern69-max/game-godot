@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="Capacitor" format=3 uid="uid://dcpo8e11npdj2"]
+
+[ext_resource type="Script" uid="uid://c12dq3anjvj4k" path="res://components/resource_scripts/capacitor.gd" id="1_gpr8s"]
+
+[resource]
+script = ExtResource("1_gpr8s")
+capacitance = 10000.0
+tolerance = 0.2
+polarized = true
+component_id = "capacitor_10u_elec"
+component_name = "10µF Electrolytic Capacitor"
+component_type = 1
+footprint = Vector2i(13, 25)
+cost = 0.15
+atlas_coords = Vector2i(388, 0)
+power_rating = 0.25
+metadata/_custom_type_script = "uid://c12dq3anjvj4k"

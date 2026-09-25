@@ -11,7 +11,7 @@ func _ready():
 	_rebuild_graph()
 
 func _rebuild_graph():
-	components = get_tree().get_nodes_in_group("circuit_components")
+	components.assign(get_tree().get_nodes_in_group("circuit_components"))
 	batteries = components.filter(func(c): return c.component_data.component_type == "battery")
 	ground = components.filter(func(c): return c.component_data.component_type == "ground")[0] if components.any(func(c): return c.component_data.component_type == "ground") else null
 

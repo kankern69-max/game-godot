@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbcok3cbmavsa"
-path="res://.godot/imported/PCB_Logo_2.png-6a3fb8eee5063bd0f2415c03d78b82d1.ctex"
+path="res://.godot/imported/PCB_Logo.png-8d0f6f035163600ea4c6076de1bb3a6d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://components/PCB_Logo_2.png"
-dest_files=["res://.godot/imported/PCB_Logo_2.png-6a3fb8eee5063bd0f2415c03d78b82d1.ctex"]
+source_file="res://ui/assets/PCB_Logo.png"
+dest_files=["res://.godot/imported/PCB_Logo.png-8d0f6f035163600ea4c6076de1bb3a6d.ctex"]
 
 [params]
 

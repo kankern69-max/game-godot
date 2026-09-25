@@ -20,6 +20,8 @@ func _ready():
 	var texture = atlas.duplicate()
 	texture.region = Rect2(component_data.atlas_coords, component_data.footprint)
 	sprite.texture = texture
+	sprite.centered = false
+	sprite.offset = - Vector2(component_data.pin_offset)
 	
 	add_to_group("circuit_components")
 
@@ -85,3 +87,8 @@ func get_voltage() -> float:
 	if component_data.component_type == Component.type.battery:
 		return 5.0
 	return voltage
+
+func get_pin_footprint() -> Vector2i:
+	if component_data.pin_footprint != Vector2i.ZERO:
+		return component_data.pin_footprint
+	return component_data.footprint
