@@ -291,37 +291,39 @@ func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVec
 			return raw_path
 			
 		var total_rows = int(round(abs(delta.y) / dotDistance))
-		if total_rows < 2:
-			raw_path.append(clampToBoard(to_pos))
+		if total_rows < 3:
+			raw_path.append(clampToBoard(Vector2(from_pos.x, to_pos.y)))
 			return raw_path
 			
 		var current_p = from_pos
-		var side_width = dotDistance * 2
-		var direction = 1
+		var extent = dotDistance * 2
 		
 		current_p.y += step_y
 		raw_path.append(clampToBoard(current_p))
 		
-		current_p.x += side_width * direction
+		var direction = 1
+		current_p.x += extent * direction
 		raw_path.append(clampToBoard(current_p))
 		
 		var rows_done = 1
 		
-		while rows_done < total_rows - 1:
-			current_p.x -= (side_width * 2) * direction
-			raw_path.append(clampToBoard(current_p))
-			
+		while rows_done < total_rows - 2:
 			current_p.y += step_y
 			raw_path.append(clampToBoard(current_p))
 			
-			rows_done += 1
 			direction *= -1
+			current_p.x = from_pos.x + (extent * direction)
+			raw_path.append(clampToBoard(current_p))
 			
-		current_p.x += side_width * direction
+			rows_done += 1
+			
+		current_p.y += step_y
+		raw_path.append(clampToBoard(current_p))
+		
+		current_p.x = from_pos.x
 		raw_path.append(clampToBoard(current_p))
 		
 		current_p.y = to_pos.y
-		current_p.x = from_pos.x
 		raw_path.append(clampToBoard(current_p))
 
 	else:
@@ -330,37 +332,39 @@ func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVec
 			return raw_path
 			
 		var total_cols = int(round(abs(delta.x) / dotDistance))
-		if total_cols < 2:
-			raw_path.append(clampToBoard(to_pos))
+		if total_cols < 3:
+			raw_path.append(clampToBoard(Vector2(to_pos.x, from_pos.y)))
 			return raw_path
 			
 		var current_p = from_pos
-		var side_height = dotDistance * 2
-		var direction = 1
+		var extent = dotDistance * 2
 		
 		current_p.x += step_x
 		raw_path.append(clampToBoard(current_p))
 		
-		current_p.y += side_height * direction
+		var direction = 1
+		current_p.y += extent * direction
 		raw_path.append(clampToBoard(current_p))
 		
 		var cols_done = 1
 		
-		while cols_done < total_cols - 1:
-			current_p.y -= (side_height * 2) * direction
-			raw_path.append(clampToBoard(current_p))
-			
+		while cols_done < total_cols - 2:
 			current_p.x += step_x
 			raw_path.append(clampToBoard(current_p))
 			
-			cols_done += 1
 			direction *= -1
+			current_p.y = from_pos.y + (extent * direction)
+			raw_path.append(clampToBoard(current_p))
 			
-		current_p.y += side_height * direction
+			cols_done += 1
+			
+		current_p.x += step_x
+		raw_path.append(clampToBoard(current_p))
+		
+		current_p.y = from_pos.y
 		raw_path.append(clampToBoard(current_p))
 		
 		current_p.x = to_pos.x
-		current_p.y = from_pos.y
 		raw_path.append(clampToBoard(current_p))
 
 	var full_grid_path: PackedVector2Array = []
@@ -374,7 +378,9 @@ func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVec
 			var interpolated = p1.lerp(p2, float(s) / max(steps, 1))
 			full_grid_path.append(snapToGrid(interpolated))
 			
-	full_grid_path.append(snapToGrid(to_pos))
+	if raw_path.size() > 0:
+		full_grid_path.append(snapToGrid(raw_path[raw_path.size() - 1]))
+		
 	return full_grid_path
 
 func findCableAt(target_pos: Vector2) -> Node2D:
