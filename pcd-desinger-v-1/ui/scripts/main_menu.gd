@@ -8,7 +8,6 @@ func _on_start_pressed():
 func _on_credits_pressed():
 	$Klikkerdeklik.play()
 
-
 func _on_quit_pressed():
 	$Klikkerdeklik.play()
 	await $Klikkerdeklik.finished

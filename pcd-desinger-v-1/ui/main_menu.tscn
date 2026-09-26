@@ -96,6 +96,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_rmr83")
 theme_override_styles/hover = SubResource("StyleBoxFlat_p8ri8")
 theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_ei257")
 text = "Start"
+expand_icon = true
 
 [node name="Quit" type="Button" parent="." unique_id=1824048329]
 layout_mode = 1
