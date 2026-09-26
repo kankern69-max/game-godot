@@ -25,6 +25,12 @@ func _ready() -> void:
 	Global.toolChanged.connect(GlobalToolChange)
 	setup_astar_grid()
 
+func _process(_delta: float) -> void:
+	for cable in SavedCables:
+		if is_instance_valid(cable) and cable.has_method("update_cable_values"):
+			cable.update_cable_values()
+			print("Cable ID: ", cable.cableID, " | Voltage: ", cable.voltage)
+
 func setup_astar_grid() -> void:
 	Astar.clear()
 	var cols = int(boardSize.x / dotDistance)
@@ -137,6 +143,8 @@ func _input(event: InputEvent) -> void:
 				
 			if cable_length > 1:
 				SavedCables.append(currentCable)
+				if currentCable.has_method("check_battery_connection"):
+					currentCable.check_battery_connection()
 			else:
 				currentCable.queue_free()
 				

@@ -4,6 +4,11 @@ extends Node2D
 @onready var line2d: Line2D = $Line2D
 
 var cableID: int = 0
+var voltage: float = 0.0
+var current: float = 0.0
+var power: float = 0.0
+var connected_source: Base_component = null
+
 
 func setup_trace(startPosi: Vector2, id: int) -> void:
 	cableID= id
@@ -56,3 +61,31 @@ func checkPointExists(pos:Vector2) -> bool:
 
 func set_cable_color(new_color: Color) -> void:
 	line2d.default_color = new_color
+
+func check_battery_connection() -> void:
+	var start_Pos_global = to_global(getPointStart())
+	connected_source = null
+	var components = get_tree().get_nodes_in_group("circuit_components")
+	for comp in components:
+		if comp is Base_component:
+			if comp.component_data and comp.component_data.component_type == Component.type.battery:
+				var comp_pos = comp.global_position
+				var grid_unit = 8.0
+				var fp_size = Vector2(comp.component_data.footprint) * grid_unit
+				var pin_off = Vector2(comp.component_data.pin_offset) * grid_unit
+				var comp_rect = Rect2(comp_pos - pin_off, fp_size)
+				comp_rect = comp_rect.grow(8.0)
+				if comp_rect.has_point(start_Pos_global):
+					connected_source = comp
+					break
+	update_cable_values()
+
+func update_cable_values() -> void:
+	if connected_source and is_instance_valid(connected_source):
+		voltage = connected_source.get_voltage()
+		current = connected_source.current
+		power = connected_source.power
+	else:
+		voltage = 0.0
+		current = 0.0
+		power = 0.0
