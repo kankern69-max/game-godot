@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://t4x632s6w7ug" path="res://mainSystems/camera_2d.gd" id="2_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://ofdnf06ntncc" path="res://ui/ui.tscn" id="3_feb5d"]
 [ext_resource type="Script" uid="uid://b5lxce5uoy0ev" path="res://mainSystems/components.gd" id="4_7jktm"]
+[ext_resource type="Texture2D" uid="uid://iri48ygh3nfp" path="res://components/fading_black.png" id="6_ryrav"]
 
 [node name="Game" type="Node2D" unique_id=1288097038]
 script = ExtResource("1_e2o6t")
@@ -23,3 +24,8 @@ script = ExtResource("2_e2o6t")
 script = ExtResource("4_7jktm")
 
 [node name="UI" parent="." unique_id=209732671 instance=ExtResource("3_feb5d")]
+
+[node name="FadeOverlay" type="TextureRect" parent="." unique_id=909347850]
+offset_right = 1920.0
+offset_bottom = 1323.0
+texture = ExtResource("6_ryrav")
