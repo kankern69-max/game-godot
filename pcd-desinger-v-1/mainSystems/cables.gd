@@ -189,17 +189,11 @@ func _input(event: InputEvent) -> void:
 				for i in range(1, leg2.size()):
 					rebuilt_path.append(leg2[i])
  
-			if currentCable.has_method("clearSegments"):
-				currentCable.clearSegments()
-			elif currentCable.has_node("Line2D"):
-				(currentCable.get_node("Line2D") as Line2D).clear_points()
- 
-			for pt in rebuilt_path:
-				var local_pt = currentCable.to_local(pt)
-				if currentCable.has_method("addCableSegment"):
-					currentCable.addCableSegment(local_pt)
-				elif currentCable.has_node("Line2D"):
-					(currentCable.get_node("Line2D") as Line2D).add_point(local_pt)
+			var line = _get_line2d(currentCable)
+			if line:
+				line.clear_points()
+				for pt in rebuilt_path:
+					line.add_point(currentCable.to_local(pt))
  
 			lastSnappedPos = targetPos
  
@@ -208,36 +202,24 @@ func _input(event: InputEvent) -> void:
 			var target_id = Astar.get_closest_point(to_global(targetPos))
 			var path: PackedVector2Array = Astar.get_point_path(start_id, target_id)
 			
-			if currentCable.has_method("clearSegments"):
-				currentCable.clearSegments()
-			elif currentCable.has_node("Line2D"):
-				(currentCable.get_node("Line2D") as Line2D).clear_points()
-			
-			for pt in path:
-				var local_pt = currentCable.to_local(pt)
-				if currentCable.has_method("addCableSegment"):
-					currentCable.addCableSegment(local_pt)
-				elif currentCable.has_node("Line2D"):
-					(currentCable.get_node("Line2D") as Line2D).add_point(local_pt)
+			var line = _get_line2d(currentCable)
+			if line:
+				line.clear_points()
+				for pt in path:
+					line.add_point(currentCable.to_local(pt))
 					
 			lastSnappedPos = targetPos
 		
 		elif currentMode == DrawMode.ExtendedLine:
 			var path: PackedVector2Array = generate_extendedLine_path(startPos, targetPos)
-			if currentCable.has_method("clearSegments"):
-				currentCable.clearSegments()
-			elif currentCable.has_node("Line2D"):
-				(currentCable.get_node("Line2D") as Line2D).clear_points()
-			
-			for pt in path:
-				var local_pt = currentCable.to_local(pt)
-				if currentCable.has_method("addCableSegment"):
-					currentCable.addCableSegment(local_pt)
-				elif currentCable.has_node("Line2D"):
-					(currentCable.get_node("Line2D") as Line2D).add_point(local_pt)
+			var line = _get_line2d(currentCable)
+			if line:
+				line.clear_points()
+				for pt in path:
+					line.add_point(currentCable.to_local(pt))
 					
 			if currentCable.has_method("update_active_point") and path.size() > 0:
-				currentCable.update_active_point(path[path.size() - 1])
+				currentCable.update_active_point(currentCable.to_local(path[path.size() - 1]))
 				
 			lastSnappedPos = targetPos
 		
@@ -291,7 +273,7 @@ func _input(event: InputEvent) -> void:
 				if currentCable.has_method("getPenultimatePoint") and currentCable.getPenultimatePoint() == nextPos:
 					currentCable.removeLastCableSegment()
 					lastSnappedPos = nextPos
-				elif currentCable.has_method("checkPointsExists") and currentCable.checkPointExists(nextPos):
+				elif currentCable.has_method("checkPointExists") and currentCable.checkPointExists(nextPos):
 					break
 				else:
 					lastSnappedPos = nextPos
@@ -301,7 +283,14 @@ func _input(event: InputEvent) -> void:
  
 			if currentCable.has_method("update_active_point"):
 				currentCable.update_active_point(lastSnappedPos)
- 
+
+func _get_line2d(cable: Node2D) -> Line2D:
+	if cable is Line2D:
+		return cable as Line2D
+	elif cable.has_node("Line2D"):
+		return cable.get_node("Line2D") as Line2D
+	return null
+
 func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVector2Array:
 	var raw_path: PackedVector2Array = []
 	raw_path.append(from_pos)
@@ -457,10 +446,7 @@ func clampToBoard(pos: Vector2) -> Vector2:
  
 func notify_circuit_update() -> void:
 	get_tree().call_group("circuit_components", "rebuild_connections")
- 
-
 	_reset_circuit_power()
- 
 	get_tree().call_group("circuit_components", "update_simulation")
  
 func _reset_circuit_power() -> void:
