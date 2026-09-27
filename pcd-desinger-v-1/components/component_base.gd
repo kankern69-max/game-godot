@@ -6,11 +6,14 @@ const atlas := preload("res://components/component_atlas.tres")
 
 @export var component_data: Component
 
-var voltage: float
-var current: float
-var power: float
+var voltage: float = 0.0
+var current: float = 0.0
+var power: float = 0.0
 var is_powered: bool = false
 var connected_components: Array[Base_component] = []
+
+# Verlaagd naar 2.0 px om enkel exacte overlap toe te staan
+const TOUCH_RADIUS: float = 2.0 
 
 func _ready():
 	if not component_data:
@@ -25,70 +28,159 @@ func _ready():
 	
 	add_to_group("circuit_components")
 
-func connect_to(other: Base_component):
-	if other not in connected_components:
-		connected_components.append(other)
+func get_pin_positions_global() -> Array[Vector2]:
+	var pins: Array[Vector2] = []
+	if not component_data:
+		pins.append(global_position)
+		return pins
 
-func update_simulation():
-	if Global.current_mode == Global.MODE.ARCADE:
-		_update_arcade()
-	else:
-		_update_simulator()
+	var footprint_px = Vector2(component_data.footprint)
+	var offset = Vector2(component_data.pin_offset)
+	
+	var left_pin_local = Vector2(4.0, footprint_px.y * 0.5) - offset
+	var right_pin_local = Vector2(max(4.0, footprint_px.x - 4.0), footprint_px.y * 0.5) - offset
+	
+	if left_pin_local.distance_to(right_pin_local) < 2.0:
+		left_pin_local.x -= 4.0
+		right_pin_local.x += 4.0
 
-	_update_visuals()
+	pins.append(to_global(left_pin_local))  # Left Pin (-)
+	pins.append(to_global(right_pin_local)) # Right Pin (+)
+	return pins
 
-func _update_arcade():
-	var visited = {}
-	is_powered = _has_power_path(visited)
-	
-	if is_powered:
-		current = 1.0
-	else:
-		current = 0.0
-
-func _has_power_path(visited: Dictionary) -> bool:
-	if self in visited:
-		return false
-	visited[self] = true
-	
-	if component_data.component_type == Component.type.battery:
-		return true
-	
-	for comp in connected_components:
-		if comp._has_power_path(visited):
-			return true
-	
-	return false
-
-func _update_simulator():
-	var resistance = _get_resistance()
-	if resistance > 0 and connected_components.size() > 0:
-		var voltage_drop = voltage - connected_components[0].voltage
-		current = abs(voltage_drop / resistance)
-	else:
-		current = 0.0
-	
-	power = current * current * resistance if resistance > 0 else 0.0
-	
-func _update_visuals():
-	pass
-	
 func _get_resistance() -> float:
-	match component_data.component_type:
-		Component.type.resistor:
-			return component_data.resistance
-		_:
-			return 0.0
+	if not component_data:
+		return 1.0
+	return 1.0
 
-func set_voltage(v: float):
-	voltage = v
+func update_simulation() -> void:
+	power = voltage * current
+	is_powered = voltage > 0.0
+
+# --- CENTRALE UPDATE FUNCTIE ---
+static func update_all_circuits(tree: SceneTree):
+	var all_cables = tree.get_nodes_in_group("cables")
+	var all_components = tree.get_nodes_in_group("circuit_components")
+
+	# 1. RESET ALLE KABELS EN COMPONENTEN EERST NAAR 0V
+	for c in all_cables:
+		_set_cable_powered(c, false)
+
+	for comp in all_components:
+		if is_instance_valid(comp):
+			comp.is_powered = false
+			comp.voltage = 0.0
+			comp.current = 0.0
+
+	# 2. CONTROLEER VANAF ELKE BATTERIJ OF ER EEN GESLOTEN STROOMKRING IS
+	for comp in all_components:
+		if is_instance_valid(comp) and comp.component_data and comp.component_data.component_type == Component.type.battery:
+			comp._evaluate_battery_circuit(all_cables, all_components)
+
+func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
+	var pins = get_pin_positions_global()
+	if pins.size() < 2:
+		return
+
+	var target_pin_minus: Vector2 = pins[0]  # Target (-)
+	var start_pin_plus: Vector2 = pins[1]   # Origin (+)
+
+	var queue: Array[Vector2] = [start_pin_plus]
+	var visited_points := {}
+	var powered_cables := {}
+	var powered_components := {}
 	
-func get_voltage() -> float:
-	if component_data.component_type == Component.type.battery:
-		return 5.0
-	return voltage
+	var is_closed_loop = false
 
-func get_pin_footprint() -> Vector2i:
-	if component_data.pin_footprint != Vector2i.ZERO:
-		return component_data.pin_footprint
-	return component_data.footprint
+	while queue.size() > 0:
+		var curr_pos = queue.pop_front()
+		
+		# Exacte controle of we de (-) pool hebben bereikt
+		if curr_pos.distance_to(target_pin_minus) <= TOUCH_RADIUS and curr_pos != start_pin_plus:
+			is_closed_loop = true
+
+		# Afgerond naar gehele pixels voor de unieke positie-key
+		var pos_key = Vector2i(round(curr_pos.x), round(curr_pos.y))
+		if pos_key in visited_points:
+			continue
+		visited_points[pos_key] = true
+
+		# 1. Zoek verbonden kabels
+		for cable in all_cables:
+			if not is_instance_valid(cable):
+				continue
+
+			var pts: Array[Vector2] = []
+			if cable.has_method("get_all_global_points"):
+				pts = cable.get_all_global_points()
+			else:
+				var line = _get_line_from_cable(cable)
+				if line:
+					for p in line.points:
+						pts.append(line.to_global(p))
+
+			var touches = false
+			for p in pts:
+				if p.distance_to(curr_pos) <= TOUCH_RADIUS:
+					touches = true
+					break
+
+			if touches:
+				powered_cables[cable] = true
+				for p in pts:
+					queue.append(p)
+
+		# 2. Zoek verbonden componenten
+		for comp in all_components:
+			if not is_instance_valid(comp) or comp == self:
+				continue
+
+			var c_pins = comp.get_pin_positions_global()
+			var touches_comp = false
+			for p in c_pins:
+				if p.distance_to(curr_pos) <= TOUCH_RADIUS:
+					touches_comp = true
+					break
+
+			if touches_comp:
+				powered_components[comp] = true
+				for p in c_pins:
+					queue.append(p)
+
+	# 3. Alleen inschakelen bij een volledig gesloten circuit
+	if is_closed_loop:
+		self.is_powered = true
+		self.voltage = 5.0
+		self.current = 1.0
+
+		for cable in powered_cables.keys():
+			_set_cable_powered(cable, true)
+
+		for comp in powered_components.keys():
+			comp.is_powered = true
+			comp.voltage = 5.0
+			comp.current = 1.0
+
+static func _get_line_from_cable(cable: Node) -> Line2D:
+	if cable is Line2D:
+		return cable as Line2D
+	elif cable.has_node("Line2D"):
+		return cable.get_node("Line2D") as Line2D
+	return null
+
+static func _set_cable_powered(cable: Node, powered: bool):
+	if "voltage" in cable:
+		cable.voltage = 5.0 if powered else 0.0
+		if "current" in cable:
+			cable.current = 1.0 if powered else 0.0
+		if "power" in cable:
+			cable.power = cable.voltage * cable.current
+	
+	if cable.has_method("set_powered"):
+		cable.call("set_powered", powered)
+	elif cable.has_method("update_visuals"):
+		cable.call("update_visuals")
+	else:
+		var line = _get_line_from_cable(cable)
+		if line:
+			line.default_color = Color(1.0, 0.85, 0.2) if powered else Color(0.35, 0.35, 0.35)

@@ -36,7 +36,6 @@ func _cancel_placing() -> void:
 		ghost.queue_free()
 		ghost = null
 	placing = false
-	 
 
 func _input(event: InputEvent) -> void:
 	if erasing:
@@ -59,19 +58,25 @@ func _input(event: InputEvent) -> void:
 			Global.toolChanged.emit("FREE")
 
 func _update_ghost_position() -> void:
+	if not is_instance_valid(ghost):
+		return
+		
 	var mousePos = to_local(get_global_mouse_position())
-	var pinSize = ghost.get_pin_footprint()
+	var pinSize = _get_footprint(ghost)
 	var gridPos = _snap_to_grid(mousePos, pinSize)
 	ghost.position = gridPos
 	var cell = _to_cell(gridPos)
 	if _cell_free(cell, pinSize):
-		ghost.modulate = Color(1,1,1, 0.5)
+		ghost.modulate = Color(1, 1, 1, 0.5)
 	else:
 		ghost.modulate = Color(1, 0.3, 0.3, 0.5)
 
 func _try_place() -> void:
+	if not is_instance_valid(ghost):
+		return
+		
 	var cell = _to_cell(ghost.position)
-	var pinSize = ghost.get_pin_footprint()
+	var pinSize = _get_footprint(ghost)
 	if not _cell_free(cell, pinSize):
 		return
 	
@@ -82,7 +87,7 @@ func _try_place() -> void:
 	self.add_child(comp)
 	
 	placed_components.append(comp)
-	_mark_occupied(cell, comp.get_pin_footprint(), comp)
+	_mark_occupied(cell, _get_footprint(comp), comp)
 	
 	Global.componentPlaced.emit()
 	
@@ -109,7 +114,7 @@ func _snap_to_grid(pos: Vector2, footprint: Vector2i) -> Vector2:
 	var clamped_x = clampf(localPos.x, 0, boardSize.x)
 	var clamped_y = clampf(localPos.y, 0, boardSize.y)
 	var snapped_x = floor(clamped_x / dotDistance) * dotDistance + halfStep
-	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep -0.5
+	var snapped_y = floor(clamped_y / dotDistance) * dotDistance + halfStep - 0.5
 	return boardOffset + Vector2(snapped_x, snapped_y)
 
 func _to_cell(worldPos: Vector2) -> Vector2i:
@@ -118,10 +123,14 @@ func _to_cell(worldPos: Vector2) -> Vector2i:
 
 func _footprint_cells(originCell: Vector2i, footprint: Vector2i) -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
-	var cellSpan := Vector2i(max(1, int(ceil(float(footprint.x) / dotDistance))), max(1, int(ceil(float(footprint.x) / dotDistance))))
+	# FIX: footprint.y werd hier voorheen als footprint.x geschreven
+	var cellSpan := Vector2i(
+		max(1, int(ceil(float(footprint.x) / dotDistance))), 
+		max(1, int(ceil(float(footprint.y) / dotDistance)))
+	)
 	for x in range(cellSpan.x):
 		for y in range(cellSpan.y):
-			cells.append(originCell + Vector2i(x,y))
+			cells.append(originCell + Vector2i(x, y))
 	return cells
 
 func _cell_free(originCell: Vector2i, footprint: Vector2i) -> bool:
@@ -133,3 +142,14 @@ func _cell_free(originCell: Vector2i, footprint: Vector2i) -> bool:
 func _mark_occupied(originCell: Vector2i, footprint: Vector2i, comp: Base_component) -> void:
 	for cell in _footprint_cells(originCell, footprint):
 		occupied[cell] = comp
+
+# FIX: Veilige check voor footprint om crashes te voorkomen
+func _get_footprint(node: Node) -> Vector2i:
+	if is_instance_valid(node) and node.has_method("get_pin_footprint"):
+		return node.get_pin_footprint()
+	elif is_instance_valid(node) and "component_data" in node and node.component_data:
+		if "pin_footprint" in node.component_data and node.component_data.pin_footprint != Vector2i.ZERO:
+			return node.component_data.pin_footprint
+		elif "footprint" in node.component_data:
+			return node.component_data.footprint
+	return Vector2i.ONE
