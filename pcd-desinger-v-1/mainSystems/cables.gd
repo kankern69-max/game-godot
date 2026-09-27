@@ -30,7 +30,6 @@ func _process(_delta: float) -> void:
 	for cable in SavedCables:
 		if is_instance_valid(cable) and cable.has_method("check_battery_connection"):
 			cable.check_battery_connection()
-			print("Cable ID: ", cable.cableID, " | Voltage: ", cable.voltage)
  
 func setup_astar_grid() -> void:
 	Astar.clear()

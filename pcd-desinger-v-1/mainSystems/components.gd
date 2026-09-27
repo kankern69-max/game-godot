@@ -123,7 +123,7 @@ func _to_cell(worldPos: Vector2) -> Vector2i:
 
 func _footprint_cells(originCell: Vector2i, footprint: Vector2i) -> Array[Vector2i]:
 	var cells: Array[Vector2i] = []
-	# FIX: footprint.y werd hier voorheen als footprint.x geschreven
+
 	var cellSpan := Vector2i(
 		max(1, int(ceil(float(footprint.x) / dotDistance))), 
 		max(1, int(ceil(float(footprint.y) / dotDistance)))
@@ -143,7 +143,7 @@ func _mark_occupied(originCell: Vector2i, footprint: Vector2i, comp: Base_compon
 	for cell in _footprint_cells(originCell, footprint):
 		occupied[cell] = comp
 
-# FIX: Veilige check voor footprint om crashes te voorkomen
+
 func _get_footprint(node: Node) -> Vector2i:
 	if is_instance_valid(node) and node.has_method("get_pin_footprint"):
 		return node.get_pin_footprint()

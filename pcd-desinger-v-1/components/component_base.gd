@@ -12,7 +12,7 @@ var power: float = 0.0
 var is_powered: bool = false
 var connected_components: Array[Base_component] = []
 
-# Verlaagd naar 2.0 px om enkel exacte overlap toe te staan
+
 const TOUCH_RADIUS: float = 2.0 
 
 func _ready():
@@ -44,8 +44,8 @@ func get_pin_positions_global() -> Array[Vector2]:
 		left_pin_local.x -= 4.0
 		right_pin_local.x += 4.0
 
-	pins.append(to_global(left_pin_local))  # Left Pin (-)
-	pins.append(to_global(right_pin_local)) # Right Pin (+)
+	pins.append(to_global(left_pin_local))  
+	pins.append(to_global(right_pin_local)) 
 	return pins
 
 func _get_resistance() -> float:
@@ -57,12 +57,10 @@ func update_simulation() -> void:
 	power = voltage * current
 	is_powered = voltage > 0.0
 
-# --- CENTRALE UPDATE FUNCTIE ---
 static func update_all_circuits(tree: SceneTree):
 	var all_cables = tree.get_nodes_in_group("cables")
 	var all_components = tree.get_nodes_in_group("circuit_components")
 
-	# 1. RESET ALLE KABELS EN COMPONENTEN EERST NAAR 0V
 	for c in all_cables:
 		_set_cable_powered(c, false)
 
@@ -72,7 +70,6 @@ static func update_all_circuits(tree: SceneTree):
 			comp.voltage = 0.0
 			comp.current = 0.0
 
-	# 2. CONTROLEER VANAF ELKE BATTERIJ OF ER EEN GESLOTEN STROOMKRING IS
 	for comp in all_components:
 		if is_instance_valid(comp) and comp.component_data and comp.component_data.component_type == Component.type.battery:
 			comp._evaluate_battery_circuit(all_cables, all_components)
@@ -82,8 +79,8 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 	if pins.size() < 2:
 		return
 
-	var target_pin_minus: Vector2 = pins[0]  # Target (-)
-	var start_pin_plus: Vector2 = pins[1]   # Origin (+)
+	var target_pin_minus: Vector2 = pins[0]  
+	var start_pin_plus: Vector2 = pins[1]   
 
 	var queue: Array[Vector2] = [start_pin_plus]
 	var visited_points := {}
@@ -95,17 +92,15 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 	while queue.size() > 0:
 		var curr_pos = queue.pop_front()
 		
-		# Exacte controle of we de (-) pool hebben bereikt
 		if curr_pos.distance_to(target_pin_minus) <= TOUCH_RADIUS and curr_pos != start_pin_plus:
 			is_closed_loop = true
 
-		# Afgerond naar gehele pixels voor de unieke positie-key
 		var pos_key = Vector2i(round(curr_pos.x), round(curr_pos.y))
 		if pos_key in visited_points:
 			continue
 		visited_points[pos_key] = true
 
-		# 1. Zoek verbonden kabels
+
 		for cable in all_cables:
 			if not is_instance_valid(cable):
 				continue
@@ -130,7 +125,7 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 				for p in pts:
 					queue.append(p)
 
-		# 2. Zoek verbonden componenten
+
 		for comp in all_components:
 			if not is_instance_valid(comp) or comp == self:
 				continue
@@ -147,7 +142,6 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 				for p in c_pins:
 					queue.append(p)
 
-	# 3. Alleen inschakelen bij een volledig gesloten circuit
 	if is_closed_loop:
 		self.is_powered = true
 		self.voltage = 5.0

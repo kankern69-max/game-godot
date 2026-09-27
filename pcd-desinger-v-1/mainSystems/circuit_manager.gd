@@ -20,7 +20,6 @@ func _rebuild_graph():
 	ground = grounds[0] if grounds.size() > 0 else null
 
 func _process(_delta):
-	# Update het volledige netwerk en controleer op gesloten stroomkringen
 	Base_component.update_all_circuits(get_tree())
 	
 	for comp in components:
