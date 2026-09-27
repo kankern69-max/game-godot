@@ -148,14 +148,19 @@ func _input(event: InputEvent) -> void:
 			var endPos = lastSnappedPos
 			if currentMode != DrawMode.Select and currentMode != DrawMode.ExtendedLine and currentCable.has_method("update_active_point"):
 				currentCable.update_active_point(endPos)
-	
+				
+			var line = _get_line2d(currentCable)
+			var total_distance: float = 0.0
+			if line and line.points.size() > 1:
+				for i in range(line.points.size() - 1):
+					total_distance += line.points[i].distance_to(line.points[i + 1])
 			var cable_length = 0
 			if currentCable.has_method("getCableCount"):
 				cable_length = currentCable.getCableCount()
 			elif currentCable.has_node("Line2D"):
 				cable_length = (currentCable.get_node("Line2D") as Line2D).points.size()
 				
-			if cable_length > 1:
+			if cable_length > 1 and total_distance >= snapPoint:
 				SavedCables.append(currentCable)
 				notify_circuit_update()
 				Base_component.update_all_circuits(get_tree())
