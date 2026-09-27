@@ -12,8 +12,10 @@ var power: float = 0.0
 var is_powered: bool = false
 var connected_components: Array[Base_component] = []
 
+# Switch state: true = Closed (Conducting), false = Open (Broken Circuit)
+var is_closed: bool = true
 
-const TOUCH_RADIUS: float = 2.0 
+const TOUCH_RADIUS: float = 6.0 
 
 func _ready():
 	if not component_data:
@@ -28,6 +30,34 @@ func _ready():
 	
 	add_to_group("circuit_components")
 
+func toggle_state() -> void:
+	if component_data and component_data.component_type == Component.type.switch:
+		is_closed = not is_closed
+		update_visuals()
+
+func is_conducting() -> bool:
+	if component_data and component_data.component_type == Component.type.switch:
+		return is_closed
+	return true
+
+func update_visuals() -> void:
+	if component_data and component_data.component_type == Component.type.switch:
+		if not is_closed:
+			sprite.modulate = Color(0.5, 0.5, 0.5) # Dimmed visual when open
+		else:
+			sprite.modulate = Color(1.0, 1.0, 1.0) # Normal visual when closed
+
+# Precise click detection using the component's actual sprite bounding box
+func contains_point(global_point: Vector2) -> bool:
+	if not component_data:
+		return global_position.distance_to(global_point) < 12.0
+	
+	var fp = Vector2(component_data.footprint)
+	var offset = Vector2(component_data.pin_offset)
+	var local_pos = to_local(global_point)
+	var rect = Rect2(-offset, fp)
+	return rect.has_point(local_pos)
+
 func get_pin_positions_global() -> Array[Vector2]:
 	var pins: Array[Vector2] = []
 	if not component_data:
@@ -37,6 +67,8 @@ func get_pin_positions_global() -> Array[Vector2]:
 	var footprint_px = Vector2(component_data.footprint)
 	var offset = Vector2(component_data.pin_offset)
 	
+	# Pin 0: Left square center (4px in)
+	# Pin 1: Right square center (footprint_px.x - 4px)
 	var left_pin_local = Vector2(4.0, footprint_px.y * 0.5) - offset
 	var right_pin_local = Vector2(max(4.0, footprint_px.x - 4.0), footprint_px.y * 0.5) - offset
 	
@@ -100,7 +132,7 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 			continue
 		visited_points[pos_key] = true
 
-
+		# 1. Cable propagation
 		for cable in all_cables:
 			if not is_instance_valid(cable):
 				continue
@@ -125,22 +157,27 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 				for p in pts:
 					queue.append(p)
 
-
+		# 2. Component pin-to-pin propagation
 		for comp in all_components:
 			if not is_instance_valid(comp) or comp == self:
 				continue
 
 			var c_pins = comp.get_pin_positions_global()
-			var touches_comp = false
-			for p in c_pins:
-				if p.distance_to(curr_pos) <= TOUCH_RADIUS:
-					touches_comp = true
+			var entered_pin_index: int = -1
+
+			for i in range(c_pins.size()):
+				if c_pins[i].distance_to(curr_pos) <= TOUCH_RADIUS:
+					entered_pin_index = i
 					break
 
-			if touches_comp:
+			if entered_pin_index != -1:
 				powered_components[comp] = true
-				for p in c_pins:
-					queue.append(p)
+				
+				# Only pass electricity through to the other pin if switch is closed
+				if comp.is_conducting():
+					for i in range(c_pins.size()):
+						if i != entered_pin_index:
+							queue.append(c_pins[i])
 
 	if is_closed_loop:
 		self.is_powered = true

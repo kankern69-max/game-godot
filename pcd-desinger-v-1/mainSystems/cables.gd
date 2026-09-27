@@ -100,7 +100,7 @@ func _input(event: InputEvent) -> void:
 		var components = get_tree().get_nodes_in_group("circuit_components")
 		for comp in components:
 			if comp is Base_component:
-				if comp.global_position.distance_to(to_global(click_pos)) < 24.0:
+				if comp.contains_point(to_global(click_pos)):
 					if comp.has_method("toggle_state"):
 						comp.toggle_state()
 						notify_circuit_update()
