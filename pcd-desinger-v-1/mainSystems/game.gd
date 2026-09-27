@@ -7,11 +7,23 @@ const boardOffset: Vector2 = Vector2((1920-640) * 0.5, (1080-400) * 0.5)
 
 func _ready() -> void:
 	if has_node("FadeOverlay"):
-		$FadeOverlay.position.y = 0.0
-		var tween = create_tween()
-		tween.tween_property($FadeOverlay, "position:y", -1080.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		var overlay = $FadeOverlay
+		
+		# Reset de positie en grootte strak op het scherm
+		overlay.position = Vector2.ZERO
+		overlay.size = Vector2(1920, 1080)
+		overlay.modulate.a = 1.0
+		
+		var tween = create_tween().set_parallel(true)
+		
+		# 1. Fade-out naar transparant
+		tween.tween_property(overlay, "modulate:a", 0.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		
+		# 2. Schuif hem ver genoeg omhoog (-600) zodat de rand snel buiten beeld schuift
+		tween.tween_property(overlay, "position:y", -600.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		
 		await tween.finished
-		$FadeOverlay.queue_free()
+		overlay.queue_free()
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:

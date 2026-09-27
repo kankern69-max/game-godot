@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vpqufs4723jb"
-valid=false
+uid="uid://4e0tp3tnn6br"
+path="res://.godot/imported/fading_black_2_png.png-d170f80ad9d6e299dc188923d7e3eb7d.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
-source_file="res://components/fading_black.png"
+source_file="res://components/fading_black_2_png.png"
+dest_files=["res://.godot/imported/fading_black_2_png.png-d170f80ad9d6e299dc188923d7e3eb7d.ctex"]
 
 [params]
 
