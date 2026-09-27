@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://c27t5ucvcgikb" path="res://ui/scripts/main_menu.gd" id="1_06t4h"]
 [ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/assets/Klikkerdeklik.mp3" id="2_0dkrt"]
 [ext_resource type="Texture2D" uid="uid://dbcok3cbmavsa" path="res://ui/assets/PCB_Logo.png" id="3_wk0pr"]
-[ext_resource type="Texture2D" uid="uid://4e0tp3tnn6br" path="res://components/fading_black_2_png.png" id="4_rmr83"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0pr"]
 bg_color = Color(0, 0.54901963, 0.2901961, 1)
@@ -193,11 +192,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -2.0
 offset_top = 1080.0
-offset_right = -2.0
-offset_bottom = 1079.9993
+offset_right = -412.0
+offset_bottom = 923.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_rmr83")
+texture = ExtResource("3_wk0pr")
 expand_mode = 1
 
 [connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
