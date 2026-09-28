@@ -6,23 +6,20 @@ const boardSize: Vector2i = Vector2i(640, 400)
 const boardOffset: Vector2 = Vector2((1920-640) * 0.5, (1080-400) * 0.5)
 
 func _ready() -> void:
-	# Pas "Logo" aan naar de exacte naam van je node in de Scène-boom
+	
 	if has_node("FadeOverlay"):
 		var FadeOverlay = $FadeOverlay
 		
-		# Zorg dat de node niet verdwijnt of vastzit
 		FadeOverlay.visible = true
 		FadeOverlay.modulate.a = 1.0
 		
-		# Maak de tween aan
+		
 		var tween = create_tween()
 		
-		# Fade rustig uit naar 0.0 transparantie in 1.5 seconden
 		tween.tween_property(FadeOverlay, "modulate:a", 0.0, 1.5)\
 			.set_trans(Tween.TRANS_QUINT)\
 			.set_ease(Tween.EASE_IN_OUT)
 		
-		# Verwijder het logo zodra de fade klaar is
 		await tween.finished
 		FadeOverlay.queue_free()
 
