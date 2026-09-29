@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://c27t5ucvcgikb" path="res://ui/scripts/main_menu.gd" id="1_06t4h"]
 [ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/assets/Klikkerdeklik.mp3" id="2_0dkrt"]
 [ext_resource type="Script" uid="uid://dt7uv8akf4ghp" path="res://ui/start.gd" id="2_rmr83"]
+[ext_resource type="Script" uid="uid://bu6ni2tayppp7" path="res://ui/quit.gd" id="3_8uxxo"]
 [ext_resource type="Texture2D" uid="uid://dbcok3cbmavsa" path="res://ui/assets/PCB_Logo.png" id="3_wk0pr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0pr"]
@@ -192,6 +193,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_fu7sn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
 text = "Quit"
+script = ExtResource("3_8uxxo")
 
 [node name="Credits" type="Button" parent="." unique_id=1210527748]
 layout_mode = 1
