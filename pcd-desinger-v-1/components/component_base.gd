@@ -13,6 +13,7 @@ var is_powered: bool = false
 var connected_components: Array[Base_component] = []
 
 var is_closed: bool = true
+var _is_being_held: bool = false
 
 const TOUCH_RADIUS: float = 6.0 
 
@@ -27,16 +28,58 @@ func _ready():
 	sprite.centered = false
 	sprite.offset = - Vector2(component_data.pin_offset)
 	
+	if component_data.component_type == Component.type.switch:
+		var s_type = component_data.get("switch_type") if "switch_type" in component_data else "Toggle"
+		if s_type == "PushButton":
+			is_closed = false
+		update_visuals()
+	
 	add_to_group("circuit_components")
 
-func toggle_state() -> void:
-	if component_data and component_data.component_type == Component.type.switch:
+func _input(event: InputEvent) -> void:
+	if _is_being_held and event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			handle_switch_release()
+			update_all_circuits(get_tree())
+
+func handle_switch_press() -> void:
+	if not component_data or component_data.component_type != Component.type.switch:
+		return
+
+	var s_type = component_data.get("switch_type") if "switch_type" in component_data else "Toggle"
+	
+	if s_type == "PushButton":
+		is_closed = true
+		_is_being_held = true
+	else:
 		is_closed = not is_closed
+		
+	update_visuals()
+
+func handle_switch_release() -> void:
+	if not component_data or component_data.component_type != Component.type.switch:
+		return
+
+	var s_type = component_data.get("switch_type") if "switch_type" in component_data else "Toggle"
+	
+	if s_type == "PushButton":
+		is_closed = false
+		_is_being_held = false
 		update_visuals()
 
-func is_conducting() -> bool:
-	if component_data and component_data.component_type == Component.type.switch:
+func toggle_state() -> void:
+	handle_switch_press()
+
+func is_conducting(entered_pin_index: int = -1) -> bool:
+	if not component_data:
+		return true
+
+	if component_data.component_type == Component.type.switch:
 		return is_closed
+
+	if component_data is Diode or component_data.component_type == Component.type.diode:
+		return entered_pin_index == 1
+
 	return true
 
 func update_visuals() -> void:
@@ -72,14 +115,18 @@ func get_pin_positions_global() -> Array[Vector2]:
 		left_pin_local.x -= 4.0
 		right_pin_local.x += 4.0
 
-	pins.append(to_global(left_pin_local))  
+	pins.append(to_global(left_pin_local)) 
 	pins.append(to_global(right_pin_local)) 
 	return pins
 
 func _get_resistance() -> float:
 	if not component_data:
-		return 1.0
-	return 1.0
+		return 0.0
+	if component_data is Resistor or "resistance" in component_data:
+		return component_data.resistance
+	if component_data is Battery or "internal_resistance" in component_data:
+		return component_data.internal_resistance
+	return 0.0
 
 func update_simulation() -> void:
 	power = voltage * current
@@ -165,25 +212,48 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 					break
 
 			if entered_pin_index != -1:
-				powered_components[comp] = true
-				
-				if comp.is_conducting():
+				if comp.is_conducting(entered_pin_index):
+					powered_components[comp] = true
 					for i in range(c_pins.size()):
 						if i != entered_pin_index:
 							queue.append(c_pins[i])
 
 	if is_closed_loop:
-		self.is_powered = true
-		self.voltage = 5.0
-		self.current = 1.0
+		var battery_v: float = 5.0
+		var battery_r: float = 0.0
+		var max_i: float = 0.0
 
-		for cable in powered_cables.keys():
-			_set_cable_powered(cable, true)
+		if component_data is Battery:
+			battery_v = component_data.voltage
+			battery_r = component_data.internal_resistance
+			max_i = component_data.max_current
+		elif "voltage" in component_data and component_data.voltage > 0.0:
+			battery_v = component_data.voltage
+
+		var total_r: float = battery_r
+		for comp in powered_components.keys():
+			total_r += comp._get_resistance()
+
+		if total_r <= 0.001:
+			total_r = 0.001
+
+		var circuit_current: float = battery_v / total_r
+		if max_i > 0.0 and circuit_current > max_i:
+			circuit_current = max_i
+
+		self.is_powered = true
+		self.voltage = battery_v
+		self.current = circuit_current
+		self.update_simulation()
 
 		for comp in powered_components.keys():
 			comp.is_powered = true
-			comp.voltage = 5.0
-			comp.current = 1.0
+			comp.current = circuit_current
+			comp.voltage = circuit_current * comp._get_resistance()
+			comp.update_simulation()
+
+		for cable in powered_cables.keys():
+			_set_cable_powered(cable, true, battery_v, circuit_current)
 
 static func _get_line_from_cable(cable: Node) -> Line2D:
 	if cable is Line2D:
@@ -192,7 +262,22 @@ static func _get_line_from_cable(cable: Node) -> Line2D:
 		return cable.get_node("Line2D") as Line2D
 	return null
 
-static func _set_cable_powered(cable: Node, powered: bool):
+static func _set_cable_powered(cable: Node, powered: bool, v: float = 5.0, i: float = 1.0):
+	if "voltage" in cable:
+		cable.voltage = v if powered else 0.0
+		if "current" in cable:
+			cable.current = i if powered else 0.0
+		if "power" in cable:
+			cable.power = cable.voltage * cable.current
+	
+	if cable.has_method("set_powered"):
+		cable.call("set_powered", powered)
+	elif cable.has_method("update_visuals"):
+		cable.call("update_visuals")
+	else:
+		var line = _get_line_from_cable(cable)
+		if line:
+			line.default_color = Color(1.0, 0.85, 0.2) if powered else Color(0.35, 0.35, 0.35)
 	if "voltage" in cable:
 		cable.voltage = 5.0 if powered else 0.0
 		if "current" in cable:
