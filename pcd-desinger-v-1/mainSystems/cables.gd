@@ -15,8 +15,8 @@ var lineAxisLocked: bool = false
 var lockedAxis: String = ""
 var startPos: Vector2 = Vector2.ZERO
 var editingCable: Node2D = null
-var fixedStartPos: Vector2 = Vector2.ZERO
-var fixedEndPos: Vector2 = Vector2.ZERO
+var cableWayPoints: PackedVector2Array = []
+var activeWayPointIndex: int = -1
 const boardSize: Vector2i = Vector2i(640, 400)
 const boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
 var Astar: AStar2D = AStar2D.new()
@@ -82,6 +82,8 @@ func GlobalToolChange(toolName: String) -> void:
 		layingCable = false
 		currentCable = null
 		editingCable = null
+		cableWayPoints.clear()
+		activeWayPointIndex = -1
 	match toolName:
 		"FREE":
 			currentMode = DrawMode.Free
@@ -124,16 +126,12 @@ func _input(event: InputEvent) -> void:
 					editingCable = cableToEdit
 					SavedCables.erase(editingCable)
 					
-					if editingCable.has_method("getPointStart") and editingCable.has_method("getPointEnd"):
-						fixedStartPos = editingCable.to_global(editingCable.getPointStart())
-						fixedEndPos = editingCable.to_global(editingCable.getPointEnd())
-					elif editingCable.has_node("Line2D"):
-						var Line = editingCable.get_node("Line2D") as Line2D
-						fixedStartPos = editingCable.to_global(Line.points[0])
-						fixedEndPos = editingCable.to_global(Line.points[Line.points.size() - 1])
 					currentCable = editingCable
 					lastSnappedPos = startPos
 					layingCable = true
+					
+					setup_editing_waypoints(to_global(startPos))
+					save_changed_points(startPos)
 			else:
 				lineAxisLocked = false
 				currentCable = TraceScene.instantiate()
@@ -170,7 +168,8 @@ func _input(event: InputEvent) -> void:
 			layingCable = false
 			currentCable = null
 			editingCable = null
-			
+			cableWayPoints.clear()
+			activeWayPointIndex = -1
 			
 	elif event is InputEventMouseMotion and layingCable:
 		var realMousePos = clampToBoard(to_local(get_global_mouse_position()))
@@ -180,27 +179,7 @@ func _input(event: InputEvent) -> void:
 			return
 		
 		if currentMode == DrawMode.Select and currentCable:
-			var start_id = Astar.get_closest_point(fixedStartPos)
-			var grab_id = Astar.get_closest_point(to_global(targetPos))
-			var end_id = Astar.get_closest_point(fixedEndPos)
- 
-			var leg1: PackedVector2Array = Astar.get_point_path(start_id, grab_id)
-			var leg2: PackedVector2Array = Astar.get_point_path(grab_id, end_id)
- 
-			var rebuilt_path: PackedVector2Array = []
-			rebuilt_path.append_array(leg1)
- 
-			if leg2.size() > 1:
-				for i in range(1, leg2.size()):
-					rebuilt_path.append(leg2[i])
- 
-			var line = _get_line2d(currentCable)
-			if line:
-				line.clear_points()
-				for pt in rebuilt_path:
-					line.add_point(currentCable.to_local(pt))
- 
-			lastSnappedPos = targetPos
+			save_changed_points(targetPos)
  
 		elif currentMode == DrawMode.Free:
 			var start_id = Astar.get_closest_point(to_global(startPos))
@@ -337,6 +316,7 @@ func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVec
 		current_p.y += step_y
 		raw_path.append(clampToBoard(current_p))
 		
+		var direction_exit = -direction
 		current_p.x = from_pos.x
 		raw_path.append(clampToBoard(current_p))
 		
@@ -464,3 +444,89 @@ func _reset_circuit_power() -> void:
 			comp.is_powered = false
 			comp.voltage = 0.0
 			comp.current = 0.0
+
+func setup_editing_waypoints(global_click_pos: Vector2) -> void:
+	cableWayPoints.clear()
+	activeWayPointIndex = -1
+	
+	var line = _get_line2d(editingCable)
+	if not line or line.points.size() < 2:
+		return
+		
+	var raw_global_points: PackedVector2Array = []
+	for pt in line.points:
+		raw_global_points.append(editingCable.to_global(pt))
+	
+	cableWayPoints = extract_corner_waypoints(raw_global_points)
+	
+	var closest_idx = -1
+	var min_dist = 16.0
+	for i in range(cableWayPoints.size()):
+		var d = cableWayPoints[i].distance_to(global_click_pos)
+		if d < min_dist:
+			min_dist = d
+			closest_idx = i
+			
+	if closest_idx != -1:
+		activeWayPointIndex = closest_idx
+	else:
+		var best_segment_idx = 0
+		var best_dist = INF
+		for i in range(cableWayPoints.size() - 1):
+			var p1 = cableWayPoints[i]
+			var p2 = cableWayPoints[i + 1]
+			var proj = Geometry2D.get_closest_point_to_segment(global_click_pos, p1, p2)
+			var d = proj.distance_to(global_click_pos)
+			if d < best_dist:
+				best_dist = d
+				best_segment_idx = i
+				
+		activeWayPointIndex = best_segment_idx + 1
+		cableWayPoints.insert(activeWayPointIndex, global_click_pos)
+
+func extract_corner_waypoints(points: PackedVector2Array) -> PackedVector2Array:
+	
+	if points.size() <= 2:
+		return points.duplicate()
+	var clean_points: PackedVector2Array = []
+	clean_points.append(points[0])
+	for i in range(1, points.size()):
+		if points[i].distance_squared_to(clean_points[clean_points.size() - 1]) > 0.1:
+			clean_points.append(points[i])
+	if clean_points.size() <= 2:
+		return clean_points
+	var corners: PackedVector2Array = []
+	corners.append(clean_points[0])
+	for i in range(1, clean_points.size() - 1):
+		var dir1 = (clean_points[i] - clean_points[i - 1]).normalized()
+		var dir2 = (clean_points[i + 1] - clean_points[i]).normalized()
+		if not dir1.is_equal_approx(dir2):
+			corners.append(clean_points[i])
+	corners.append(clean_points[clean_points.size() - 1])
+	return corners
+
+func save_changed_points(targetPos: Vector2) -> void:
+	if not currentCable or activeWayPointIndex < 0 or activeWayPointIndex >= cableWayPoints.size():
+		return
+	
+	cableWayPoints[activeWayPointIndex] = to_global(targetPos)
+	
+	var full_path: PackedVector2Array = []
+	for i in range(cableWayPoints.size() - 1):
+		var start_id = Astar.get_closest_point(cableWayPoints[i])
+		var end_id = Astar.get_closest_point(cableWayPoints[i + 1])
+		var leg: PackedVector2Array = Astar.get_point_path(start_id, end_id)
+	
+		if i == 0:
+			full_path.append_array(leg)
+		elif leg.size() > 1:
+			for j in range(1, leg.size()):
+				full_path.append(leg[j])
+	
+	var line = _get_line2d(currentCable)
+	if line:
+		line.clear_points()
+		for pt in full_path:
+			line.add_point(currentCable.to_local(pt))
+	
+	lastSnappedPos = targetPos
