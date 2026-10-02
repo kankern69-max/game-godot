@@ -29,3 +29,6 @@ func _on_button_up()-> void:
 	var tween = create_tween()
 	tween.tween_property(self,"scale", Vector2(1.08, 1.08), 0.1)\
 		.set_trans(Tween.TRANS_BACK)
+
+func _on_button_pressed() -> void:
+	get_tree().quit()
