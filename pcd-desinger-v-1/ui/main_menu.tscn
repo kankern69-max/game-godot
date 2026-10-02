@@ -4,7 +4,7 @@
 [ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/assets/Klikkerdeklik.mp3" id="2_0dkrt"]
 [ext_resource type="Script" uid="uid://dt7uv8akf4ghp" path="res://ui/start.gd" id="2_rmr83"]
 [ext_resource type="Script" uid="uid://bu6ni2tayppp7" path="res://ui/quit.gd" id="3_8uxxo"]
-[ext_resource type="Texture2D" uid="uid://dbcok3cbmavsa" path="res://ui/assets/PCB_Logo.png" id="3_wk0pr"]
+[ext_resource type="Texture2D" uid="uid://cw6wkrmfl4qtv" path="res://components/PCB_Logo.png" id="5_8uxxo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0pr"]
 bg_color = Color(0.039215688, 0.21960784, 0.12156863, 1)
@@ -223,7 +223,7 @@ volume_db = 8.0
 position = Vector2(966.99994, 316)
 rotation = -6.2831855
 scale = Vector2(1.2906717, 0.99655145)
-texture = ExtResource("3_wk0pr")
+texture = ExtResource("5_8uxxo")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1325700215]
 libraries/ = SubResource("AnimationLibrary_rmr83")
@@ -239,7 +239,7 @@ offset_right = -412.0
 offset_bottom = 923.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_wk0pr")
+texture = ExtResource("5_8uxxo")
 expand_mode = 1
 
 [connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
