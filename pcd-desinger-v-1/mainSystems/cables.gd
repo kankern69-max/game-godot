@@ -448,17 +448,18 @@ func _reset_circuit_power() -> void:
 func setup_editing_waypoints(global_click_pos: Vector2) -> void:
 	cableWayPoints.clear()
 	activeWayPointIndex = -1
-	
-	var line = _get_line2d(editingCable)
-	if not line or line.points.size() < 2:
+	if not editingCable:
 		return
-		
-	var raw_global_points: PackedVector2Array = []
-	for pt in line.points:
-		raw_global_points.append(editingCable.to_global(pt))
-	
-	cableWayPoints = extract_corner_waypoints(raw_global_points)
-	
+	if editingCable.get("waypoints") != null and editingCable.waypoints.size() >= 2:
+		cableWayPoints = editingCable.waypoints.duplicate()
+	else:
+		var line = _get_line2d(editingCable)
+		if not line or line.points.size() < 2:
+			return
+		var raw_global_points: PackedVector2Array = []
+		for pt in line.points:
+			raw_global_points.append(editingCable.to_global(pt))
+		cableWayPoints = extract_corner_waypoints(raw_global_points)
 	var closest_idx = -1
 	var min_dist = 16.0
 	for i in range(cableWayPoints.size()):
@@ -466,7 +467,6 @@ func setup_editing_waypoints(global_click_pos: Vector2) -> void:
 		if d < min_dist:
 			min_dist = d
 			closest_idx = i
-			
 	if closest_idx != -1:
 		activeWayPointIndex = closest_idx
 	else:
@@ -478,11 +478,12 @@ func setup_editing_waypoints(global_click_pos: Vector2) -> void:
 			var proj = Geometry2D.get_closest_point_to_segment(global_click_pos, p1, p2)
 			var d = proj.distance_to(global_click_pos)
 			if d < best_dist:
-				best_dist = d
+				best_dist = d 
 				best_segment_idx = i
-				
 		activeWayPointIndex = best_segment_idx + 1
 		cableWayPoints.insert(activeWayPointIndex, global_click_pos)
+	editingCable.waypoints = cableWayPoints.duplicate()
+	editingCable.legs = build_legs_from_waypoints(cableWayPoints)
 
 func extract_corner_waypoints(points: PackedVector2Array) -> PackedVector2Array:
 	
@@ -508,25 +509,37 @@ func extract_corner_waypoints(points: PackedVector2Array) -> PackedVector2Array:
 func save_changed_points(targetPos: Vector2) -> void:
 	if not currentCable or activeWayPointIndex < 0 or activeWayPointIndex >= cableWayPoints.size():
 		return
+	var new_global_pos = to_global(targetPos)
+	var target_ID = Astar.get_closest_point(new_global_pos)
+	cableWayPoints[activeWayPointIndex] = new_global_pos
+	currentCable.waypoints[activeWayPointIndex] = new_global_pos
+	if activeWayPointIndex > 0:
+		var prev_IDX = activeWayPointIndex - 1
+		var start_ID = Astar.get_closest_point(cableWayPoints[prev_IDX])
+		currentCable.legs[prev_IDX] = Astar.get_point_path(start_ID, target_ID)
 	
-	cableWayPoints[activeWayPointIndex] = to_global(targetPos)
-	
+	if activeWayPointIndex < cableWayPoints.size() - 1:
+		var end_ID = Astar.get_closest_point(cableWayPoints[activeWayPointIndex + 1])
+		currentCable.legs[activeWayPointIndex] = Astar.get_point_path(target_ID, end_ID)
 	var full_path: PackedVector2Array = []
-	for i in range(cableWayPoints.size() - 1):
-		var start_id = Astar.get_closest_point(cableWayPoints[i])
-		var end_id = Astar.get_closest_point(cableWayPoints[i + 1])
-		var leg: PackedVector2Array = Astar.get_point_path(start_id, end_id)
-	
+	for i in range(currentCable.legs.size()):
+		var leg = currentCable.legs[i]
 		if i == 0:
 			full_path.append_array(leg)
 		elif leg.size() > 1:
 			for j in range(1, leg.size()):
 				full_path.append(leg[j])
-	
 	var line = _get_line2d(currentCable)
 	if line:
 		line.clear_points()
 		for pt in full_path:
 			line.add_point(currentCable.to_local(pt))
-	
 	lastSnappedPos = targetPos
+
+func build_legs_from_waypoints(wps: PackedVector2Array) -> Array[PackedVector2Array]:
+	var new_legs: Array[PackedVector2Array] = []
+	for i in range(wps.size() - 1):
+		var start_ID = Astar.get_closest_point(wps[i])
+		var end_ID = Astar.get_closest_point(wps[i + 1])
+		new_legs.append(Astar.get_point_path(start_ID, end_ID))
+	return new_legs
