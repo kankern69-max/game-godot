@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://j8oxgjaxflk6"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_qi6xj"]
+
+[resource]
+script = ExtResource("1_qi6xj")
+id = "base_tech"
+title = "Base comp"
+img_atlas = Vector2i(252, 0)
+img_size = Vector2(16, 7)
+unlocked_components = Array[String](["resistor_220", "resistor_330", "resistor_1k", "resistor_4k7", "resistor_10k", "resistor_100k", "battery_5v", "switch_toggle"])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"

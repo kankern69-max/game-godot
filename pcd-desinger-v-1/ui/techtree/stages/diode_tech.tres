@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://bbfj0lyi3sxge"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_sd4i0"]
+[ext_resource type="Resource" uid="uid://j8oxgjaxflk6" path="res://ui/techtree/stages/base_tech.tres" id="2_p7m55"]
+
+[resource]
+script = ExtResource("1_sd4i0")
+id = "diode_tech"
+title = "Diode's"
+img_atlas = Vector2i(460, 0)
+img_size = Vector2(16, 5)
+aquired_techs = Array[ExtResource("1_sd4i0")]([ExtResource("2_p7m55")])
+unlocked_components = Array[String](["diode_1n4001", "diode_1n4148"])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"

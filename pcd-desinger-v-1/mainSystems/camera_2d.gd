@@ -5,7 +5,7 @@ var view: float = 1
 func _process(_delta: float) -> void:
 	zoom = Vector2.ONE * pow(1.15,view)
 
-func _input(event):
+func _unhandled_input(event):
 	_CamMovement(event)
 	if event is InputEventMouseButton and event.pressed:
 

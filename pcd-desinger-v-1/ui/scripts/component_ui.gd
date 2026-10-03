@@ -36,7 +36,7 @@ func draw_components() -> void:
 	
 	var filtered_list: Array[Component] = []
 	for component_id in Global.unlocked_components:
-		var component: Component = Global.components[component_id]
+		var component: Component = Global.components_paths[component_id]
 		
 		if search_text != "":
 			var name_match: bool = component.component_name.to_lower().contains(search_text)

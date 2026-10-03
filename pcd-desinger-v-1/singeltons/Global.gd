@@ -3,12 +3,17 @@ extends Node
 signal toolChanged(toolName: String)
 signal componentPlaced
 
+signal component_unlocked(component_id: String)
+signal tech_unlocked(tech_id: String)
+
 var CableColor: Color = Color(1.0, 0.0, 0.0, 1.0)
 enum MODE {ARCADE, SIMULATOR}
 
 var current_mode: MODE = MODE.ARCADE
 
-const components: Dictionary = {
+var selected_component: Component
+
+const components_paths: Dictionary = {
 	"resistor_220": preload("res://components/component_resources/resistors/resistor_220.tres"), 
 	"resistor_330": preload("res://components/component_resources/resistors/resistor_330.tres"), 
 	"resistor_1k": preload("res://components/component_resources/resistors/resistor_1k.tres"), 
@@ -32,5 +37,31 @@ const components: Dictionary = {
 	"switch_toggle": preload("res://components/component_resources/Switches/Toggle Switch.tres")
 }
 
-var unlocked_components: Array[String] = ["resistor_220", "resistor_330", "resistor_1k", "resistor_4k7", "resistor_10k", "resistor_100k", "capacitor_100n_cer", "capacitor_10n_cer", "cpacitor_10u_elec", "inductor_10u", "inductor_100u", "inductor_1m", "diode_1n4001", "diode_1n4148", "led_blue_5mm", "led_green_5mm", "led_red_5mm", "battery_5v", "ground", "switch_pushbutton", "switch_toggle"]
-var selected_component: Component
+var unlocked_techs: Array[String] = []
+
+var unlocked_components: Array[String] = []
+
+func is_component_unlocked(comp_id: String) -> bool:
+	return unlocked_components.has(comp_id)
+
+func unlock_component(comp_id: String) -> void:
+	if not unlocked_components.has(comp_id):
+		unlocked_components.append(comp_id)
+		component_unlocked.emit(comp_id)
+
+func unlock_tech(tech: TechNodeResource) -> bool:
+	if unlocked_techs.has(tech.id) or not tech.can_unlock():
+		return false
+		
+	unlocked_techs.append(tech.id)
+	
+	for comp_id in tech.unlocked_components:
+		if comp_id not in unlocked_components:
+			unlocked_components.append(comp_id)
+	
+	if tech.id.begins_with("board_expansion"):
+		get_tree().call_group("pcb_board", "expand_board", 0.10)
+	
+	tech_unlocked.emit(tech.id)
+	return true
+	

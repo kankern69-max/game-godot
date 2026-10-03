@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://x6rry0l4d2cc"]
+
+[ext_resource type="Script" uid="uid://c6q2wfclkhkrl" path="res://ui/techtree/tech_node_ui.gd" id="1_wdwxb"]
+
+[node name="TechNodeUi" type="Panel" unique_id=1842559716]
+custom_minimum_size = Vector2(110, 110)
+offset_right = 110.0
+offset_bottom = 110.0
+script = ExtResource("1_wdwxb")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1518216689]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=246936335]
+layout_mode = 2
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer" unique_id=1888031637]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=538881780]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

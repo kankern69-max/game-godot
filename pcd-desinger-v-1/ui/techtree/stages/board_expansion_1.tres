@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://cqvhe6u5p6o03"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_uceub"]
+[ext_resource type="Resource" uid="uid://j8oxgjaxflk6" path="res://ui/techtree/stages/base_tech.tres" id="2_lhw3f"]
+
+[resource]
+script = ExtResource("1_uceub")
+id = "board_expansion_1"
+title = "PCB Expansion I"
+img_size = Vector2(64, 64)
+aquired_techs = Array[ExtResource("1_uceub")]([ExtResource("2_lhw3f")])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"
