@@ -185,7 +185,7 @@ func _input(event: InputEvent) -> void:
 			var start_id = Astar.get_closest_point(to_global(startPos))
 			var target_id = Astar.get_closest_point(to_global(targetPos))
 			var path: PackedVector2Array = Astar.get_point_path(start_id, target_id)
-			
+			path = remove_path_loops(path)
 			var line = _get_line2d(currentCable)
 			if line:
 				line.clear_points()
@@ -196,6 +196,7 @@ func _input(event: InputEvent) -> void:
 		
 		elif currentMode == DrawMode.ExtendedLine:
 			var path: PackedVector2Array = generate_extendedLine_path(startPos, targetPos)
+			path = remove_path_loops(path)
 			var line = _get_line2d(currentCable)
 			if line:
 				line.clear_points()
@@ -254,6 +255,7 @@ func _input(event: InputEvent) -> void:
 				var nextPos = clampToBoard(lastSnappedPos + step)
 				if nextPos == lastSnappedPos:
 					break
+				var globalNextPos = to_global(nextPos)
 				if currentCable.has_method("getPenultimatePoint") and currentCable.getPenultimatePoint() == nextPos:
 					currentCable.removeLastCableSegment()
 					lastSnappedPos = nextPos
@@ -267,6 +269,24 @@ func _input(event: InputEvent) -> void:
  
 			if currentCable.has_method("update_active_point"):
 				currentCable.update_active_point(lastSnappedPos)
+
+func remove_path_loops(path:PackedVector2Array) -> PackedVector2Array:
+	var result: PackedVector2Array = []
+	var visited_indices: Dictionary = {}
+	for pt in path:
+		var snapped = snapToGrid(pt)
+		var key = Vector2i(round(snapped.x), round(snapped.y))
+		if visited_indices.has(key):
+			var loop_start_IDX: int =visited_indices[key]
+			for i in range(result.size() - 1, loop_start_IDX, -1):
+				var prev_snapped = snapToGrid(result[i])
+				var prev_key = Vector2i(round(prev_snapped.x), round(prev_snapped.y))
+				visited_indices.erase(prev_key)
+				result.remove_at(i)
+		else:
+			visited_indices[key] = result.size()
+			result.append(snapped)
+	return result
 
 func _get_line2d(cable: Node2D) -> Line2D:
 	if cable is Line2D:
@@ -529,6 +549,7 @@ func save_changed_points(targetPos: Vector2) -> void:
 		elif leg.size() > 1:
 			for j in range(1, leg.size()):
 				full_path.append(leg[j])
+	full_path = remove_path_loops(full_path)
 	var line = _get_line2d(currentCable)
 	if line:
 		line.clear_points()
