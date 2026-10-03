@@ -6,6 +6,9 @@ var cableID: int = 0
 var voltage: float = 0.0
 var current: float = 0.0
 var power: float = 0.0
+var waypoints: PackedVector2Array = []
+var legs: Array[PackedVector2Array] = []
+
 
 func setup_trace(startPosi: Vector2, id: int) -> void:
 	add_to_group("cables")

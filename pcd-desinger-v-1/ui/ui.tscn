@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://8o8qcvyjplj6" path="res://ui/assets/stairs-solid.png" id="7_pa1oa"]
 [ext_resource type="Texture2D" uid="uid://dhfjni1dnp6j6" path="res://ui/assets/hand-pointer-solid.png" id="8_pa1oa"]
 [ext_resource type="Texture2D" uid="uid://2v7mbncj5s5g" path="res://ui/assets/aquarius-solid.png" id="10_ay4pc"]
+[ext_resource type="Script" uid="uid://bijfmw3ymdhkh" path="res://ui/research_ui.gd" id="11_bi8hs"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
 bg_color = Color(0, 0.7176471, 0.35686275, 1)
@@ -119,6 +120,8 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_bi8hs"]
 
 [node name="UI" type="CanvasLayer" unique_id=209732671]
 
@@ -401,6 +404,123 @@ offset_right = 145.0
 offset_bottom = 70.0
 text = "layer: 1"
 
+[node name="researchUI" type="Panel" parent="Control" unique_id=1915034221]
+layout_mode = 0
+offset_left = 779.0
+offset_top = 7.0
+offset_right = 1177.0
+offset_bottom = 49.0
+script = ExtResource("11_bi8hs")
+
+[node name="research_main_button" type="Button" parent="Control/researchUI" unique_id=956886694]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 6.0
+offset_right = 383.0
+offset_bottom = 37.0
+text = "research
+"
+
+[node name="researchPanel" type="Panel" parent="Control/researchUI" unique_id=1615255557]
+visible = false
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 0
+offset_left = -547.0
+offset_top = 78.0
+offset_right = 947.0
+offset_bottom = 1010.0
+
+[node name="startSquare" type="Panel" parent="Control/researchUI/researchPanel" unique_id=1435874122]
+layout_mode = 0
+offset_left = 87.0
+offset_top = 447.0
+offset_right = 167.0
+offset_bottom = 535.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/researchUI/researchPanel/startSquare" unique_id=1784836973]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 72.0
+offset_bottom = 81.0
+texture = SubResource("ViewportTexture_bi8hs")
+
+[node name="diodeUnlock" type="Panel" parent="Control/researchUI/researchPanel" unique_id=883625415]
+layout_mode = 0
+offset_left = 236.0
+offset_top = 442.0
+offset_right = 316.0
+offset_bottom = 530.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/researchUI/researchPanel/diodeUnlock" unique_id=157851716]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 72.0
+offset_bottom = 81.0
+texture = SubResource("ViewportTexture_bi8hs")
+
+[node name="LEDunlock" type="Panel" parent="Control/researchUI/researchPanel" unique_id=1683681103]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 330.0
+offset_right = 319.0
+offset_bottom = 406.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/researchUI/researchPanel/LEDunlock" unique_id=1100424786]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 72.0
+offset_bottom = 81.0
+texture = SubResource("ViewportTexture_bi8hs")
+
+[node name="largerArea1" type="Panel" parent="Control/researchUI/researchPanel" unique_id=1643859417]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 587.0
+offset_right = 165.0
+offset_bottom = 675.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/researchUI/researchPanel/largerArea1" unique_id=590656318]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 72.0
+offset_bottom = 81.0
+texture = SubResource("ViewportTexture_bi8hs")
+
+[node name="largerArea2" type="Panel" parent="Control/researchUI/researchPanel" unique_id=220042368]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 703.0
+offset_right = 165.0
+offset_bottom = 791.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/researchUI/researchPanel/largerArea2" unique_id=1874803594]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 72.0
+offset_bottom = 81.0
+texture = SubResource("ViewportTexture_bi8hs")
+
+[node name="largerArea3" type="Panel" parent="Control/researchUI/researchPanel" unique_id=1400649716]
+layout_mode = 0
+offset_left = 204.0
+offset_top = 704.0
+offset_right = 284.0
+offset_bottom = 792.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/researchUI/researchPanel/largerArea3" unique_id=1192312441]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 72.0
+offset_bottom = 81.0
+texture = SubResource("ViewportTexture_bi8hs")
+
 [connection signal="text_changed" from="Control/ComponentUI/SearchBar/LineEdit" to="Control/ComponentUI" method="_on_line_edit_text_changed"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Sort" to="Control/ComponentUI" method="_on_sort_sort_selected"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Type" to="Control/ComponentUI" method="_on_type_type_selected"]
@@ -411,3 +531,4 @@ text = "layer: 1"
 [connection signal="gui_input" from="Control/ToolUI/move" to="Control/ToolUI" method="_on_move_gui_input"]
 [connection signal="gui_input" from="Control/ToolUI/Erase" to="Control/ToolUI" method="_on_erase_gui_input"]
 [connection signal="gui_input" from="Control/ToolUI/line2" to="Control/ToolUI" method="_on_line2_gui_input"]
+[connection signal="pressed" from="Control/researchUI/research_main_button" to="Control/researchUI" method="_on_research_main_button_pressed"]
