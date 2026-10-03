@@ -90,7 +90,7 @@ func _try_place() -> void:
 	_mark_occupied(cell, _get_footprint(comp), comp)
 	
 	Global.componentPlaced.emit()
-	
+
 func remove_component(comp: Base_component) -> void:
 	if comp not in placed_components:
 		return
@@ -142,7 +142,6 @@ func _cell_free(originCell: Vector2i, footprint: Vector2i) -> bool:
 func _mark_occupied(originCell: Vector2i, footprint: Vector2i, comp: Base_component) -> void:
 	for cell in _footprint_cells(originCell, footprint):
 		occupied[cell] = comp
-
 
 func _get_footprint(node: Node) -> Vector2i:
 	if is_instance_valid(node) and node.has_method("get_pin_footprint"):

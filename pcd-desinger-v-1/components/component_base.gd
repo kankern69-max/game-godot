@@ -3,18 +3,15 @@ class_name Base_component
 
 @onready var sprite: Sprite2D = $Sprite2D
 const atlas := preload("res://components/component_atlas.tres")
-
 @export var component_data: Component
-
 var voltage: float = 0.0
 var current: float = 0.0
 var power: float = 0.0
 var is_powered: bool = false
 var connected_components: Array[Base_component] = []
-
 var is_closed: bool = true
 var _is_being_held: bool = false
-
+var _glow_overlay: Sprite2D = null
 const TOUCH_RADIUS: float = 6.0 
 
 func _ready():
@@ -32,9 +29,25 @@ func _ready():
 		var s_type = component_data.get("switch_type") if "switch_type" in component_data else "Toggle"
 		if s_type == "PushButton":
 			is_closed = false
-		update_visuals()
 	
+	_setup_glow_overlay()
+	update_visuals()
 	add_to_group("circuit_components")
+	update_all_circuits.call_deferred(get_tree())
+
+func _setup_glow_overlay() -> void:
+	if not component_data or not ("color" in component_data):
+		return
+	_glow_overlay = Sprite2D.new()
+	_glow_overlay.name = "GlowOverlay"
+	var glow_texture = atlas.duplicate()
+	var top_height = max(1.0, floor(component_data.footprint.y * 0.5))
+	glow_texture.region = Rect2(component_data.atlas_coords, Vector2(component_data.footprint.x, top_height))
+	_glow_overlay.texture = glow_texture
+	_glow_overlay.centered = false
+	_glow_overlay.offset = - Vector2(component_data.pin_offset)
+	_glow_overlay.visible = false
+	add_child(_glow_overlay)
 
 func _input(event: InputEvent) -> void:
 	if _is_being_held and event is InputEventMouseButton:
@@ -55,6 +68,7 @@ func handle_switch_press() -> void:
 		is_closed = not is_closed
 		
 	update_visuals()
+	update_all_circuits(get_tree())
 
 func handle_switch_release() -> void:
 	if not component_data or component_data.component_type != Component.type.switch:
@@ -77,17 +91,25 @@ func is_conducting(entered_pin_index: int = -1) -> bool:
 	if component_data.component_type == Component.type.switch:
 		return is_closed
 
-	if component_data is Diode or component_data.component_type == Component.type.diode:
-		return entered_pin_index == 1
-
 	return true
 
 func update_visuals() -> void:
+	if not is_instance_valid(sprite):
+		return
 	if component_data and component_data.component_type == Component.type.switch:
 		if not is_closed:
-			sprite.modulate = Color(0.5, 0.5, 0.5) 
+			sprite.modulate = Color(0.5, 0.5, 0.5)
 		else:
-			sprite.modulate = Color(1.0, 1.0, 1.0) 
+			sprite.modulate = Color(1.0, 1.0, 1.0)
+	else:
+		sprite.self_modulate = Color(1.0, 1.0, 1.0)
+		sprite.modulate = Color(1.0, 1.0, 1.0)
+	if is_instance_valid(_glow_overlay):
+		if is_powered and component_data and "color" in component_data:
+			_glow_overlay.visible = true
+			_glow_overlay.self_modulate = (component_data.color as Color) * 2.5
+		else:
+			_glow_overlay.visible = false
 
 func contains_point(global_point: Vector2) -> bool:
 	if not component_data:
@@ -105,15 +127,15 @@ func get_pin_positions_global() -> Array[Vector2]:
 		pins.append(global_position)
 		return pins
 
-	var footprint_px = Vector2(component_data.footprint)
+	var fp = Vector2(component_data.footprint)
 	var offset = Vector2(component_data.pin_offset)
 	
-	var left_pin_local = Vector2(4.0, footprint_px.y * 0.5) - offset
-	var right_pin_local = Vector2(max(4.0, footprint_px.x - 4.0), footprint_px.y * 0.5) - offset
-	
-	if left_pin_local.distance_to(right_pin_local) < 2.0:
-		left_pin_local.x -= 4.0
-		right_pin_local.x += 4.0
+	var pin_y: float = fp.y * 0.5
+	if fp.y > fp.x or component_data is Diode or component_data.component_type == Component.type.diode:
+		pin_y = fp.y
+
+	var left_pin_local = Vector2(0.0, pin_y) - offset
+	var right_pin_local = Vector2(fp.x, pin_y) - offset
 
 	pins.append(to_global(left_pin_local)) 
 	pins.append(to_global(right_pin_local)) 
@@ -130,9 +152,13 @@ func _get_resistance() -> float:
 
 func update_simulation() -> void:
 	power = voltage * current
-	is_powered = voltage > 0.0
+	is_powered = (voltage > 0.0) or (current > 0.0)
+	update_visuals()
 
 static func update_all_circuits(tree: SceneTree):
+	if not tree:
+		return
+
 	var all_cables = tree.get_nodes_in_group("cables")
 	var all_components = tree.get_nodes_in_group("circuit_components")
 
@@ -144,6 +170,7 @@ static func update_all_circuits(tree: SceneTree):
 			comp.is_powered = false
 			comp.voltage = 0.0
 			comp.current = 0.0
+			comp.update_visuals()
 
 	for comp in all_components:
 		if is_instance_valid(comp) and comp.component_data and comp.component_data.component_type == Component.type.battery:
@@ -249,7 +276,9 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 		for comp in powered_components.keys():
 			comp.is_powered = true
 			comp.current = circuit_current
-			comp.voltage = circuit_current * comp._get_resistance()
+			
+			var r = comp._get_resistance()
+			comp.voltage = (circuit_current * r) if r > 0.0 else battery_v
 			comp.update_simulation()
 
 		for cable in powered_cables.keys():
@@ -265,31 +294,14 @@ static func _get_line_from_cable(cable: Node) -> Line2D:
 static func _set_cable_powered(cable: Node, powered: bool, v: float = 5.0, i: float = 1.0):
 	if "voltage" in cable:
 		cable.voltage = v if powered else 0.0
-		if "current" in cable:
-			cable.current = i if powered else 0.0
-		if "power" in cable:
-			cable.power = cable.voltage * cable.current
-	
+	if "current" in cable:
+		cable.current = i if powered else 0.0
+	if "power" in cable:
+		cable.power = (v * i) if powered else 0.0
+	if "is_powered" in cable:
+		cable.is_powered = powered
+
 	if cable.has_method("set_powered"):
 		cable.call("set_powered", powered)
-	elif cable.has_method("update_visuals"):
+	if cable.has_method("update_visuals"):
 		cable.call("update_visuals")
-	else:
-		var line = _get_line_from_cable(cable)
-		if line:
-			line.default_color = Color(1.0, 0.85, 0.2) if powered else Color(0.35, 0.35, 0.35)
-	if "voltage" in cable:
-		cable.voltage = 5.0 if powered else 0.0
-		if "current" in cable:
-			cable.current = 1.0 if powered else 0.0
-		if "power" in cable:
-			cable.power = cable.voltage * cable.current
-	
-	if cable.has_method("set_powered"):
-		cable.call("set_powered", powered)
-	elif cable.has_method("update_visuals"):
-		cable.call("update_visuals")
-	else:
-		var line = _get_line_from_cable(cable)
-		if line:
-			line.default_color = Color(1.0, 0.85, 0.2) if powered else Color(0.35, 0.35, 0.35)

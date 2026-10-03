@@ -73,14 +73,7 @@ func checkPointExists(pos: Vector2) -> bool:
 func set_cable_color(new_color: Color) -> void:
 	line2d.default_color = new_color
 
-func update_visuals() -> void:
-	if voltage > 0.0:
-		line2d.default_color = Color(1.0, 0.85, 0.2) 
-	else:
-		line2d.default_color = Color(0.35, 0.35, 0.35) 
-
 func set_powered(powered: bool) -> void:
 	voltage = 5.0 if powered else 0.0
 	current = 1.0 if powered else 0.0
 	power = voltage * current
-	update_visuals()
