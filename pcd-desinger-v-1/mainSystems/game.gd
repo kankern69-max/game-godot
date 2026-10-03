@@ -2,10 +2,11 @@ extends Node2D
 
 var dotDistance: int = 8
 const windowSize: Vector2i = Vector2i(1920, 1080)
-const boardSize: Vector2i = Vector2i(640, 400)
-const boardOffset: Vector2 = Vector2((1920-640) * 0.5, (1080-400) * 0.5)
+var boardSize: Vector2i = Vector2i(640, 400)
+var boardOffset: Vector2 = Vector2((1920-640) * 0.5, (1080-400) * 0.5)
 
 func _ready() -> void:
+	add_to_group("pcb_board")
 	
 	if has_node("FadeOverlay"):
 		var FadeOverlay = $FadeOverlay
@@ -22,6 +23,14 @@ func _ready() -> void:
 		
 		await tween.finished
 		FadeOverlay.queue_free()
+
+func expand_board(percentage: float = 0.10) -> void:
+	boardSize = Vector2i(round(boardSize.x * (1.0 + percentage)), round(boardSize.y * (1.0 + percentage)))
+	boardOffset = Vector2((windowSize.x - boardSize.x) * 0.5, (windowSize.y - boardSize.y) * 0.5)
+	
+	get_tree().call_group("cables_manager", "update_board_dimensions", boardSize, boardOffset)
+	
+	queue_redraw()
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:

@@ -422,7 +422,6 @@ text = "research
 "
 
 [node name="researchPanel" type="Panel" parent="Control/researchUI" unique_id=1615255557]
-visible = false
 modulate = Color(0, 0, 0, 1)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
@@ -532,3 +531,6 @@ texture = SubResource("ViewportTexture_bi8hs")
 [connection signal="gui_input" from="Control/ToolUI/Erase" to="Control/ToolUI" method="_on_erase_gui_input"]
 [connection signal="gui_input" from="Control/ToolUI/line2" to="Control/ToolUI" method="_on_line2_gui_input"]
 [connection signal="pressed" from="Control/researchUI/research_main_button" to="Control/researchUI" method="_on_research_main_button_pressed"]
+[connection signal="gui_input" from="Control/researchUI/researchPanel/largerArea1" to="Control/researchUI" method="_on_larger_area_1_gui_input"]
+[connection signal="gui_input" from="Control/researchUI/researchPanel/largerArea2" to="Control/researchUI" method="_on_larger_area_2_gui_input"]
+[connection signal="gui_input" from="Control/researchUI/researchPanel/largerArea3" to="Control/researchUI" method="_on_larger_area_3_gui_input"]

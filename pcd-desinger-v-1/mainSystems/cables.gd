@@ -17,8 +17,8 @@ var startPos: Vector2 = Vector2.ZERO
 var editingCable: Node2D = null
 var cableWayPoints: PackedVector2Array = []
 var activeWayPointIndex: int = -1
-const boardSize: Vector2i = Vector2i(640, 400)
-const boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
+var boardSize: Vector2i = Vector2i(640, 400)
+var boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
 var Astar: AStar2D = AStar2D.new()
  
 func _ready() -> void:
@@ -566,3 +566,8 @@ func build_legs_from_waypoints(wps: PackedVector2Array) -> Array[PackedVector2Ar
 		var end_ID = Astar.get_closest_point(wps[i + 1])
 		new_legs.append(Astar.get_point_path(start_ID, end_ID))
 	return new_legs
+
+func update_board_dimensions(new_board_size: Vector2i, new_board_offset: Vector2) -> void:
+	boardSize = new_board_size
+	boardOffset = new_board_offset
+	setup_astar_grid()
