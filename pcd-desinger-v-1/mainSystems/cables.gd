@@ -23,7 +23,8 @@ var Astar: AStar2D = AStar2D.new()
  
 func _ready() -> void:
 	add_to_group("cables_manager")
-	Global.toolChanged.connect(GlobalToolChange)
+	if Global.has_signal("toolChanged"):
+		Global.toolChanged.connect(GlobalToolChange)
 	setup_astar_grid()
  
 func _process(_delta: float) -> void:
@@ -143,27 +144,28 @@ func _input(event: InputEvent) -> void:
 				layingCable = true
  
 		elif layingCable:
-			var endPos = lastSnappedPos
-			if currentMode != DrawMode.Select and currentMode != DrawMode.ExtendedLine and currentCable.has_method("update_active_point"):
-				currentCable.update_active_point(endPos)
-				
-			var line = _get_line2d(currentCable)
-			var total_distance: float = 0.0
-			if line and line.points.size() > 1:
-				for i in range(line.points.size() - 1):
-					total_distance += line.points[i].distance_to(line.points[i + 1])
-			var cable_length = 0
-			if currentCable.has_method("getCableCount"):
-				cable_length = currentCable.getCableCount()
-			elif currentCable.has_node("Line2D"):
-				cable_length = (currentCable.get_node("Line2D") as Line2D).points.size()
-				
-			if cable_length > 1 and total_distance >= snapPoint:
-				SavedCables.append(currentCable)
-				notify_circuit_update()
-				Base_component.update_all_circuits(get_tree())
-			else:
-				currentCable.queue_free()
+			if is_instance_valid(currentCable):
+				var endPos = lastSnappedPos
+				if currentMode != DrawMode.Select and currentMode != DrawMode.ExtendedLine and currentCable.has_method("update_active_point"):
+					currentCable.update_active_point(endPos)
+					
+				var line = _get_line2d(currentCable)
+				var total_distance: float = 0.0
+				if line and line.points.size() > 1:
+					for i in range(line.points.size() - 1):
+						total_distance += line.points[i].distance_to(line.points[i + 1])
+				var cable_length = 0
+				if currentCable.has_method("getCableCount"):
+					cable_length = currentCable.getCableCount()
+				elif currentCable.has_node("Line2D"):
+					cable_length = (currentCable.get_node("Line2D") as Line2D).points.size()
+					
+				if cable_length > 1 and total_distance >= snapPoint:
+					SavedCables.append(currentCable)
+					notify_circuit_update()
+					Base_component.update_all_circuits(get_tree())
+				else:
+					currentCable.queue_free()
 				
 			layingCable = false
 			currentCable = null
@@ -178,19 +180,19 @@ func _input(event: InputEvent) -> void:
 		if targetPos == lastSnappedPos and (currentMode == DrawMode.Free or currentMode == DrawMode.Select or currentMode == DrawMode.ExtendedLine):
 			return
 		
-		if currentMode == DrawMode.Select and currentCable:
+		if currentMode == DrawMode.Select and is_instance_valid(currentCable):
 			save_changed_points(targetPos)
  
 		elif currentMode == DrawMode.Free:
-			var start_id = Astar.get_closest_point(to_global(startPos))
-			var target_id = Astar.get_closest_point(to_global(targetPos))
+			var start_id = Astar.get_closest_point(startPos)
+			var target_id = Astar.get_closest_point(targetPos)
 			var path: PackedVector2Array = Astar.get_point_path(start_id, target_id)
 			path = remove_path_loops(path)
 			var line = _get_line2d(currentCable)
 			if line:
 				line.clear_points()
 				for pt in path:
-					line.add_point(currentCable.to_local(pt))
+					line.add_point(currentCable.to_local(to_global(pt)))
 					
 			lastSnappedPos = targetPos
 		
@@ -256,10 +258,10 @@ func _input(event: InputEvent) -> void:
 				if nextPos == lastSnappedPos:
 					break
 				var globalNextPos = to_global(nextPos)
-				if currentCable.has_method("getPenultimatePoint") and currentCable.getPenultimatePoint() == nextPos:
+				if currentCable.has_method("getPenultimatePoint") and currentCable.getPenultimatePoint() == to_global(nextPos):
 					currentCable.removeLastCableSegment()
 					lastSnappedPos = nextPos
-				elif currentCable.has_method("checkPointExists") and currentCable.checkPointExists(nextPos):
+				elif currentCable.has_method("checkPointExists") and currentCable.checkPointExists(to_global(nextPos)):
 					break
 				else:
 					lastSnappedPos = nextPos
@@ -468,7 +470,7 @@ func _reset_circuit_power() -> void:
 func setup_editing_waypoints(global_click_pos: Vector2) -> void:
 	cableWayPoints.clear()
 	activeWayPointIndex = -1
-	if not editingCable:
+	if not is_instance_valid(editingCable):
 		return
 	if editingCable.get("waypoints") != null and editingCable.waypoints.size() >= 2:
 		cableWayPoints = editingCable.waypoints.duplicate()
@@ -527,19 +529,19 @@ func extract_corner_waypoints(points: PackedVector2Array) -> PackedVector2Array:
 	return corners
 
 func save_changed_points(targetPos: Vector2) -> void:
-	if not currentCable or activeWayPointIndex < 0 or activeWayPointIndex >= cableWayPoints.size():
+	if not is_instance_valid(currentCable) or activeWayPointIndex < 0 or activeWayPointIndex >= cableWayPoints.size():
 		return
 	var new_global_pos = to_global(targetPos)
-	var target_ID = Astar.get_closest_point(new_global_pos)
+	var target_ID = Astar.get_closest_point(targetPos)
 	cableWayPoints[activeWayPointIndex] = new_global_pos
 	currentCable.waypoints[activeWayPointIndex] = new_global_pos
 	if activeWayPointIndex > 0:
 		var prev_IDX = activeWayPointIndex - 1
-		var start_ID = Astar.get_closest_point(cableWayPoints[prev_IDX])
+		var start_ID = Astar.get_closest_point(to_local(cableWayPoints[prev_IDX]))
 		currentCable.legs[prev_IDX] = Astar.get_point_path(start_ID, target_ID)
 	
 	if activeWayPointIndex < cableWayPoints.size() - 1:
-		var end_ID = Astar.get_closest_point(cableWayPoints[activeWayPointIndex + 1])
+		var end_ID = Astar.get_closest_point(to_local(cableWayPoints[activeWayPointIndex + 1]))
 		currentCable.legs[activeWayPointIndex] = Astar.get_point_path(target_ID, end_ID)
 	var full_path: PackedVector2Array = []
 	for i in range(currentCable.legs.size()):
@@ -554,13 +556,13 @@ func save_changed_points(targetPos: Vector2) -> void:
 	if line:
 		line.clear_points()
 		for pt in full_path:
-			line.add_point(currentCable.to_local(pt))
+			line.add_point(currentCable.to_local(to_global(pt)))
 	lastSnappedPos = targetPos
 
 func build_legs_from_waypoints(wps: PackedVector2Array) -> Array[PackedVector2Array]:
 	var new_legs: Array[PackedVector2Array] = []
 	for i in range(wps.size() - 1):
-		var start_ID = Astar.get_closest_point(wps[i])
+		var start_ID = Astar.get_closest_point(to_local(wps[i]))
 		var end_ID = Astar.get_closest_point(wps[i + 1])
 		new_legs.append(Astar.get_point_path(start_ID, end_ID))
 	return new_legs
