@@ -195,6 +195,7 @@ offset_right = -165.0
 offset_bottom = 227.5
 grow_horizontal = 0
 grow_vertical = 2
+pivot_offset_ratio = Vector2(0, 10)
 theme_override_styles/normal = SubResource("StyleBoxFlat_fu7sn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
