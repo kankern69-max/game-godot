@@ -257,7 +257,6 @@ func _input(event: InputEvent) -> void:
 				var nextPos = clampToBoard(lastSnappedPos + step)
 				if nextPos == lastSnappedPos:
 					break
-				var globalNextPos = to_global(nextPos)
 				if currentCable.has_method("getPenultimatePoint") and currentCable.getPenultimatePoint() == to_global(nextPos):
 					currentCable.removeLastCableSegment()
 					lastSnappedPos = nextPos
@@ -338,7 +337,6 @@ func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVec
 		current_p.y += step_y
 		raw_path.append(clampToBoard(current_p))
 		
-		var direction_exit = -direction
 		current_p.x = from_pos.x
 		raw_path.append(clampToBoard(current_p))
 		

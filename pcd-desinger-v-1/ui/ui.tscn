@@ -146,6 +146,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="ComponentUI" type="Panel" parent="Control" unique_id=1102487387]
 layout_mode = 1
@@ -424,6 +425,7 @@ offset_left = 779.0
 offset_top = 7.0
 offset_right = 1177.0
 offset_bottom = 49.0
+rotation = -6.2831855
 script = ExtResource("11_bi8hs")
 
 [node name="research_main_button" type="Button" parent="Control/researchUI" unique_id=956886694]
@@ -439,9 +441,9 @@ text = "research
 clip_contents = true
 layout_mode = 0
 offset_left = -547.0
-offset_top = 78.0
+offset_top = -953.105
 offset_right = 947.0
-offset_bottom = 1010.0
+offset_bottom = -21.10498
 
 [node name="techtree" type="Control" parent="Control/researchUI/researchPanel" unique_id=1781145279]
 layout_mode = 1
@@ -449,9 +451,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -232.0
-offset_top = -85.0
+offset_top = -94.995
 offset_right = 194.0
-offset_bottom = 63.0
+offset_bottom = -0.86499023
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("12_ju45i")
