@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://bjus8yadiqf2q"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_5how8"]
+[ext_resource type="Resource" uid="uid://j8oxgjaxflk6" path="res://ui/techtree/stages/base_tech.tres" id="2_5lomr"]
+
+[resource]
+script = ExtResource("1_5how8")
+id = "resistor_tech"
+title = "Resistor values"
+img_atlas = Vector2i(252, 0)
+img_size = Vector2(16, 7)
+aquired_techs = Array[ExtResource("1_5how8")]([ExtResource("2_5lomr")])
+unlocked_components = Array[String](["resistor_220", "resistor_4k7", "resistor_10k", "resistor_100k"])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"

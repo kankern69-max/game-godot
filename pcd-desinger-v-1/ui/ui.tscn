@@ -13,12 +13,19 @@
 [ext_resource type="Script" uid="uid://bijfmw3ymdhkh" path="res://ui/techtree/research_ui.gd" id="11_bi8hs"]
 [ext_resource type="Script" uid="uid://bshojoe4tjq6b" path="res://ui/techtree/techtree.gd" id="12_ju45i"]
 [ext_resource type="PackedScene" uid="uid://x6rry0l4d2cc" path="res://ui/techtree/tech_node_ui.tscn" id="12_x7jpl"]
-[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="13_diyc5"]
 [ext_resource type="Resource" uid="uid://j8oxgjaxflk6" path="res://ui/techtree/stages/base_tech.tres" id="13_os0ka"]
 [ext_resource type="Resource" uid="uid://bbfj0lyi3sxge" path="res://ui/techtree/stages/diode_tech.tres" id="14_ju45i"]
+[ext_resource type="Resource" uid="uid://bko8xg6uth2jx" path="res://ui/techtree/stages/button_tech.tres" id="15_c3fg2"]
+[ext_resource type="Resource" uid="uid://bjus8yadiqf2q" path="res://ui/techtree/stages/resistor_tech.tres" id="16_3lbto"]
 [ext_resource type="Resource" uid="uid://djofed0btnlb5" path="res://ui/techtree/stages/led_tech.tres" id="16_mf2ns"]
 [ext_resource type="Resource" uid="uid://cqvhe6u5p6o03" path="res://ui/techtree/stages/board_expansion_1.tres" id="17_74toj"]
+[ext_resource type="Resource" uid="uid://dbjg1loaib7r" path="res://ui/techtree/stages/power_tech.tres" id="17_bw7v0"]
 [ext_resource type="Resource" uid="uid://car2wfr7xujno" path="res://ui/techtree/stages/board_expansion_2.tres" id="18_co7pv"]
+[ext_resource type="Resource" uid="uid://drhvf7vpoqpfl" path="res://ui/techtree/stages/board_expansion_3.tres" id="19_x7nxp"]
+[ext_resource type="Resource" uid="uid://bij70mpju24a0" path="res://ui/techtree/stages/capacitor_tech.tres" id="22_bw7v0"]
+[ext_resource type="Resource" uid="uid://bpgft8utowg3q" path="res://ui/techtree/stages/transistor_tech.tres" id="22_fgtw6"]
+[ext_resource type="Resource" uid="uid://bnnemtk0sevbb" path="res://ui/techtree/stages/inductor_tech.tres" id="25_br2v7"]
+[ext_resource type="Resource" uid="uid://b00cxag4hk01j" path="res://ui/techtree/stages/electrolytic_tech.tres" id="25_rkf1o"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
 bg_color = Color(0, 0.7176471, 0.35686275, 1)
@@ -128,14 +135,6 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
-
-[sub_resource type="Resource" id="Resource_x7nxp"]
-script = ExtResource("13_diyc5")
-id = "board_expansion_3"
-title = "PCB Expansion III"
-img_size = Vector2(64, 64)
-aquired_techs = Array[ExtResource("13_diyc5")]([ExtResource("13_os0ka"), ExtResource("17_74toj"), ExtResource("18_co7pv")])
-metadata/_custom_type_script = "uid://b6o1cpgidc533"
 
 [node name="UI" type="CanvasLayer" unique_id=209732671]
 
@@ -441,24 +440,20 @@ text = "research
 clip_contents = true
 layout_mode = 0
 offset_left = -547.0
-offset_top = -953.105
+offset_top = -940.0
 offset_right = 947.0
-offset_bottom = -21.10498
+offset_bottom = -8.0
 
 [node name="techtree" type="Control" parent="Control/researchUI/researchPanel" unique_id=1781145279]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -232.0
-offset_top = -94.995
-offset_right = 194.0
-offset_bottom = -0.86499023
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("12_ju45i")
 
-[node name="TechNodeUi" parent="Control/researchUI/researchPanel/techtree" unique_id=1842559716 instance=ExtResource("12_x7jpl")]
+[node name="base_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=1842559716 instance=ExtResource("12_x7jpl")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -473,65 +468,132 @@ grow_horizontal = 2
 grow_vertical = 2
 tech_data = ExtResource("13_os0ka")
 
-[node name="TechNodeUi2" parent="Control/researchUI/researchPanel/techtree" unique_id=295159966 instance=ExtResource("12_x7jpl")]
+[node name="board_expansion_1" parent="Control/researchUI/researchPanel/techtree" unique_id=2088352564 instance=ExtResource("12_x7jpl")]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 1125.0
+offset_left = 472.0
 offset_top = -55.0
-offset_right = 1235.0
+offset_right = 582.0
 offset_bottom = 55.0
-grow_vertical = 2
-tech_data = ExtResource("14_ju45i")
-
-[node name="TechNodeUi3" parent="Control/researchUI/researchPanel/techtree" unique_id=1475015520 instance=ExtResource("12_x7jpl")]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 1125.0
-offset_top = -275.0
-offset_right = 1235.0
-offset_bottom = -165.0
-grow_vertical = 2
-tech_data = ExtResource("16_mf2ns")
-
-[node name="TechNodeUi4" parent="Control/researchUI/researchPanel/techtree" unique_id=2088352564 instance=ExtResource("12_x7jpl")]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 905.0
-offset_top = 165.0
-offset_right = 1015.0
-offset_bottom = 275.0
 grow_vertical = 2
 tech_data = ExtResource("17_74toj")
 
-[node name="TechNodeUi5" parent="Control/researchUI/researchPanel/techtree" unique_id=854864770 instance=ExtResource("12_x7jpl")]
+[node name="board_expansion_2" parent="Control/researchUI/researchPanel/techtree" unique_id=854864770 instance=ExtResource("12_x7jpl")]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 905.0
-offset_top = 385.0
-offset_right = 1015.0
-offset_bottom = 495.0
+offset_left = 252.0
+offset_top = -55.0
+offset_right = 362.0
+offset_bottom = 55.0
 grow_vertical = 2
 tech_data = ExtResource("18_co7pv")
 
-[node name="TechNodeUi6" parent="Control/researchUI/researchPanel/techtree" unique_id=448032787 instance=ExtResource("12_x7jpl")]
+[node name="board_expansion_3" parent="Control/researchUI/researchPanel/techtree" unique_id=448032787 instance=ExtResource("12_x7jpl")]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 905.0
-offset_top = 605.0
-offset_right = 1015.0
-offset_bottom = 715.0
+offset_left = 32.0
+offset_top = -55.0
+offset_right = 142.0
+offset_bottom = 55.0
 grow_vertical = 2
-tech_data = SubResource("Resource_x7nxp")
+tech_data = ExtResource("19_x7nxp")
+
+[node name="button_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=1232594624 instance=ExtResource("12_x7jpl")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -275.0
+offset_right = 55.0
+offset_bottom = -165.0
+grow_horizontal = 2
+grow_vertical = 2
+tech_data = ExtResource("15_c3fg2")
+
+[node name="resistor_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=295159966 instance=ExtResource("12_x7jpl")]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 912.0
+offset_top = -55.0
+offset_right = 1022.0
+offset_bottom = 55.0
+grow_vertical = 2
+tech_data = ExtResource("16_3lbto")
+
+[node name="power_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=743927850 instance=ExtResource("12_x7jpl")]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 1132.0
+offset_top = -55.0
+offset_right = 1242.0
+offset_bottom = 55.0
+grow_vertical = 2
+tech_data = ExtResource("17_bw7v0")
+
+[node name="diode_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=1400845650 instance=ExtResource("12_x7jpl")]
+layout_mode = 0
+offset_left = 912.0
+offset_top = 191.0
+offset_right = 1022.0
+offset_bottom = 301.0
+tech_data = ExtResource("14_ju45i")
+
+[node name="transistor_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=47782145 instance=ExtResource("12_x7jpl")]
+layout_mode = 0
+offset_left = 1132.0
+offset_top = 191.0
+offset_right = 1242.0
+offset_bottom = 301.0
+tech_data = ExtResource("22_fgtw6")
+
+[node name="led_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=1475015520 instance=ExtResource("12_x7jpl")]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 911.9999
+offset_top = -495.00006
+offset_right = 1021.9999
+offset_bottom = -385.00006
+grow_vertical = 2
+tech_data = ExtResource("16_mf2ns")
+
+[node name="capacitor_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=1310601500 instance=ExtResource("12_x7jpl")]
+layout_mode = 0
+offset_left = 912.0
+offset_top = 631.0
+offset_right = 1022.0
+offset_bottom = 741.0
+tech_data = ExtResource("22_bw7v0")
+
+[node name="inductor_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=330792713 instance=ExtResource("12_x7jpl")]
+layout_mode = 0
+offset_left = 692.0
+offset_top = 631.0
+offset_right = 802.0
+offset_bottom = 741.0
+tech_data = ExtResource("25_br2v7")
+
+[node name="electrolytic_tech" parent="Control/researchUI/researchPanel/techtree" unique_id=448003089 instance=ExtResource("12_x7jpl")]
+layout_mode = 0
+offset_left = 912.0
+offset_top = 851.0
+offset_right = 1022.0
+offset_bottom = 961.0
+tech_data = ExtResource("25_rkf1o")
 
 [connection signal="text_changed" from="Control/ComponentUI/SearchBar/LineEdit" to="Control/ComponentUI" method="_on_line_edit_text_changed"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Sort" to="Control/ComponentUI" method="_on_sort_sort_selected"]

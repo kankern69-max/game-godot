@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://bpgft8utowg3q"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_nqhpb"]
+[ext_resource type="Resource" uid="uid://bbfj0lyi3sxge" path="res://ui/techtree/stages/diode_tech.tres" id="2_kxr7i"]
+
+[resource]
+script = ExtResource("1_nqhpb")
+id = "transistor_tech"
+title = "Transistors"
+img_atlas = Vector2i(539, 0)
+img_size = Vector2(8, 16)
+aquired_techs = Array[ExtResource("1_nqhpb")]([ExtResource("2_kxr7i")])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"

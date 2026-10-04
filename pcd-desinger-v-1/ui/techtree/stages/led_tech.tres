@@ -1,7 +1,6 @@
 [gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://djofed0btnlb5"]
 
 [ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_eedui"]
-[ext_resource type="Resource" uid="uid://j8oxgjaxflk6" path="res://ui/techtree/stages/base_tech.tres" id="2_8jk13"]
 [ext_resource type="Resource" uid="uid://bbfj0lyi3sxge" path="res://ui/techtree/stages/diode_tech.tres" id="3_o5wbi"]
 
 [resource]
@@ -10,6 +9,6 @@ id = "led_tech"
 title = "LED's"
 img_atlas = Vector2i(515, 0)
 img_size = Vector2(8, 16)
-aquired_techs = Array[ExtResource("1_eedui")]([ExtResource("2_8jk13"), ExtResource("3_o5wbi")])
+aquired_techs = Array[ExtResource("1_eedui")]([ExtResource("3_o5wbi")])
 unlocked_components = Array[String](["led_blue_5mm", "led_green_5mm", "led_red_5mm"])
 metadata/_custom_type_script = "uid://b6o1cpgidc533"

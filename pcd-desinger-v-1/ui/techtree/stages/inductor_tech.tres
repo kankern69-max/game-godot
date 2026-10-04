@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://bnnemtk0sevbb"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_t6gf5"]
+[ext_resource type="Resource" uid="uid://bij70mpju24a0" path="res://ui/techtree/stages/capacitor_tech.tres" id="2_vjmrb"]
+
+[resource]
+script = ExtResource("1_t6gf5")
+id = "inductor_tech"
+title = "Indoctors"
+img_atlas = Vector2i(444, 0)
+img_size = Vector2(16, 21)
+aquired_techs = Array[ExtResource("1_t6gf5")]([ExtResource("2_vjmrb")])
+unlocked_components = Array[String](["inductor_10u", "inductor_100u", "inductor_1m"])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://dbjg1loaib7r"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_e8ynp"]
+[ext_resource type="Resource" uid="uid://bjus8yadiqf2q" path="res://ui/techtree/stages/resistor_tech.tres" id="2_6pps0"]
+
+[resource]
+script = ExtResource("1_e8ynp")
+id = "power_tech"
+title = "power"
+img_atlas = Vector2i(228, 0)
+img_size = Vector2(24, 31)
+aquired_techs = Array[ExtResource("1_e8ynp")]([ExtResource("2_6pps0")])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"

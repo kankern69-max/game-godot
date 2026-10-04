@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://drhvf7vpoqpfl"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_y80a3"]
+[ext_resource type="Resource" uid="uid://j8oxgjaxflk6" path="res://ui/techtree/stages/base_tech.tres" id="2_te5sn"]
+[ext_resource type="Resource" uid="uid://cqvhe6u5p6o03" path="res://ui/techtree/stages/board_expansion_1.tres" id="3_fkubu"]
+[ext_resource type="Resource" uid="uid://car2wfr7xujno" path="res://ui/techtree/stages/board_expansion_2.tres" id="4_5qgn4"]
+
+[resource]
+script = ExtResource("1_y80a3")
+id = "board_expansion_3"
+title = "PCB Expansion III"
+img_size = Vector2(64, 64)
+aquired_techs = Array[ExtResource("1_y80a3")]([ExtResource("2_te5sn"), ExtResource("3_fkubu"), ExtResource("4_5qgn4")])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"

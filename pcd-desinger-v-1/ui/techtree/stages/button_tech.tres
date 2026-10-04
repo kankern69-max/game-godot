@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TechNodeResource" format=3 uid="uid://bko8xg6uth2jx"]
+
+[ext_resource type="Script" uid="uid://b6o1cpgidc533" path="res://ui/techtree/technoderesource.gd" id="1_v3j7d"]
+[ext_resource type="Resource" uid="uid://j8oxgjaxflk6" path="res://ui/techtree/stages/base_tech.tres" id="2_vbseg"]
+
+[resource]
+script = ExtResource("1_v3j7d")
+id = "button_tech"
+title = "Pushbutton"
+img_atlas = Vector2i(563, 2)
+img_size = Vector2(8, 6)
+aquired_techs = Array[ExtResource("1_v3j7d")]([ExtResource("2_vbseg")])
+unlocked_components = Array[String](["switch_pushbutton"])
+metadata/_custom_type_script = "uid://b6o1cpgidc533"
