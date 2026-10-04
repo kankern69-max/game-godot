@@ -65,7 +65,7 @@ func unlock_tech(tech: TechNodeResource) -> bool:
 	for comp_id in tech.unlocked_components:
 		if comp_id not in unlocked_components:
 			unlocked_components.append(comp_id)
-	
+		
 	for order_id in tech.unlocked_orders:
 		if order_id not in Orders.unlocked_orders:
 			Orders.unlock_order(order_id)

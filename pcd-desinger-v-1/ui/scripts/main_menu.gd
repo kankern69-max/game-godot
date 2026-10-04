@@ -3,7 +3,7 @@ extends Control
 func _on_start_pressed() -> void:
 	$Klikkerdeklik.play()
 	await$Klikkerdeklik.finished
-	get_tree().change_scene_to_file("res://game.tscn")
+	get_tree().change_scene_to_file("res://mainSystems/game.tscn")
 
 func _on_credits_pressed() -> void:
 	$Klikkerdeklik.play()
