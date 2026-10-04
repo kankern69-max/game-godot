@@ -44,6 +44,10 @@ var unlocked_techs: Array[String] = []
 
 var unlocked_components: Array[String] = []
 
+func _ready():
+	var base_tech: TechNodeResource = preload("res://ui/techtree/stages/base_tech.tres")
+	unlock_tech(base_tech)
+
 func is_component_unlocked(comp_id: String) -> bool:
 	return unlocked_components.has(comp_id)
 

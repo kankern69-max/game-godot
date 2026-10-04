@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://yubuix3qvtwj" path="res://ui/scripts/drawing_ui.gd" id="2_ks8t7"]
 [ext_resource type="Script" uid="uid://c15itt636dald" path="res://ui/scripts/order_ui.gd" id="4_tf0e0"]
 [ext_resource type="PackedScene" uid="uid://cw4ihrxhwgc4o" path="res://ui/order_tile.tscn" id="4_vkava"]
+[ext_resource type="Texture2D" uid="uid://nmv1ysnygop0" path="res://ui/assets/buyers.png" id="5_br2v7"]
 [ext_resource type="Texture2D" uid="uid://yrtfkwabgdfc" path="res://ui/assets/slash-solid.png" id="6_bo1jx"]
 [ext_resource type="Texture2D" uid="uid://dkix88lyaytl4" path="res://ui/assets/eraser-solid.png" id="7_gycre"]
 [ext_resource type="Texture2D" uid="uid://8o8qcvyjplj6" path="res://ui/assets/stairs-solid.png" id="7_pa1oa"]
@@ -119,6 +120,10 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_c44sx"]
+atlas = ExtResource("5_br2v7")
+region = Rect2(0, 0, 10, 16)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pa1oa"]
 bg_color = Color(0.89686066, 0.46799225, 9.62615e-07, 1)
 corner_radius_top_left = 10
@@ -217,6 +222,7 @@ offset_left = 10.0
 offset_top = 110.0
 offset_right = 240.0
 offset_bottom = 490.0
+horizontal_scroll_mode = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/ComponentUI/components" unique_id=183747797]
 custom_minimum_size = Vector2(230, 100)
@@ -269,24 +275,88 @@ offset_left = 10.0
 offset_top = 10.0
 offset_right = 240.0
 offset_bottom = 490.0
+horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/OrderUI/ScrollContainer" unique_id=2058134701]
+[node name="orders" type="VBoxContainer" parent="Control/OrderUI/ScrollContainer" unique_id=2058134701]
+visible = false
 layout_mode = 2
 
-[node name="ComponentTile" parent="Control/OrderUI/ScrollContainer/VBoxContainer" unique_id=1059776968 instance=ExtResource("4_vkava")]
+[node name="ComponentTile" parent="Control/OrderUI/ScrollContainer/orders" unique_id=1059776968 instance=ExtResource("4_vkava")]
 layout_mode = 2
 
-[node name="ComponentTile2" parent="Control/OrderUI/ScrollContainer/VBoxContainer" unique_id=1346571312 instance=ExtResource("4_vkava")]
+[node name="ComponentTile2" parent="Control/OrderUI/ScrollContainer/orders" unique_id=1346571312 instance=ExtResource("4_vkava")]
 layout_mode = 2
 
-[node name="ComponentTile3" parent="Control/OrderUI/ScrollContainer/VBoxContainer" unique_id=1219413176 instance=ExtResource("4_vkava")]
+[node name="ComponentTile3" parent="Control/OrderUI/ScrollContainer/orders" unique_id=1219413176 instance=ExtResource("4_vkava")]
 layout_mode = 2
 
-[node name="ComponentTile4" parent="Control/OrderUI/ScrollContainer/VBoxContainer" unique_id=323429393 instance=ExtResource("4_vkava")]
+[node name="ComponentTile4" parent="Control/OrderUI/ScrollContainer/orders" unique_id=323429393 instance=ExtResource("4_vkava")]
 layout_mode = 2
 
-[node name="ComponentTile5" parent="Control/OrderUI/ScrollContainer/VBoxContainer" unique_id=204008041 instance=ExtResource("4_vkava")]
+[node name="ComponentTile5" parent="Control/OrderUI/ScrollContainer/orders" unique_id=204008041 instance=ExtResource("4_vkava")]
 layout_mode = 2
+
+[node name="AcceptedOrder" type="Panel" parent="Control/OrderUI" unique_id=1957935119]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 240.0
+offset_bottom = 490.0
+
+[node name="buyerImg" type="Panel" parent="Control/OrderUI/AcceptedOrder" unique_id=1204587537]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 90.0
+offset_bottom = 90.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/OrderUI/AcceptedOrder/buyerImg" unique_id=758633148]
+layout_mode = 0
+offset_left = 2.5
+offset_top = 2.5
+offset_right = 77.5
+offset_bottom = 77.5
+texture = SubResource("AtlasTexture_c44sx")
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Control/OrderUI/AcceptedOrder" unique_id=1794728335]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 33.0
+text = "Client name"
+
+[node name="OrderMoney" type="Label" parent="Control/OrderUI/AcceptedOrder" unique_id=1381849417]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 0
+offset_left = 100.0
+offset_top = 38.0
+offset_right = 187.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 11
+text = "money: €10
+recearch points: 2"
+
+[node name="OrderType" type="Label" parent="Control/OrderUI/AcceptedOrder" unique_id=1696637540]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 100.0
+offset_right = 103.0
+offset_bottom = 123.0
+text = "Order type"
+
+[node name="OrderDetails" type="Label" parent="Control/OrderUI/AcceptedOrder" unique_id=1571350699]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 0
+offset_left = 10.0
+offset_top = 130.0
+offset_right = 220.0
+offset_bottom = 470.0
+theme_override_font_sizes/font_size = 11
+text = "- Components
+- Component states
+- idk more specs?"
 
 [node name="tab" type="Panel" parent="Control/OrderUI" unique_id=559196444]
 z_index = -1

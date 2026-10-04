@@ -23,7 +23,7 @@ func _ready():
 	timer.start()
 	generate_order()
 
-func _process(delta):
+func _process(_delta):
 	generate_order()
 
 func unlock_order(order_id: String) -> void:
@@ -32,14 +32,14 @@ func unlock_order(order_id: String) -> void:
 		return
 	unlocked_orders.append(order)
 
-func _activate(order: OrderResource) -> void:
+func activate(order: OrderResource) -> void:
 	if active_order != null:
 		return
-	if not unlocked_orders.has(active_order):
+	if not unlocked_orders.has(order):
 		return
 	
-	order_activated.emit(order)
 	active_order = order
+	order_activated.emit()
 
 func _check_orders() -> void:
 	if active_order == null:
@@ -49,9 +49,9 @@ func _check_orders() -> void:
 		_complete(active_order)
 
 func _complete(order: OrderResource) -> void:
-	Global.money += active_order.reward_money
-	Global.reaserch_points += active_order.reward_points
-	order_completed.emit(active_order)
+	Global.money += order.reward_money
+	Global.reaserch_points += order.reward_points
+	order_completed.emit(order)
 	active_order = null
 
 func generate_order() -> void:

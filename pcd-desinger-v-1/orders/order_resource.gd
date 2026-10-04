@@ -8,6 +8,9 @@ class_name OrderResource
 @export var reward_points: int
 @export var reward_money: int
 
+var buyer_number: int
+var buyer_name: String
+
 func is_coplete(components: Array) -> bool:
 	for r in requirements:
 		if not r.is_met(components):
