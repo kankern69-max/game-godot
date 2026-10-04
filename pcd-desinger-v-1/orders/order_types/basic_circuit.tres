@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="OrderResource" format=3 uid="uid://d4dgdfy2llhij"]
+
+[ext_resource type="Script" uid="uid://dqxuk51wwq3bq" path="res://orders/order_requirement.gd" id="1_2fvjq"]
+[ext_resource type="Script" uid="uid://bsoqr4cvbc5i7" path="res://orders/order_resource.gd" id="2_1rk6m"]
+
+[sub_resource type="Resource" id="Resource_bo10s"]
+script = ExtResource("1_2fvjq")
+component_type = 4
+metadata/_custom_type_script = "uid://dqxuk51wwq3bq"
+
+[sub_resource type="Resource" id="Resource_obdm6"]
+script = ExtResource("1_2fvjq")
+component_type = 7
+metadata/_custom_type_script = "uid://dqxuk51wwq3bq"
+
+[resource]
+script = ExtResource("2_1rk6m")
+id = "basic_circuit"
+title = "Basic Circuit"
+discription = "fellas"
+requirements = Array[ExtResource("1_2fvjq")]([SubResource("Resource_bo10s"), SubResource("Resource_obdm6")])
+reward_points = 1
+reward_money = 10
+metadata/_custom_type_script = "uid://bsoqr4cvbc5i7"

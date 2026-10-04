@@ -6,7 +6,8 @@
 script = ExtResource("1_qi6xj")
 id = "base_tech"
 title = "Basics"
-img_atlas = Vector2i(252, 0)
+img_atlas = Vector2i(547, 0)
 img_size = Vector2(16, 7)
 unlocked_components = Array[String](["battery_5v", "switch_toggle", "resistor_330", "resistor_1k", "led_red_5mm"])
+unlocked_orders = Array[String](["basic_circuit"])
 metadata/_custom_type_script = "uid://b6o1cpgidc533"

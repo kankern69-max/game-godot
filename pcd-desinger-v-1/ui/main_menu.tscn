@@ -2,9 +2,10 @@
 
 [ext_resource type="Script" uid="uid://c27t5ucvcgikb" path="res://ui/scripts/main_menu.gd" id="1_06t4h"]
 [ext_resource type="AudioStream" uid="uid://dfembns4wg350" path="res://ui/assets/Klikkerdeklik.mp3" id="2_0dkrt"]
-[ext_resource type="Script" uid="uid://dt7uv8akf4ghp" path="res://ui/start.gd" id="2_rmr83"]
-[ext_resource type="Script" uid="uid://bu6ni2tayppp7" path="res://ui/quit.gd" id="3_8uxxo"]
-[ext_resource type="Texture2D" uid="uid://cw6wkrmfl4qtv" path="res://components/PCB_Logo.png" id="5_8uxxo"]
+[ext_resource type="Script" uid="uid://dt7uv8akf4ghp" path="res://ui/scripts/start.gd" id="2_rmr83"]
+[ext_resource type="Script" uid="uid://bu6ni2tayppp7" path="res://ui/scripts/quit.gd" id="3_8uxxo"]
+[ext_resource type="Script" uid="uid://c4rvtcc4carij" path="res://ui/scripts/credits.gd" id="4_ei257"]
+[ext_resource type="Texture2D" uid="uid://cqxea3bv1b76h" path="res://ui/assets/PCB_Logo_2.png" id="5_8uxxo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0pr"]
 bg_color = Color(0.039215688, 0.21960784, 0.12156863, 1)
@@ -85,21 +86,6 @@ corner_radius_top_right = 28
 corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
 corner_detail = 20
-expand_margin_left = 80.0
-expand_margin_right = 80.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jix8l"]
-bg_color = Color(0.06666667, 0.32156864, 0.18039216, 1)
-border_width_left = 12
-border_width_top = 12
-border_width_right = 12
-border_width_bottom = 12
-border_color = Color(1, 0.84313726, 0, 1)
-border_blend = true
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
 expand_margin_left = 80.0
 expand_margin_right = 80.0
 
@@ -210,10 +196,11 @@ offset_bottom = 227.5
 grow_horizontal = 0
 grow_vertical = 2
 pivot_offset_ratio = Vector2(0, 10)
-theme_override_styles/normal = SubResource("StyleBoxFlat_jix8l")
+theme_override_styles/normal = SubResource("StyleBoxFlat_fu7sn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_t7e0r")
 theme_override_styles/hover = SubResource("StyleBoxFlat_t7e0r")
 text = "Credits"
+script = ExtResource("4_ei257")
 
 [node name="Klikkerdeklik" type="AudioStreamPlayer2D" parent="." unique_id=1598779239]
 stream = ExtResource("2_0dkrt")

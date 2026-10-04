@@ -1,5 +1,7 @@
 extends Node
 
+
+"""
 const SOLVER_ITERATIONS = 20
 
 var components: Array[Base_component] = []
@@ -25,3 +27,4 @@ func _process(_delta):
 	for comp in components:
 		if is_instance_valid(comp):
 			comp.update_simulation()
+"""

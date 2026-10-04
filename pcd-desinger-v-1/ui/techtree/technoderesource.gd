@@ -8,6 +8,7 @@ class_name TechNodeResource
 @export var research_cost: float = 0.0
 @export var aquired_techs: Array[TechNodeResource] = []
 @export var unlocked_components: Array[String] = []
+@export var unlocked_orders: Array[String] = []
 
 func can_unlock() -> bool:
 	if Global.unlocked_techs.has(id):
