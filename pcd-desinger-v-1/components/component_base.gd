@@ -184,28 +184,37 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 	var target_pin_minus: Vector2 = pins[0]  
 	var start_pin_plus: Vector2 = pins[1]   
 
-	var queue: Array[Vector2] = [start_pin_plus]
+	var queue: Array = [[start_pin_plus, ""]]
 	var visited_points := {}
 	var powered_cables := {}
 	var powered_components := {}
 	
 	var is_closed_loop = false
-
+	
 	while queue.size() > 0:
-		var curr_pos = queue.pop_front()
+		var entry = queue.pop_front()
+		var curr_pos: Vector2 = entry[0]
+		var curr_layer: String = entry[1]
 		
 		if curr_pos.distance_to(target_pin_minus) <= TOUCH_RADIUS and curr_pos != start_pin_plus:
 			is_closed_loop = true
-
-		var pos_key = Vector2i(round(curr_pos.x), round(curr_pos.y))
+		
+		var pos_key = "%d, %d, %s" % [round(curr_pos.x), round(curr_pos.y), curr_layer]
 		if pos_key in visited_points:
 			continue
 		visited_points[pos_key] = true
-
+		
 		for cable in all_cables:
 			if not is_instance_valid(cable):
 				continue
-
+			
+			var cable_layer: String = ""
+			var layer_value = cable.get("layer_key")
+			if layer_value != null:
+				cable_layer = layer_value
+			if curr_layer != "" and cable_layer != curr_layer:
+				continue
+			
 			var pts: Array[Vector2] = []
 			if cable.has_method("get_all_global_points"):
 				pts = cable.get_all_global_points()
@@ -214,37 +223,37 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 				if line:
 					for p in line.points:
 						pts.append(line.to_global(p))
-
+			
 			var touches = false
 			for p in pts:
 				if p.distance_to(curr_pos) <= TOUCH_RADIUS:
 					touches = true
 					break
-
+			
 			if touches:
 				powered_cables[cable] = true
 				for p in pts:
-					queue.append(p)
-
+					queue.append([p, cable_layer])
+			
 		for comp in all_components:
 			if not is_instance_valid(comp) or comp == self:
 				continue
-
+			
 			var c_pins = comp.get_pin_positions_global()
 			var entered_pin_index: int = -1
-
+			
 			for i in range(c_pins.size()):
 				if c_pins[i].distance_to(curr_pos) <= TOUCH_RADIUS:
 					entered_pin_index = i
 					break
-
+			
 			if entered_pin_index != -1:
 				if comp.is_conducting(entered_pin_index):
 					powered_components[comp] = true
 					for i in range(c_pins.size()):
 						if i != entered_pin_index:
-							queue.append(c_pins[i])
-
+							queue.append([c_pins[i], ""])
+	
 	if is_closed_loop:
 		var battery_v: float = 5.0
 		var battery_r: float = 0.0
@@ -276,7 +285,7 @@ func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
 		for comp in powered_components.keys():
 			comp.is_powered = true
 			comp.current = circuit_current
-			
+
 			var r = comp._get_resistance()
 			comp.voltage = (circuit_current * r) if r > 0.0 else battery_v
 			comp.update_simulation()

@@ -1,12 +1,16 @@
 extends Node
 
+signal cableLayerChanged(layer_color: Color)
 signal toolChanged(toolName: String)
 signal componentPlaced
 
 signal component_unlocked(component_id: String)
 signal tech_unlocked(tech_id: String)
 
-var CableColor: Color = Color(1.0, 0.0, 0.0, 1.0)
+var CableColor: Color = Color(1.0, 0.0, 0.0, 1.0):
+	set(value):
+		CableColor = value
+		cableLayerChanged.emit(value)
 enum MODE {ARCADE, SIMULATOR}
 
 var current_mode: MODE = MODE.ARCADE

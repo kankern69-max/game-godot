@@ -3,6 +3,7 @@ extends Node2D
 @onready var line2d: Line2D = $Line2D
 
 var cableID: int = 0
+var layer_key: String = ""
 var voltage: float = 0.0
 var current: float = 0.0
 var power: float = 0.0

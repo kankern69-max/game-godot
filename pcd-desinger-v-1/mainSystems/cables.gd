@@ -20,12 +20,19 @@ var activeWayPointIndex: int = -1
 var boardSize: Vector2i = Vector2i(640, 400)
 var boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
 var Astar: AStar2D = AStar2D.new()
+var astars: Dictionary = {}
  
+const DIMMED_ALPHA: float = 0.5
+var layers: Dictionary = {}
+var _layer_tweens: Dictionary = {}
+
 func _ready() -> void:
 	add_to_group("cables_manager")
 	if Global.has_signal("toolChanged"):
 		Global.toolChanged.connect(GlobalToolChange)
-	setup_astar_grid()
+	if Global.has_signal("cableLayerChanged"):
+		Global.cableLayerChanged.connect(_on_cable_layer_changed)
+	_set_working_layer(_layer_key(Global.CableColor))
  
 func _process(_delta: float) -> void:
 	for cable in SavedCables:
@@ -33,18 +40,40 @@ func _process(_delta: float) -> void:
 			cable.check_battery_connection()
  
 func setup_astar_grid() -> void:
-	build_base_grid()
+	# (re)builds every layer's routing grid, e.g. after the board is resized
+	for key in astars:
+		_build_grid(astars[key])
 	update_cable_weights()
 
-func build_base_grid() -> void:
-	Astar.clear()
+# Each PCB layer routes on its own grid, so a trace on one layer never blocks another layer.
+func get_astar(key: String) -> AStar2D:
+	if not astars.has(key):
+		var astar := AStar2D.new()
+		_build_grid(astar)
+		astars[key] = astar
+		_update_weights_for(key)
+	return astars[key]
+
+func _set_working_layer(key: String) -> void:
+	Astar = get_astar(key)
+
+func update_cable_weights() -> void:
+	for key in astars:
+		_update_weights_for(key)
+
+func _cable_layer(cable: Node2D) -> String:
+	var k = cable.get("layer_key")
+	return k if k != null else ""
+
+func _build_grid(astar: AStar2D) -> void:
+	astar.clear()
 	var cols = int(boardSize.x / dotDistance)
 	var rows = int(boardSize.y / dotDistance)
 	for x in range(cols):
 		for y in range(rows):
 			var point_id = get_point_id(x, y)
 			var world_pos = boardOffset + Vector2(x * dotDistance + halfStep, y * dotDistance + halfStep)
-			Astar.add_point(point_id, world_pos)
+			astar.add_point(point_id, world_pos)
 	for x in range(cols):
 		for y in range(rows):
 			var current_id = get_point_id(x, y)
@@ -57,9 +86,9 @@ func build_base_grid() -> void:
 			for n in orthogonals:
 				if n.x >= 0 and n.x < cols and n.y >= 0 and n.y < rows:
 					var neighbor_id = get_point_id(n.x, n.y)
-					if not Astar.are_points_connected(current_id, neighbor_id):
-						Astar.connect_points(current_id, neighbor_id, true)
-						Astar.set_point_weight_scale(neighbor_id, 1.0)
+					if not astar.are_points_connected(current_id, neighbor_id):
+						astar.connect_points(current_id, neighbor_id, true)
+						astar.set_point_weight_scale(neighbor_id, 1.0)
 			var diagonals = [
 				Vector2i(x + 1, y + 1),
 				Vector2i(x - 1, y + 1),
@@ -69,26 +98,26 @@ func build_base_grid() -> void:
 			for n in diagonals:
 				if n.x >= 0 and n.x < cols and n.y >= 0 and n.y < rows:
 					var neighbor_id = get_point_id(n.x, n.y)
-					if not Astar.are_points_connected(current_id, neighbor_id):
-						Astar.connect_points(current_id, neighbor_id, true)
-						Astar.set_point_weight_scale(neighbor_id, 2.0)
-	update_cable_weights()
+					if not astar.are_points_connected(current_id, neighbor_id):
+						astar.connect_points(current_id, neighbor_id, true)
+						astar.set_point_weight_scale(neighbor_id, 2.0)
 
-func update_cable_weights() -> void:
+func _update_weights_for(key: String) -> void:
+	var astar: AStar2D = astars[key]
 	var cols = int(boardSize.x / dotDistance)
 	var rows = int(boardSize.y / dotDistance)
 	for x in range(cols):
 		for y in range(rows):
 			var pid = get_point_id(x, y)
-			Astar.set_point_weight_scale(pid, 1.0)
+			astar.set_point_weight_scale(pid, 1.0)
 	for cable in SavedCables:
-		if is_instance_valid(cable):
+		if is_instance_valid(cable) and _cable_layer(cable) == key:
 			var line = _get_line2d(cable)
 			if line and line.points.size() > 0:
 				if line.points.size() == 1:
 					var world_pt = cable.to_global(line.points[0])
-					var pid = Astar.get_closest_point(to_local(world_pt))
-					Astar.set_point_weight_scale(pid, 100.0)
+					var pid = astar.get_closest_point(to_local(world_pt))
+					astar.set_point_weight_scale(pid, 100.0)
 				else:
 					for i in range(line.points.size() - 1):
 						var p1 = cable.to_global(line.points[i])
@@ -97,8 +126,8 @@ func update_cable_weights() -> void:
 						var steps = max(1, int(round(dist / dotDistance)))
 						for s in range(steps + 1):
 							var sample_pt = p1.lerp(p2, float(s) / float(steps))
-							var pid = Astar.get_closest_point(to_local(sample_pt))
-							Astar.set_point_weight_scale(pid, 100.0)
+							var pid = astar.get_closest_point(to_local(sample_pt))
+							astar.set_point_weight_scale(pid, 100.0)
 						for s in range(steps):
 							var pt_a = p1.lerp(p2, float(s) / float(steps))
 							var pt_b = p1.lerp(p2, float(s + 1) / float(steps))
@@ -110,8 +139,8 @@ func update_cable_weights() -> void:
 								if g1.x >= 0 and g1.x < cols and g1.y >= 0 and g1.y < rows and g2.x >= 0 and g2.x < cols and g2.y >= 0 and g2.y < rows:
 									var cross_id_1 = get_point_id(g1.x, g2.y)
 									var cross_id_2 = get_point_id(g2.x, g1.y)
-									if Astar.are_points_connected(cross_id_1, cross_id_2):
-										Astar.disconnect_points(cross_id_1, cross_id_2, true)
+									if astar.are_points_connected(cross_id_1, cross_id_2):
+										astar.disconnect_points(cross_id_1, cross_id_2, true)
  
 func pos_to_grid_coords(local_pos: Vector2) -> Vector2i:
 	var localPos = local_pos - boardOffset
@@ -168,6 +197,8 @@ func _input(event: InputEvent) -> void:
 				var cableToEdit = findCableAt(startPos)
 				if cableToEdit:
 					editingCable = cableToEdit
+					_set_working_layer(_cable_layer(editingCable))
+					SavedCables.erase(editingCable)
 					SavedCables.erase(editingCable)
 					update_cable_weights()
 					currentCable = editingCable
@@ -177,8 +208,11 @@ func _input(event: InputEvent) -> void:
 					save_changed_points(startPos)
 			else:
 				lineAxisLocked = false
+				var layer_key := _layer_key(Global.CableColor)
+				_set_working_layer(layer_key)
 				currentCable = TraceScene.instantiate()
-				add_child(currentCable)
+				currentCable.layer_key = layer_key
+				get_layer(Global.CableColor).add_child(currentCable)
 				currentCable.set_cable_color(Global.CableColor)
 				cableCounter += 1
 				currentCable.setup_trace(startPos, cableCounter)
@@ -413,8 +447,9 @@ func generate_extendedLine_path(from_pos: Vector2, to_pos: Vector2) -> PackedVec
  
 func findCableAt(target_pos: Vector2) -> Node2D:
 	var global_target = to_global(snapToGrid(target_pos))
+	var active_key := _layer_key(Global.CableColor)
 	for cable in SavedCables:
-		if is_instance_valid(cable):
+		if is_instance_valid(cable) and _cable_layer(cable) == active_key:
 			var line = _get_line2d(cable)
 			if line and line.points.size() > 0:
 				if line.points.size() == 1:
@@ -435,7 +470,7 @@ func eraseCableAt(target_pos: Vector2) -> void:
 	var global_target = to_global(snapToGrid(target_pos))
 	for i in range(SavedCables.size() - 1, -1, -1):
 		var cable = SavedCables[i]
-		if is_instance_valid(cable):
+		if is_instance_valid(cable) and _cable_layer(cable) == _layer_key(Global.CableColor):
 			var line = _get_line2d(cable)
 			var matched = false
 			if line and line.points.size() > 0:
@@ -592,3 +627,27 @@ func update_board_dimensions(new_board_size: Vector2i, new_board_offset: Vector2
 	boardSize = new_board_size
 	boardOffset = new_board_offset
 	setup_astar_grid()
+
+func _layer_key(color: Color) -> String:
+	return color.to_html(false)
+
+func get_layer(color: Color) -> Node2D:
+	var key := _layer_key(color)
+	if not layers.has(key):
+		var layer := Node2D.new()
+		layer.name = "Layer_" + key
+		add_child(layer)
+		layers[key] = layer
+		layer.modulate.a = 1.0 if key == _layer_key(Global.CableColor) else DIMMED_ALPHA
+	return layers[key]
+
+func _on_cable_layer_changed(active_color: Color) -> void:
+	var active_key := _layer_key(active_color)
+	for key in layers:
+		var layer: Node2D = layers[key]
+		var target: float = 1.0 if key == active_key else DIMMED_ALPHA
+		if _layer_tweens.has(key) and _layer_tweens[key]:
+			_layer_tweens[key].kill()
+		var tween := create_tween()
+		tween.tween_property(layer, "modulate:a", target, 0.12)
+		_layer_tweens[key] = tween
