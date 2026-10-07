@@ -33,6 +33,10 @@ func _process(_delta: float) -> void:
 			cable.check_battery_connection()
  
 func setup_astar_grid() -> void:
+	build_base_grid()
+	update_cable_weights()
+
+func build_base_grid() -> void:
 	Astar.clear()
 	var cols = int(boardSize.x / dotDistance)
 	var rows = int(boardSize.y / dotDistance)
@@ -95,7 +99,24 @@ func update_cable_weights() -> void:
 							var sample_pt = p1.lerp(p2, float(s) / float(steps))
 							var pid = Astar.get_closest_point(to_local(sample_pt))
 							Astar.set_point_weight_scale(pid, 100.0)
+						for s in range(steps):
+							var pt_a = p1.lerp(p2, float(s) / float(steps))
+							var pt_b = p1.lerp(p2, float(s + 1) / float(steps))
+							var g1 = pos_to_grid_coords(to_local(pt_a))
+							var g2 = pos_to_grid_coords(to_local(pt_b))
+							var dx = abs(g1.x - g2.x)
+							var dy = abs(g1.y - g2.y)
+							if dx == 1 and dy == 1:
+								if g1.x >= 0 and g1.x < cols and g1.y >= 0 and g1.y < rows and g2.x >= 0 and g2.x < cols and g2.y >= 0 and g2.y < rows:
+									var cross_id_1 = get_point_id(g1.x, g2.y)
+									var cross_id_2 = get_point_id(g2.x, g1.y)
+									if Astar.are_points_connected(cross_id_1, cross_id_2):
+										Astar.disconnect_points(cross_id_1, cross_id_2, true)
  
+func pos_to_grid_coords(local_pos: Vector2) -> Vector2i:
+	var localPos = local_pos - boardOffset
+	return Vector2i(int(round((localPos.x - halfStep) / dotDistance)), int(round((localPos.y - halfStep) / dotDistance)))
+
 func get_point_id(x: int, y:int) -> int:
 	var cols = int(boardSize.x / dotDistance)
 	return x + y * cols
