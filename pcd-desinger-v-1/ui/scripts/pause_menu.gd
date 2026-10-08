@@ -1,22 +1,21 @@
 extends Control
-
-func _ready() -> void:
-	hide()
 	
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("Esc"):
 		toggle_pause()
 		
 func toggle_pause() -> void:
-	var new_pause_state = !get_tree().paused
-	get_tree().paused = new_pause_state
-	visible = new_pause_state
-	
-func _on_resume_button_pressed() -> void:
+	visible = !get_tree().paused
+	get_tree().paused = !get_tree().paused
+	print(get_tree().paused)
+
+
+func _on_resume_pressed():
 	get_tree().paused = false
-	toggle_pause()
+	visible = false
 	
-func _on_main_menu_button_pressed() -> void:
+
+func _on_button_pressed():
 	get_tree().paused = false
 	if get_tree():
 		get_tree().call_deferred("change_scene_to_file", "res://ui/main_menu.tscn")
