@@ -27,7 +27,6 @@
 [ext_resource type="Resource" uid="uid://bpgft8utowg3q" path="res://ui/techtree/stages/transistor_tech.tres" id="22_fgtw6"]
 [ext_resource type="Resource" uid="uid://bnnemtk0sevbb" path="res://ui/techtree/stages/inductor_tech.tres" id="25_br2v7"]
 [ext_resource type="Resource" uid="uid://b00cxag4hk01j" path="res://ui/techtree/stages/electrolytic_tech.tres" id="25_rkf1o"]
-[ext_resource type="Script" uid="uid://dkuc8j7yg28s4" path="res://ui/option_button.gd" id="28_c44sx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ofb81"]
 bg_color = Color(0, 0.7176471, 0.35686275, 1)
@@ -664,13 +663,6 @@ offset_top = 851.0
 offset_right = 1022.0
 offset_bottom = 961.0
 tech_data = ExtResource("25_rkf1o")
-
-[node name="OptionButton" type="OptionButton" parent="." unique_id=114466916]
-offset_left = 252.0
-offset_right = 421.0
-offset_bottom = 69.0
-toggle_mode = false
-script = ExtResource("28_c44sx")
 
 [connection signal="text_changed" from="Control/ComponentUI/SearchBar/LineEdit" to="Control/ComponentUI" method="_on_line_edit_text_changed"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Sort" to="Control/ComponentUI" method="_on_sort_sort_selected"]

@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://b5lxce5uoy0ev" path="res://mainSystems/components.gd" id="4_yol1p"]
 [ext_resource type="PackedScene" uid="uid://ofdnf06ntncc" path="res://ui/ui.tscn" id="5_0xyn8"]
 [ext_resource type="Texture2D" uid="uid://cqxea3bv1b76h" path="res://ui/assets/PCB_Logo_2.png" id="6_eomgf"]
+[ext_resource type="PackedScene" uid="uid://ce8ewhethrby0" path="res://control.tscn" id="7_snfdj"]
 
 [node name="Game" type="Node2D" unique_id=1288097038]
 script = ExtResource("1_cs74v")
@@ -32,3 +33,5 @@ offset_right = 1725.0
 offset_bottom = 983.0
 texture = ExtResource("6_eomgf")
 expand_mode = 1
+
+[node name="PauseMenu" parent="." unique_id=1280827132 instance=ExtResource("7_snfdj")]
