@@ -12,6 +12,7 @@ var connected_components: Array[Base_component] = []
 var is_closed: bool = true
 var _is_being_held: bool = false
 var _glow_overlay: Sprite2D = null
+var is_ghost: bool = false
 const TOUCH_RADIUS: float = 6.0 
 
 func _ready():
@@ -30,10 +31,13 @@ func _ready():
 		if s_type == "PushButton":
 			is_closed = false
 	
+	
 	_setup_glow_overlay()
 	update_visuals()
 	add_to_group("circuit_components")
-	update_all_circuits.call_deferred(get_tree())
+	if not is_ghost:
+		add_to_group("circuit_components")
+		update_all_circuits.call_deferred(get_tree())
 
 func _setup_glow_overlay() -> void:
 	if not component_data or not ("color" in component_data):

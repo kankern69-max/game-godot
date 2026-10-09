@@ -71,8 +71,7 @@ func unlock_tech(tech: TechNodeResource) -> bool:
 			unlocked_components.append(comp_id)
 		
 	for order_id in tech.unlocked_orders:
-		if order_id not in Orders.unlocked_orders:
-			Orders.unlock_order(order_id)
+		Orders.unlock_order(order_id)
 	
 	if tech.id.begins_with("board_expansion"):
 		get_tree().call_group("pcb_board", "expand_board", 0.10)
