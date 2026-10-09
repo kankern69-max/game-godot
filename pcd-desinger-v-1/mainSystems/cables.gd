@@ -63,7 +63,7 @@ func update_cable_weights() -> void:
 
 func _cable_layer(cable: Node2D) -> String:
 	var k = cable.get("layer_key")
-	return k if k != null else ""
+	return k if k != null 	else ""
 
 func _build_grid(astar: AStar2D) -> void:
 	astar.clear()
@@ -513,7 +513,13 @@ func notify_circuit_update() -> void:
 	get_tree().call_group("circuit_components", "rebuild_connections")
 	_reset_circuit_power()
 	get_tree().call_group("circuit_components", "update_simulation")
- 
+	
+	# Controleer of er ten minste één component op het bord is dat stroom/spanning ontvangt:
+	for comp in get_tree().get_nodes_in_group("circuit_components"):
+		if is_instance_valid(comp) and comp.get("is_powered") == true:
+			AchievementManager.add_progress("first_circuit", 1)
+			break
+	 
 func _reset_circuit_power() -> void:
 	for c in get_tree().get_nodes_in_group("cables"):
 		if is_instance_valid(c) and c.has_method("set_powered"):

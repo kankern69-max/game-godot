@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="AchievementResource" format=3 uid="uid://b2ujm6ve22o5i"]
+
+[ext_resource type="Script" uid="uid://cw1d6bjq1yafl" path="res://achievement_resource.gd" id="1_cnxoa"]
+
+[resource]
+script = ExtResource("1_cnxoa")
+id = "first_circuit"
+title = "First Circuit"
+description = "Made your first circuit!"
+metadata/_custom_type_script = "uid://cw1d6bjq1yafl"

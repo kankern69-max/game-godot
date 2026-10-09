@@ -666,8 +666,21 @@ offset_bottom = 961.0
 tech_data = ExtResource("25_rkf1o")
 
 [node name="PauseMenu" parent="Control" unique_id=1280827132 instance=ExtResource("28_c44sx")]
-visible = false
+light_mask = 513
+visibility_layer = 513
 layout_mode = 1
+
+[node name="ColorRect2" type="ColorRect" parent="Control/PauseMenu" unique_id=472039798]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 419.521
+offset_bottom = 136.47095
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.19607843, 0.38431373, 0.14117648, 0.59607846)
 
 [connection signal="text_changed" from="Control/ComponentUI/SearchBar/LineEdit" to="Control/ComponentUI" method="_on_line_edit_text_changed"]
 [connection signal="item_selected" from="Control/ComponentUI/Filters/HBoxContainer/Sort" to="Control/ComponentUI" method="_on_sort_sort_selected"]
