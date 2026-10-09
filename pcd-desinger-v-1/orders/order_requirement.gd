@@ -9,7 +9,11 @@ class_name OrderRequirement
 func count_matches(components: Array) -> int:
 	var n := 0
 	for c in components:
-		if not is_instance_valid(c) or not c.component_data:
+		if not is_instance_valid(c) or c.is_queued_for_deletion() or not c.component_data:
+			continue
+		if c.component_data.component_type != component_type:
+			continue
+		if must_be_powered and not c.is_powered:
 			continue
 		if c.component_data.component_type != component_type:
 			continue

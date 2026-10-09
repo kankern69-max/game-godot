@@ -279,7 +279,6 @@ offset_bottom = 490.0
 horizontal_scroll_mode = 0
 
 [node name="orders" type="VBoxContainer" parent="Control/OrderUI/ScrollContainer" unique_id=2058134701]
-visible = false
 layout_mode = 2
 
 [node name="ComponentTile" parent="Control/OrderUI/ScrollContainer/orders" unique_id=1059776968 instance=ExtResource("4_vkava")]
@@ -298,6 +297,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="AcceptedOrder" type="Panel" parent="Control/OrderUI" unique_id=1957935119]
+visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0

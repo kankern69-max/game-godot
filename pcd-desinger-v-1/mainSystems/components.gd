@@ -27,6 +27,7 @@ func _start_placing() -> void:
 	_cancel_placing()
 	ghost = component_scene.instantiate()
 	ghost.component_data = Global.selected_component
+	ghost.is_ghost = true
 	ghost.modulate.a = 0.5
 	add_child(ghost)
 	placing = true

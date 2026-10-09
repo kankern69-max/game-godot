@@ -6,13 +6,19 @@ extends Panel
 
 @onready var buyerImg: TextureRect = $AcceptedOrder/buyerImg/TextureRect
 @onready var nameLabel: Label = $AcceptedOrder/Name
+@onready var moneyLabel: Label = $AcceptedOrder/OrderMoney
+@onready var typeLabel: Label = $AcceptedOrder/OrderType
+@onready var detailsLabel: Label = $AcceptedOrder/OrderDetails
 
 var atlas_texture := preload("res://ui/assets/buyers.png")
 var tile_scene: PackedScene = preload("res://ui/order_tile.tscn")
 var open: bool
 
 func _ready():
-	Orders.order_activated.connect(_update_order_ui)
+	Orders.order_activated.connect(_refresh.unbind(1))
+	Orders.order_completed.connect(_refresh.unbind(1))
+	Orders.orders_changed.connect(_refresh)
+	_refresh
 
 func _on_tab_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -32,15 +38,13 @@ func _on_tab_gui_input(event):
 		tween.set_ease(Tween.EaseType.EASE_OUT)
 		tween.tween_property(panel, "position", target_position, 0.4)
 
-func _process(_delta):
-	if vbox.get_child_count() != Orders.generated_orders.size():
-		_update_order_ui()
-		
-func _update_order_ui() -> void:
-	vbox.visible = Orders.active_order == null
-	AcceptedOrderPanel.visible = !vbox.visible
-		
+func _refresh() -> void:
+	var has_active: bool = Orders.active_order != null
+	vbox.visible = not has_active
+	AcceptedOrderPanel.visible = has_active
+	
 	for child in vbox.get_children():
+		vbox.remove_child(child)
 		child.queue_free()
 	
 	for order in Orders.generated_orders:
@@ -48,9 +52,19 @@ func _update_order_ui() -> void:
 		tile.order = order
 		vbox.add_child(tile)
 	
-	if AcceptedOrderPanel.visible:
-		var img := AtlasTexture.new()
-		img.atlas = atlas_texture.duplicate()
-		img.region = Rect2(Vector2i(0 + (10 * Orders.active_order.buyer_number), 0), Vector2i(10,16))
-		buyerImg.texture = img
-		nameLabel.text = Orders.active_order.buyer_name 
+	if has_active:
+		_show_accepted(Orders.active_order)
+
+func _show_accepted(order: OrderResource) -> void:
+	var img := AtlasTexture.new()
+	img.atlas = atlas_texture
+	img.region = Rect2(Vector2i(10 * order.buyer_number, 0), Vector2i(10, 16))
+	buyerImg.texture = img
+	
+	nameLabel.text = order.buyer_name
+	typeLabel.text = order.title
+	moneyLabel.text = "money: €%s\nreasearch points: %s" % [order.reward_money, order.reward_points]
+	var lines: Array[String] = []
+	for r in order.requirements:
+		lines.append("%dx %s" % [r.count, Component.type.keys()[r.component_type]])
+	detailsLabel.text = "\n".join(lines)

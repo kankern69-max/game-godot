@@ -7,16 +7,9 @@ extends Panel
 var atlas_texture := preload("res://ui/assets/buyers.png") 
 var order: OrderResource
 
-const BUYERS: Array = ["person 1", "person 2", "person 3"]
-
 func _ready():	
 	if order == null:
 		return
-	
-	var buyer: int = randi_range(0, 2)
-	var buyer_name: String = BUYERS[buyer]
-	order.buyer_name = buyer_name
-	order.buyer_number = buyer
 	
 	NameLabel.text = order.buyer_name
 	var img := AtlasTexture.new()
