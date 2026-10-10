@@ -7,21 +7,22 @@ signal componentPlaced
 signal component_unlocked(component_id: String)
 signal tech_unlocked(tech_id: String)
 
-var CableColor: Color = Color(1.0, 0.0, 0.0, 1.0):
-	set(value):
-		CableColor = value
-		cableLayerChanged.emit(value)
-enum MODE {ARCADE, SIMULATOR}
 
-var current_mode: MODE = MODE.ARCADE
+enum MODE {SANDBOX, CARRER, SCIENCE}
+var current_mode: MODE = MODE.CARRER
 
 var reaserch_points: int
 var money: float
 
+var CableColor: Color = Color(1.0, 0.0, 0.0, 1.0):
+	set(value):
+		CableColor = value
+		cableLayerChanged.emit(value)
+
 var selected_component: Component
 
 const components_paths: Dictionary = {
-	"resistor_220": preload("res://components/component_resources/resistors/resistor_220.tres"), 
+	"resistor_220": preload("res://components/component_resources/resistors/resistor_220.tres"),
 	"resistor_330": preload("res://components/component_resources/resistors/resistor_330.tres"), 
 	"resistor_1k": preload("res://components/component_resources/resistors/resistor_1k.tres"), 
 	"resistor_4k7": preload("res://components/component_resources/resistors/resistor_4k7.tres"),
@@ -29,7 +30,7 @@ const components_paths: Dictionary = {
 	"resistor_100k": preload("res://components/component_resources/resistors/resistor_100k.tres"),
 	"capacitor_100n_cer": preload("res://components/component_resources/capacitors/capacitor_100n_cer.tres"),
 	"capacitor_10n_cer": preload("res://components/component_resources/capacitors/capacitor_10n_cer.tres"),
-	"cpacitor_10u_elec": preload("res://components/component_resources/capacitors/capacitor_10u_elec.tres"),
+	"capacitor_10u_elec": preload("res://components/component_resources/capacitors/capacitor_10u_elec.tres"),
 	"inductor_10u": preload("res://components/component_resources/inductors/inductor_10u.tres"),
 	"inductor_100u": preload("res://components/component_resources/inductors/inductor_100u.tres"),
 	"inductor_1m": preload("res://components/component_resources/inductors/inductor_1m.tres"),

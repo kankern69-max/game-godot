@@ -15,10 +15,12 @@ var tile_scene: PackedScene = preload("res://ui/order_tile.tscn")
 var open: bool
 
 func _ready():
+	if Global.current_mode == Global.MODE.SANDBOX:
+		visible = false
 	Orders.order_activated.connect(_refresh.unbind(1))
 	Orders.order_completed.connect(_refresh.unbind(1))
 	Orders.orders_changed.connect(_refresh)
-	_refresh
+	_refresh()
 
 func _on_tab_gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:

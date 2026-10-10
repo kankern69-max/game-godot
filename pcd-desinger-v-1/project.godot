@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 Global="*uid://dsedamw5vypyl"
 Orders="*uid://y5c6fbc6dwgv"
 AchievementManager="*uid://bq1vs2jraskib"
+Savegame="*uid://61vfh6e0is10"
 
 [display]
 

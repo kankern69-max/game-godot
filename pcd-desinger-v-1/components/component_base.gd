@@ -11,6 +11,7 @@ var is_powered: bool = false
 var connected_components: Array[Base_component] = []
 var is_closed: bool = true
 var _is_being_held: bool = false
+var is_burnt: bool = false
 var _glow_overlay: Sprite2D = null
 var is_ghost: bool = false
 const TOUCH_RADIUS: float = 6.0 
@@ -52,6 +53,11 @@ func _setup_glow_overlay() -> void:
 	_glow_overlay.offset = - Vector2(component_data.pin_offset)
 	_glow_overlay.visible = false
 	add_child(_glow_overlay)
+
+func burn_out() -> void:
+	is_burnt = true
+	is_powered = false
+	update_visuals()
 
 func _input(event: InputEvent) -> void:
 	if _is_being_held and event is InputEventMouseButton:
@@ -99,6 +105,11 @@ func is_conducting(entered_pin_index: int = -1) -> bool:
 
 func update_visuals() -> void:
 	if not is_instance_valid(sprite):
+		return
+	if is_burnt:
+		sprite.modulate = Color(0.15, 0.15, 0.15)
+		if is_instance_valid(_glow_overlay):
+			_glow_overlay.visible = false
 		return
 	if component_data and component_data.component_type == Component.type.switch:
 		if not is_closed:
@@ -159,143 +170,17 @@ func update_simulation() -> void:
 	is_powered = (voltage > 0.0) or (current > 0.0)
 	update_visuals()
 
-static func update_all_circuits(tree: SceneTree):
+static func update_all_circuits(tree: SceneTree) -> void:
 	if not tree:
 		return
-
-	var all_cables = tree.get_nodes_in_group("cables")
-	var all_components = tree.get_nodes_in_group("circuit_components")
-
-	for c in all_cables:
-		_set_cable_powered(c, false)
-
-	for comp in all_components:
-		if is_instance_valid(comp):
-			comp.is_powered = false
-			comp.voltage = 0.0
-			comp.current = 0.0
-			comp.update_visuals()
-
-	for comp in all_components:
-		if is_instance_valid(comp) and comp.component_data and comp.component_data.component_type == Component.type.battery:
-			comp._evaluate_battery_circuit(all_cables, all_components)
-
-func _evaluate_battery_circuit(all_cables: Array, all_components: Array):
-	var pins = get_pin_positions_global()
-	if pins.size() < 2:
-		return
-
-	var target_pin_minus: Vector2 = pins[0]  
-	var start_pin_plus: Vector2 = pins[1]   
-
-	var queue: Array = [[start_pin_plus, ""]]
-	var visited_points := {}
-	var powered_cables := {}
-	var powered_components := {}
-	
-	var is_closed_loop = false
-	
-	while queue.size() > 0:
-		var entry = queue.pop_front()
-		var curr_pos: Vector2 = entry[0]
-		var curr_layer: String = entry[1]
-		
-		if curr_pos.distance_to(target_pin_minus) <= TOUCH_RADIUS and curr_pos != start_pin_plus:
-			is_closed_loop = true
-		
-		var pos_key = "%d, %d, %s" % [round(curr_pos.x), round(curr_pos.y), curr_layer]
-		if pos_key in visited_points:
-			continue
-		visited_points[pos_key] = true
-		
-		for cable in all_cables:
-			if not is_instance_valid(cable):
-				continue
-			
-			var cable_layer: String = ""
-			var layer_value = cable.get("layer_key")
-			if layer_value != null:
-				cable_layer = layer_value
-			if curr_layer != "" and cable_layer != curr_layer:
-				continue
-			
-			var pts: Array[Vector2] = []
-			if cable.has_method("get_all_global_points"):
-				pts = cable.get_all_global_points()
-			else:
-				var line = _get_line_from_cable(cable)
-				if line:
-					for p in line.points:
-						pts.append(line.to_global(p))
-			
-			var touches = false
-			for p in pts:
-				if p.distance_to(curr_pos) <= TOUCH_RADIUS:
-					touches = true
-					break
-			
-			if touches:
-				powered_cables[cable] = true
-				for p in pts:
-					queue.append([p, cable_layer])
-			
-		for comp in all_components:
-			if not is_instance_valid(comp) or comp == self:
-				continue
-			
-			var c_pins = comp.get_pin_positions_global()
-			var entered_pin_index: int = -1
-			
-			for i in range(c_pins.size()):
-				if c_pins[i].distance_to(curr_pos) <= TOUCH_RADIUS:
-					entered_pin_index = i
-					break
-			
-			if entered_pin_index != -1:
-				if comp.is_conducting(entered_pin_index):
-					powered_components[comp] = true
-					for i in range(c_pins.size()):
-						if i != entered_pin_index:
-							queue.append([c_pins[i], ""])
-	
-	if is_closed_loop:
-		var battery_v: float = 5.0
-		var battery_r: float = 0.0
-		var max_i: float = 0.0
-
-		if component_data is Battery:
-			battery_v = component_data.voltage
-			battery_r = component_data.internal_resistance
-			max_i = component_data.max_current
-		elif "voltage" in component_data and component_data.voltage > 0.0:
-			battery_v = component_data.voltage
-
-		var total_r: float = battery_r
-		for comp in powered_components.keys():
-			total_r += comp._get_resistance()
-
-		if total_r <= 0.001:
-			total_r = 0.001
-
-		var circuit_current: float = battery_v / total_r
-		if max_i > 0.0 and circuit_current > max_i:
-			circuit_current = max_i
-
-		self.is_powered = true
-		self.voltage = battery_v
-		self.current = circuit_current
-		self.update_simulation()
-
-		for comp in powered_components.keys():
-			comp.is_powered = true
-			comp.current = circuit_current
-
-			var r = comp._get_resistance()
-			comp.voltage = (circuit_current * r) if r > 0.0 else battery_v
-			comp.update_simulation()
-
-		for cable in powered_cables.keys():
-			_set_cable_powered(cable, true, battery_v, circuit_current)
+	var problems := CircuitSolver.run(tree)
+	if Global.current_mode == Global.MODE.SCIENCE:
+		var guard := 0
+		while not problems.is_empty() and guard < 5:
+			for comp in problems.keys():
+				comp.burn_out()
+			problems = CircuitSolver.run(tree)
+			guard += 1
 
 static func _get_line_from_cable(cable: Node) -> Line2D:
 	if cable is Line2D:

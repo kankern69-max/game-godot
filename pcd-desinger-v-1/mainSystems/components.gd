@@ -101,6 +101,7 @@ func remove_component(comp: Base_component) -> void:
 	placed_components.erase(comp)
 	comp.queue_free()
 	Global.componentPlaced.emit()
+	Base_component.update_all_circuits.call_deferred(get_tree())
 
 func _erase_component_at(pos: Vector2) -> void:
 	var localPos = pos - boardOffset

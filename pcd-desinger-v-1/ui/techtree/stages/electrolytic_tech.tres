@@ -10,5 +10,5 @@ title = "Electrolytic"
 img_atlas = Vector2i(377, 0)
 img_size = Vector2(10, 20)
 aquired_techs = Array[ExtResource("1_g0pso")]([ExtResource("2_optb5")])
-unlocked_components = Array[String](["cpacitor_10u_elec"])
+unlocked_components = Array[String](["capacitor_10u_elec"])
 metadata/_custom_type_script = "uid://b6o1cpgidc533"

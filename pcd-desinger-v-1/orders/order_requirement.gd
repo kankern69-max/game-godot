@@ -17,7 +17,7 @@ func count_matches(components: Array) -> int:
 			continue
 		if c.component_data.component_type != component_type:
 			continue
-		if Global.current_mode == Global.MODE.SIMULATOR and c.voltage < min_voltage:
+		if Global.current_mode == Global.MODE.SCIENCE and c.voltage < min_voltage:
 			continue
 		n += 1
 	return n
