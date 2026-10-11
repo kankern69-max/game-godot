@@ -5,7 +5,6 @@ var TraceScene: PackedScene = preload("res://mainSystems/trace.tscn")
 
 # board settings
 const dotDistance: int = 8
-const snapPoint: int = 8
 var halfStep: float = dotDistance * 0.5
 var boardSize: Vector2i = Vector2i(640, 400)
 var boardOffset: Vector2 = Vector2((1920 - 640) * 0.5, (1080 - 400) * 0.5)
@@ -54,12 +53,18 @@ class DirectionalAStar extends AStar2D:
 	var turn_penalty: float = 0.0
 
 	func _compute_cost(from_id: int, to_id: int) -> float:
+		var to_heading: int
+		var cost: float
+		
 		if from_id >= state_count or to_id >= state_count:
 			return 0.0
-		var to_heading = to_id & 7
-		var cost = step_length * (diagonal_cost if (to_heading & 1) == 1 else 1.0)
+		
+		to_heading = to_id & 7
+		cost = step_length * (diagonal_cost if (to_heading & 1) == 1 else 1.0)
+		
 		if (from_id & 7) != to_heading:
 			cost += turn_penalty
+			
 		return cost
 
 func _ready() -> void:   # connects the toolchange and the layer signals
@@ -86,8 +91,10 @@ func setup_astar_grid() -> void:   # just sets up the Astar pathfiding
 	update_cable_weights()
 
 func get_astar(key: String) -> DirectionalAStar:   # gets the Astar pathfiding for a specific layer
+	var astar: DirectionalAStar
+	
 	if not astars.has(key):
-		var astar = DirectionalAStar.new()
+		astar = DirectionalAStar.new()
 		_build_grid(astar)
 		astars[key] = astar
 		_update_weights_for(key)
@@ -106,11 +113,16 @@ func _cable_layer(cable: Node2D) -> String:   # returns what cable layer is sele
 	return layer_key if layer_key != null else ""
 
 func _build_grid(grid: DirectionalAStar) -> void:  # makes the Astar grid with the points and valid connections
-	grid.clear()
 	var columns = int(boardSize.x / dotDistance)
 	var rows = int(boardSize.y / dotDistance)
 	var heading_count = directions.size()
+	var cell_id: int
+	var world_position: Vector2
+	var next_heading: int
+	var next_cell: Vector2i
+	var next_id: int
 	
+	grid.clear()
 	grid.state_count = columns * rows * heading_count
 	grid.step_length = dotDistance
 	grid.diagonal_cost = diagonalCost
@@ -119,23 +131,23 @@ func _build_grid(grid: DirectionalAStar) -> void:  # makes the Astar grid with t
 	
 	for x in range(columns):
 		for y in range(rows):
-			var cell_id = get_point_id(x, y)
-			var world_position = boardOffset + Vector2(x * dotDistance + halfStep, y * dotDistance + halfStep)
+			cell_id = get_point_id(x, y)
+			world_position = boardOffset + Vector2(x * dotDistance + halfStep, y * dotDistance + halfStep)
 			
 			for heading in range(heading_count):
 				grid.add_point(get_state_id(cell_id, heading), world_position)
 				
 	for x in range(columns):
 		for y in range(rows):
-			var cell_id = get_point_id(x, y)
+			cell_id = get_point_id(x, y)
 			
 			for heading in range(heading_count):
 				for turn in range(-1, 2):
-					var next_heading = posmod(heading + turn, heading_count)
-					var next_cell = Vector2i(x, y) + directions[next_heading]
+					next_heading = posmod(heading + turn, heading_count)
+					next_cell = Vector2i(x, y) + directions[next_heading]
 					
 					if _is_cell_in_grid(next_cell, columns, rows):
-						var next_id = get_state_id(get_point_id(next_cell.x, next_cell.y), next_heading)
+						next_id = get_state_id(get_point_id(next_cell.x, next_cell.y), next_heading)
 						grid.connect_points(get_state_id(cell_id, heading), next_id, false)
 
 func _update_weights_for(key: String) -> void:  # does the weight calculations again for the selected layer
@@ -143,6 +155,14 @@ func _update_weights_for(key: String) -> void:  # does the weight calculations a
 	var columns = int(boardSize.x / dotDistance)
 	var rows = int(boardSize.y / dotDistance)
 	var blocked_edges: Dictionary = blocked_edges_by_layer.get(key, {})
+	var corners: PackedVector2Array
+	var line: Line2D
+	var world_point: Vector2
+	var segment_start: Vector2
+	var segment_end: Vector2
+	var segment_length: float
+	var steps: int
+	var sample_point: Vector2
 	
 	for edge in blocked_edges.values():
 		grid.connect_points(edge.x, edge.y, false)
@@ -155,7 +175,7 @@ func _update_weights_for(key: String) -> void:  # does the weight calculations a
 
 	for cable in SavedCables:
 		if is_instance_valid(cable) and _cable_layer(cable) == key:
-			var corners = cable_corners_dict.get(cable, null)
+			corners = cable_corners_dict.get(cable, null)
 			
 			if corners == null:
 				corners = cable.get("corner_waypoints")
@@ -163,46 +183,44 @@ func _update_weights_for(key: String) -> void:  # does the weight calculations a
 			if corners != null:
 				for corner in (corners as PackedVector2Array):
 					var corner_cell = pos_to_grid_coords(to_local(corner))
-					
-					for offset_x in range(-1, 2):
-						for offset_y in range(-1, 2):
-							var cell = Vector2i(corner_cell.x + offset_x, corner_cell.y + offset_y)
-							
-							if _is_cell_in_grid(cell, columns, rows):
-								_set_cell_disabled(grid, cell, true)
+					if _is_cell_in_grid(corner_cell, columns, rows):
+						_set_cell_disabled(grid, corner_cell, true)
 			
-			var line = _get_line2d(cable)
+			line = _get_line2d(cable)
 			if line and line.points.size() > 0:
 				if line.points.size() == 1:
-					var world_point = cable.to_global(line.points[0])
+					world_point = cable.to_global(line.points[0])
 					_set_cell_disabled(grid, _nearest_cell(to_local(world_point)), true)
 				
 				else:
 					for i in range(line.points.size() - 1):
-						var segment_start = cable.to_global(line.points[i])
-						var segment_end = cable.to_global(line.points[i + 1])
-						var segment_length = segment_start.distance_to(segment_end)
-						var steps = maxi(1, int(round(segment_length / dotDistance)))
+						segment_start = cable.to_global(line.points[i])
+						segment_end = cable.to_global(line.points[i + 1])
+						segment_length = segment_start.distance_to(segment_end)
+						steps = maxi(1, int(round(segment_length / dotDistance)))
 						
 						for s in range(steps + 1):
-							var sample_point = segment_start.lerp(segment_end, float(s) / float(steps))
+							sample_point = segment_start.lerp(segment_end, float(s) / float(steps))
 							_set_cell_disabled(grid, _nearest_cell(to_local(sample_point)), true)
 						
 						_block_crossing_diagonals(grid, blocked_edges, _nearest_cell(to_local(segment_start)), _nearest_cell(to_local(segment_end)))
 
 func _block_crossing_diagonals(grid: DirectionalAStar, blocked_edges: Dictionary, from_cell: Vector2i, to_cell: Vector2i) -> void:  # prevent pathfiding from going through diagnal cables
 	var delta = to_cell - from_cell
-	
-	if delta.x == 0 or absi(delta.x) != absi(delta.y):
-		return
 	var columns = int(boardSize.x / dotDistance)
 	var rows = int(boardSize.y / dotDistance)
 	var step = Vector2i(signi(delta.x), signi(delta.y))
+	var cell: Vector2i
+	var corner_a: Vector2i
+	var corner_b: Vector2i
+	
+	if delta.x == 0 or absi(delta.x) != absi(delta.y):
+		return
 	
 	for i in range(absi(delta.x)):
-		var cell = from_cell + step * i
-		var corner_a = Vector2i(cell.x + step.x, cell.y)
-		var corner_b = Vector2i(cell.x, cell.y + step.y)
+		cell = from_cell + step * i
+		corner_a = Vector2i(cell.x + step.x, cell.y)
+		corner_b = Vector2i(cell.x, cell.y + step.y)
 		
 		if not _is_cell_in_grid(corner_a, columns, rows) or not _is_cell_in_grid(corner_b, columns, rows):
 			continue
@@ -212,16 +230,20 @@ func _block_crossing_diagonals(grid: DirectionalAStar, blocked_edges: Dictionary
 
 func _block_move(grid: DirectionalAStar, blocked_edges: Dictionary, from_cell: Vector2i, to_cell: Vector2i) -> void:  # disconnects some state moves to block pathfinding
 	var move_heading = directions.find(to_cell - from_cell)
+	var from_cell_id: int
+	var to_state: int
+	var from_state: int
+	var edge_key: int
 	
 	if move_heading == -1:
 		return
 	
-	var from_cell_id = get_point_id(from_cell.x, from_cell.y)
-	var to_state = get_state_id(get_point_id(to_cell.x, to_cell.y), move_heading)
+	from_cell_id = get_point_id(from_cell.x, from_cell.y)
+	to_state = get_state_id(get_point_id(to_cell.x, to_cell.y), move_heading)
 	
 	for turn in range(-1, 2):
-		var from_state = get_state_id(from_cell_id, posmod(move_heading + turn, directions.size()))
-		var edge_key = from_state * grid.state_count + to_state
+		from_state = get_state_id(from_cell_id, posmod(move_heading + turn, directions.size()))
+		edge_key = from_state * grid.state_count + to_state
 		
 		if blocked_edges.has(edge_key):
 			continue
@@ -275,11 +297,39 @@ func GlobalToolChange(tool_name: String) -> void:  # updates the active tool
 			currentMode = DrawMode.EXTENDED_LINE
 
 func _input(event: InputEvent) -> void:  # handles all mouse inputs
+	var click_position: Vector2
+	var components: Array
+	var component: Node
+	var mouse_position: Vector2
+	var cable_to_edit: Node2D
+	var layer_key: String
+	var end_position: Vector2
+	var line: Line2D
+	var total_distance: float
+	var cable_point_count: int
+	var initial_waypoints: PackedVector2Array
+	var target_position: Vector2
+	var path: PackedVector2Array
+	var global_points: PackedVector2Array
+	var corners: PackedVector2Array
+	var initial_offset: Vector2
+	var abs_x: float
+	var abs_y: float
+	var larger: float
+	var smaller: float
+	var diagonal_length: float
+	var offset: Vector2
+	var step_x: float
+	var step_y: float
+	var step: Vector2
+	var next_position: Vector2
+	
 	if currentMode == DrawMode.SELECT and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var click_position = to_local(get_global_mouse_position())
-		var components = get_tree().get_nodes_in_group("circuit_components")
+		click_position = to_local(get_global_mouse_position())
+		components = get_tree().get_nodes_in_group("circuit_components")
 		
-		for component in components:
+		for comp in components:
+			component = comp
 			if component is Base_component:
 				if component.contains_point(to_global(click_position)):
 					if component.has_method("toggle_state"):
@@ -290,7 +340,7 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 	
 	if currentMode == DrawMode.ERASE:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			var mouse_position = to_local(get_global_mouse_position())
+			mouse_position = to_local(get_global_mouse_position())
 			eraseCableAt(mouse_position)
 			notify_circuit_update()
 			Base_component.update_all_circuits(get_tree())
@@ -300,7 +350,7 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 		if event.pressed:
 			startPos = snapToGrid(to_local(get_global_mouse_position()))
 			if currentMode == DrawMode.SELECT:
-				var cable_to_edit = findCableAt(startPos)
+				cable_to_edit = findCableAt(startPos)
 				
 				if cable_to_edit:
 					editingCable = cable_to_edit
@@ -315,7 +365,7 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 			
 			else:
 				lineAxisLocked = false
-				var layer_key = _layer_key(Global.CableColor)
+				layer_key = _layer_key(Global.CableColor)
 				_set_working_layer(layer_key)
 				currentCable = TraceScene.instantiate()
 				currentCable.layer_key = layer_key
@@ -337,19 +387,19 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 					Base_component.update_all_circuits(get_tree())
 					
 				else:
-					var end_position = lastSnappedPos
+					end_position = lastSnappedPos
 					
 					if currentCable.has_method("update_active_point"):
 						currentCable.update_active_point(end_position)
 					
-					var line = _get_line2d(currentCable)
-					var total_distance: float = 0.0
+					line = _get_line2d(currentCable)
+					total_distance = 0.0
 					
 					if line and line.points.size() > 1:
 						for i in range(line.points.size() - 1):
 							total_distance += line.points[i].distance_to(line.points[i + 1])
 					
-					var cable_point_count = 0
+					cable_point_count = 0
 					
 					if currentCable.has_method("getCableCount"):
 						cable_point_count = currentCable.getCableCount()
@@ -357,9 +407,9 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 					elif currentCable.has_node("Line2D"):
 						cable_point_count = (currentCable.get_node("Line2D") as Line2D).points.size()
 					
-					if cable_point_count > 1 and total_distance >= snapPoint:
+					if cable_point_count > 1 and total_distance >= dotDistance:
 						if not cable_waypoints_dict.has(currentCable):
-							var initial_waypoints: PackedVector2Array = []
+							initial_waypoints = PackedVector2Array()
 							initial_waypoints.append(currentCable.to_global(line.points[0]))
 							initial_waypoints.append(currentCable.to_global(line.points[line.points.size() - 1]))
 							cable_waypoints_dict[currentCable] = initial_waypoints
@@ -384,8 +434,8 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 			activeWayPointIndex = -1
 	
 	elif event is InputEventMouseMotion and layingCable:
-		var mouse_position = clampToBoard(to_local(get_global_mouse_position()))
-		var target_position = snapToGrid(mouse_position)
+		mouse_position = clampToBoard(to_local(get_global_mouse_position()))
+		target_position = snapToGrid(mouse_position)
 		
 		if target_position == lastSnappedPos and (currentMode == DrawMode.FREE or currentMode == DrawMode.SELECT or currentMode == DrawMode.EXTENDED_LINE):
 			return
@@ -394,12 +444,12 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 			save_changed_points(target_position)
 		
 		elif currentMode == DrawMode.FREE:
-			var path = remove_collinear_points(find_path(startPos, target_position))
+			path = remove_collinear_points(find_path(startPos, target_position))
 			
 			if path.is_empty():
 				return
 			
-			var line = _get_line2d(currentCable)
+			line = _get_line2d(currentCable)
 			
 			if line:
 				line.clear_points()
@@ -407,24 +457,24 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 				for point in path:
 					line.add_point(currentCable.to_local(to_global(point)))
 
-			var global_points: PackedVector2Array = []
+			global_points = PackedVector2Array()
 			
 			for point in path:
 				global_points.append(to_global(point))
 				
-			var corners = extract_corner_waypoints(global_points)
+			corners = extract_corner_waypoints(global_points)
 			cable_corners_dict[currentCable] = corners
 			currentCable.set("corner_waypoints", corners)
-			var initial_waypoints: PackedVector2Array = []
+			initial_waypoints = PackedVector2Array()
 			initial_waypoints.append(to_global(path[0]))
 			initial_waypoints.append(to_global(path[path.size() - 1]))
 			cable_waypoints_dict[currentCable] = initial_waypoints
 			lastSnappedPos = target_position
 		
 		elif currentMode == DrawMode.EXTENDED_LINE:
-			var path = generate_extendedLine_path(startPos, target_position)
+			path = generate_extendedLine_path(startPos, target_position)
 			path = clean_astar_path(path)
-			var line = _get_line2d(currentCable)
+			line = _get_line2d(currentCable)
 			
 			if line:
 				line.clear_points()
@@ -439,14 +489,14 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 		
 		elif currentMode == DrawMode.LINE:
 			if not lineAxisLocked:
-				var initial_offset = mouse_position - startPos
+				initial_offset = mouse_position - startPos
 				
-				if initial_offset.length() >= snapPoint:
+				if initial_offset.length() >= dotDistance:
 					lineAxisLocked = true
-					var abs_x = absf(initial_offset.x)
-					var abs_y = absf(initial_offset.y)
-					var larger = maxf(abs_x, abs_y)
-					var smaller = minf(abs_x, abs_y)
+					abs_x = absf(initial_offset.x)
+					abs_y = absf(initial_offset.y)
+					larger = maxf(abs_x, abs_y)
+					smaller = minf(abs_x, abs_y)
 					
 					if smaller > larger * 0.414:
 						lockedAxis = "d"
@@ -465,34 +515,34 @@ func _input(event: InputEvent) -> void:  # handles all mouse inputs
 					mouse_position.x = startPos.x
 					
 				elif lockedAxis == "d":
-					var initial_offset = mouse_position - startPos
-					var diagonal_length = round((absf(initial_offset.x) + absf(initial_offset.y)) * 0.5 / snapPoint) * snapPoint
+					initial_offset = mouse_position - startPos
+					diagonal_length = round((absf(initial_offset.x) + absf(initial_offset.y)) * 0.5 / dotDistance) * dotDistance
 					mouse_position.x = startPos.x + (signf(initial_offset.x) * diagonal_length)
 					mouse_position.y = startPos.y + (signf(initial_offset.y) * diagonal_length)
 			
-			var offset = mouse_position - lastSnappedPos
+			offset = mouse_position - lastSnappedPos
 			
-			while absf(offset.x) >= snapPoint or absf(offset.y) >= snapPoint:
-				var step_x: float = 0.0
-				var step_y: float = 0.0
+			while absf(offset.x) >= dotDistance or absf(offset.y) >= dotDistance:
+				step_x = 0.0
+				step_y = 0.0
 				
 				if lockedAxis == "d":
-					step_x = signf(offset.x) * snapPoint
-					step_y = signf(offset.y) * snapPoint
+					step_x = signf(offset.x) * dotDistance
+					step_y = signf(offset.y) * dotDistance
 				
 				else:
-					if absf(offset.x) >= snapPoint:
-						step_x = signf(offset.x) * snapPoint
+					if absf(offset.x) >= dotDistance:
+						step_x = signf(offset.x) * dotDistance
 					
-					if absf(offset.y) >= snapPoint:
-						step_y = signf(offset.y) * snapPoint
+					if absf(offset.y) >= dotDistance:
+						step_y = signf(offset.y) * dotDistance
 				
-				var step = Vector2(step_x, step_y)
+				step = Vector2(step_x, step_y)
 				
 				if step == Vector2.ZERO:
 					break
 				
-				var next_position = clampToBoard(lastSnappedPos + step)
+				next_position = clampToBoard(lastSnappedPos + step)
 				
 				if next_position == lastSnappedPos:
 					break
@@ -518,12 +568,19 @@ func find_path(from_position: Vector2, to_position: Vector2, incoming_direction:
 	var rows = int(boardSize.y / dotDistance)
 	var start_cell = pos_to_grid_coords(from_position)
 	var end_cell = pos_to_grid_coords(to_position)
+	var start_cell_id: int
+	var end_cell_id: int
+	var start_node: int
+	var end_node: int
+	var start_was_disabled: bool
+	var raw_path: PackedVector2Array
+	var path: PackedVector2Array
 	
 	if not _is_cell_in_grid(start_cell, columns, rows) or not _is_cell_in_grid(end_cell, columns, rows):
 		return PackedVector2Array()
 	
-	var start_cell_id = get_point_id(start_cell.x, start_cell.y)
-	var end_cell_id = get_point_id(end_cell.x, end_cell.y)
+	start_cell_id = get_point_id(start_cell.x, start_cell.y)
+	end_cell_id = get_point_id(end_cell.x, end_cell.y)
 	
 	if Astar.is_point_disabled(get_state_id(end_cell_id, 0)):
 		return PackedVector2Array()
@@ -531,9 +588,9 @@ func find_path(from_position: Vector2, to_position: Vector2, incoming_direction:
 	if start_cell == end_cell:
 		return PackedVector2Array([_cell_to_position(start_cell)])
 	
-	var start_node = Astar.state_count
-	var end_node = start_node + 1
-	var start_was_disabled = Astar.is_point_disabled(get_state_id(start_cell_id, 0))
+	start_node = Astar.state_count
+	end_node = start_node + 1
+	start_was_disabled = Astar.is_point_disabled(get_state_id(start_cell_id, 0))
 	
 	if start_was_disabled:
 		_set_cell_disabled(Astar, start_cell, false)
@@ -547,7 +604,7 @@ func find_path(from_position: Vector2, to_position: Vector2, incoming_direction:
 		
 		Astar.connect_points(get_state_id(end_cell_id, heading), end_node, false)
 
-	var raw_path = Astar.get_point_path(start_node, end_node)
+	raw_path = Astar.get_point_path(start_node, end_node)
 
 	Astar.remove_point(start_node)
 	Astar.remove_point(end_node)
@@ -555,7 +612,7 @@ func find_path(from_position: Vector2, to_position: Vector2, incoming_direction:
 	if start_was_disabled:
 		_set_cell_disabled(Astar, start_cell, true)
 	
-	var path = PackedVector2Array()
+	path = PackedVector2Array()
 	
 	for point in raw_path:
 		if path.is_empty() or not path[path.size() - 1].is_equal_approx(point):
@@ -570,11 +627,14 @@ func _cell_to_position(cell: Vector2i) -> Vector2:  # converts cell coordinets i
 	return boardOffset + Vector2(cell.x * dotDistance + halfStep, cell.y * dotDistance + halfStep)
 
 func get_end_direction(path: PackedVector2Array, fallback_direction: int) -> int:  # determines the direction the cable reaches the end from
+	var last_step: Vector2
+	var direction: int
+	
 	if path.size() < 2:
 		return fallback_direction
 	
-	var last_step = path[path.size() - 1] - path[path.size() - 2]
-	var direction = directions.find(Vector2i(last_step.sign()))
+	last_step = path[path.size() - 1] - path[path.size() - 2]
+	direction = directions.find(Vector2i(last_step.sign()))
 	
 	return direction if direction != -1 else fallback_direction
 
@@ -585,23 +645,29 @@ func get_start_direction(path: PackedVector2Array) -> int:  # determines the dir
 	return directions.find(Vector2i((path[1] - path[0]).sign()))
 
 func _is_turn_allowed(from_direction: int, to_direction: int) -> bool:  # checks if a turn between 2 directions is allowed
+	var difference: int
+	
 	if from_direction == -1 or to_direction == -1:
 		return true
 	
-	var difference = posmod(from_direction - to_direction, directions.size())
+	difference = posmod(from_direction - to_direction, directions.size())
 	
 	return difference <= 1 or difference >= directions.size() - 1
 
 func remove_collinear_points(path: PackedVector2Array) -> PackedVector2Array:  # removes unnecessary points on straight lines
+	var result: PackedVector2Array
+	var direction_before: Vector2
+	var direction_after: Vector2
+	
 	if path.size() <= 2:
 		return path
 	
-	var result = PackedVector2Array()
+	result = PackedVector2Array()
 	result.append(path[0])
 	
 	for i in range(1, path.size() - 1):
-		var direction_before = (path[i] - path[i - 1]).normalized()
-		var direction_after = (path[i + 1] - path[i]).normalized()
+		direction_before = (path[i] - path[i - 1]).normalized()
+		direction_after = (path[i + 1] - path[i]).normalized()
 		
 		if not direction_before.is_equal_approx(direction_after):
 			result.append(path[i])
@@ -610,23 +676,30 @@ func remove_collinear_points(path: PackedVector2Array) -> PackedVector2Array:  #
 	return result
 
 func clean_astar_path(path: PackedVector2Array) -> PackedVector2Array:  # removes redundent points in the Astar path
+	var cleaned: PackedVector2Array
+	var visited_indices: Dictionary
+	var snapped_point: Vector2
+	var key: Vector2i
+	var index: int
+	var cleaned_key: Vector2i
+	
 	if path.size() <= 2:
 		return path
 	
-	var cleaned: PackedVector2Array = []
-	var visited_indices: Dictionary = {}
+	cleaned = PackedVector2Array()
+	visited_indices = {}
 	
 	for point in path:
-		var snapped_point = snapToGrid(point)
-		var key = Vector2i(round(snapped_point.x), round(snapped_point.y))
+		snapped_point = snapToGrid(point)
+		key = Vector2i(round(snapped_point.x), round(snapped_point.y))
 		
 		if visited_indices.has(key):
-			var index: int = visited_indices[key]
+			index = visited_indices[key]
 			cleaned.resize(index + 1)
 			visited_indices.clear()
 			
 			for i in range(cleaned.size()):
-				var cleaned_key = Vector2i(round(cleaned[i].x), round(cleaned[i].y))
+				cleaned_key = Vector2i(round(cleaned[i].x), round(cleaned[i].y))
 				visited_indices[cleaned_key] = i
 		
 		else:
@@ -645,30 +718,47 @@ func _get_line2d(cable: Node2D) -> Line2D:  # finds the line2d node from the cab
 	return null
 
 func generate_extendedLine_path(from_position: Vector2, to_position: Vector2) -> PackedVector2Array:  # calculates the path for the extendend cable 
-	var raw_path: PackedVector2Array = []
-	raw_path.append(from_position)
+	var raw_path: PackedVector2Array
 	var delta = to_position - from_position
+	var step_y: float
+	var total_rows: int
+	var current_point: Vector2
+	var extent: float
+	var direction: int
+	var rows_done: int
+	var step_x: float
+	var total_columns: int
+	var columns_done: int
+	var full_grid_path: PackedVector2Array
+	var segment_start: Vector2
+	var segment_end: Vector2
+	var segment_length: float
+	var steps: int
+	var interpolated: Vector2
+	
+	raw_path = PackedVector2Array()
+	raw_path.append(from_position)
 	
 	if abs(delta.y) >= abs(delta.x):
-		var step_y: float = sign(delta.y) * dotDistance
+		step_y = sign(delta.y) * dotDistance
 		
 		if step_y == 0:
 			return raw_path
 		
-		var total_rows = int(round(abs(delta.y) / dotDistance))
+		total_rows = int(round(abs(delta.y) / dotDistance))
 		
 		if total_rows < 3:
 			raw_path.append(clampToBoard(Vector2(from_position.x, to_position.y)))
 			return raw_path
 		
-		var current_point = from_position
-		var extent = dotDistance * 2
+		current_point = from_position
+		extent = dotDistance * 2
 		current_point.y += step_y
 		raw_path.append(clampToBoard(current_point))
-		var direction = 1
+		direction = 1
 		current_point.x += extent * direction
 		raw_path.append(clampToBoard(current_point))
-		var rows_done = 1
+		rows_done = 1
 		
 		while rows_done < total_rows - 2:
 			current_point.y += step_y
@@ -686,25 +776,25 @@ func generate_extendedLine_path(from_position: Vector2, to_position: Vector2) ->
 		raw_path.append(clampToBoard(current_point))
 	
 	else:
-		var step_x: float = sign(delta.x) * dotDistance
+		step_x = sign(delta.x) * dotDistance
 		
 		if step_x == 0:
 			return raw_path
 		
-		var total_columns = int(round(abs(delta.x) / dotDistance))
+		total_columns = int(round(abs(delta.x) / dotDistance))
 		
 		if total_columns < 3:
 			raw_path.append(clampToBoard(Vector2(to_position.x, from_position.y)))
 			return raw_path
 		
-		var current_point = from_position
-		var extent = dotDistance * 2
+		current_point = from_position
+		extent = dotDistance * 2
 		current_point.x += step_x
 		raw_path.append(clampToBoard(current_point))
-		var direction = 1
+		direction = 1
 		current_point.y += extent * direction
 		raw_path.append(clampToBoard(current_point))
-		var columns_done = 1
+		columns_done = 1
 		
 		while columns_done < total_columns - 2:
 			current_point.x += step_x
@@ -721,16 +811,16 @@ func generate_extendedLine_path(from_position: Vector2, to_position: Vector2) ->
 		current_point.x = to_position.x
 		raw_path.append(clampToBoard(current_point))
 	
-	var full_grid_path: PackedVector2Array = []
+	full_grid_path = PackedVector2Array()
 	
 	for i in range(raw_path.size() - 1):
-		var segment_start = raw_path[i]
-		var segment_end = raw_path[i + 1]
-		var segment_length = segment_start.distance_to(segment_end)
-		var steps = int(round(segment_length / dotDistance))
+		segment_start = raw_path[i]
+		segment_end = raw_path[i + 1]
+		segment_length = segment_start.distance_to(segment_end)
+		steps = int(round(segment_length / dotDistance))
 		
 		for s in range(steps):
-			var interpolated = segment_start.lerp(segment_end, float(s) / max(steps, 1))
+			interpolated = segment_start.lerp(segment_end, float(s) / max(steps, 1))
 			full_grid_path.append(snapToGrid(interpolated))
 	
 	if raw_path.size() > 0:
@@ -741,10 +831,14 @@ func generate_extendedLine_path(from_position: Vector2, to_position: Vector2) ->
 func findCableAt(target_position: Vector2) -> Node2D:  # locates cables near the target possition
 	var global_target = to_global(snapToGrid(target_position))
 	var active_key = _layer_key(Global.CableColor)
+	var line: Line2D
+	var segment_start: Vector2
+	var segment_end: Vector2
+	var closest_point: Vector2
 	
 	for cable in SavedCables:
 		if is_instance_valid(cable) and _cable_layer(cable) == active_key:
-			var line = _get_line2d(cable)
+			line = _get_line2d(cable)
 			
 			if line and line.points.size() > 0:
 				if line.points.size() == 1:
@@ -753,9 +847,9 @@ func findCableAt(target_position: Vector2) -> Node2D:  # locates cables near the
 				
 				else:
 					for i in range(line.points.size() - 1):
-						var segment_start = cable.to_global(line.points[i])
-						var segment_end = cable.to_global(line.points[i + 1])
-						var closest_point = Geometry2D.get_closest_point_to_segment(global_target, segment_start, segment_end)
+						segment_start = cable.to_global(line.points[i])
+						segment_end = cable.to_global(line.points[i + 1])
+						closest_point = Geometry2D.get_closest_point_to_segment(global_target, segment_start, segment_end)
 						
 						if closest_point.distance_to(global_target) < 12.0:
 							return cable
@@ -767,13 +861,18 @@ func findCableAt(target_position: Vector2) -> Node2D:  # locates cables near the
 
 func eraseCableAt(target_position: Vector2) -> void:  # deletes the cables on the clicked position
 	var global_target = to_global(snapToGrid(target_position))
+	var line: Line2D
+	var is_match: bool
+	var segment_start: Vector2
+	var segment_end: Vector2
+	var closest_point: Vector2
 	
 	for i in range(SavedCables.size() - 1, -1, -1):
 		var cable = SavedCables[i]
 		
 		if is_instance_valid(cable) and _cable_layer(cable) == _layer_key(Global.CableColor):
-			var line = _get_line2d(cable)
-			var is_match = false
+			line = _get_line2d(cable)
+			is_match = false
 			
 			if line and line.points.size() > 0:
 				if line.points.size() == 1:
@@ -782,9 +881,9 @@ func eraseCableAt(target_position: Vector2) -> void:  # deletes the cables on th
 				
 				else:
 					for j in range(line.points.size() - 1):
-						var segment_start = cable.to_global(line.points[j])
-						var segment_end = cable.to_global(line.points[j + 1])
-						var closest_point = Geometry2D.get_closest_point_to_segment(global_target, segment_start, segment_end)
+						segment_start = cable.to_global(line.points[j])
+						segment_end = cable.to_global(line.points[j + 1])
+						closest_point = Geometry2D.get_closest_point_to_segment(global_target, segment_start, segment_end)
 						
 						if closest_point.distance_to(global_target) < 12.0:
 							is_match = true
@@ -842,6 +941,17 @@ func _reset_circuit_power() -> void:  # resets the power states for everything
 			component.current = 0.0
 
 func setup_editing_waypoints(global_click_position: Vector2) -> void:  # creates the waypoints when rerouting a cable
+	var line: Line2D
+	var stored_legs: Array[PackedVector2Array]
+	var built: Array[PackedVector2Array]
+	var legs_match: bool
+	var closest_index: int
+	var closest_distance: float
+	var distance: float
+	var closest_segment_index: int
+	var closest_segment_distance: float
+	var closest_point: Vector2
+	
 	cableWayPoints.clear()
 	editing_legs.clear()
 	activeWayPointIndex = -1
@@ -853,7 +963,7 @@ func setup_editing_waypoints(global_click_position: Vector2) -> void:  # creates
 		cableWayPoints = (cable_waypoints_dict[editingCable] as PackedVector2Array).duplicate()
 		
 	else:
-		var line = _get_line2d(editingCable)
+		line = _get_line2d(editingCable)
 		
 		if not line or line.points.size() < 2:
 			return
@@ -862,27 +972,27 @@ func setup_editing_waypoints(global_click_position: Vector2) -> void:  # creates
 		cableWayPoints.append(editingCable.to_global(line.points[line.points.size() - 1]))
 		cable_waypoints_dict[editingCable] = cableWayPoints.duplicate()
 	
-	var stored_legs: Array[PackedVector2Array] = []
+	stored_legs = []
 	
 	if cable_legs_dict.has(editingCable):
 		stored_legs.assign(cable_legs_dict[editingCable] as Array)
 		
 	else:
-		var built = build_legs_from_waypoints(cableWayPoints)
+		built = build_legs_from_waypoints(cableWayPoints)
 		stored_legs = built
 		cable_legs_dict[editingCable] = stored_legs.duplicate()
 	
-	var legs_match = stored_legs.size() == cableWayPoints.size() - 1
+	legs_match = stored_legs.size() == cableWayPoints.size() - 1
 	
 	for leg in stored_legs:
 		if leg.is_empty():
 			legs_match = false
 
-	var closest_index = -1
-	var closest_distance = 16.0
+	closest_index = -1
+	closest_distance = 16.0
 	
 	for i in range(cableWayPoints.size()):
-		var distance = cableWayPoints[i].distance_to(global_click_position)
+		distance = cableWayPoints[i].distance_to(global_click_position)
 		
 		if distance < closest_distance:
 			closest_distance = distance
@@ -892,14 +1002,14 @@ func setup_editing_waypoints(global_click_position: Vector2) -> void:  # creates
 		activeWayPointIndex = closest_index
 	
 	else:
-		var closest_segment_index = 0
-		var closest_segment_distance = INF
+		closest_segment_index = 0
+		closest_segment_distance = INF
 		
 		for i in range(cableWayPoints.size() - 1):
 			var segment_start = cableWayPoints[i]
 			var segment_end = cableWayPoints[i + 1]
-			var closest_point = Geometry2D.get_closest_point_to_segment(global_click_position, segment_start, segment_end)
-			var distance = closest_point.distance_to(global_click_position)
+			closest_point = Geometry2D.get_closest_point_to_segment(global_click_position, segment_start, segment_end)
+			distance = closest_point.distance_to(global_click_position)
 			
 			if distance < closest_segment_distance:
 				closest_segment_distance = distance
@@ -921,10 +1031,15 @@ func setup_editing_waypoints(global_click_position: Vector2) -> void:  # creates
 		activeWayPointIndex = -1
 
 func extract_corner_waypoints(points: PackedVector2Array) -> PackedVector2Array:  # extracts corner points from a list of path points
+	var unique_points: PackedVector2Array
+	var corners: PackedVector2Array
+	var direction_before: Vector2
+	var direction_after: Vector2
+	
 	if points.size() <= 2:
 		return points.duplicate()
 		
-	var unique_points: PackedVector2Array = []
+	unique_points = PackedVector2Array()
 	unique_points.append(points[0])
 	
 	for i in range(1, points.size()):
@@ -934,12 +1049,12 @@ func extract_corner_waypoints(points: PackedVector2Array) -> PackedVector2Array:
 	if unique_points.size() <= 2:
 		return unique_points
 	
-	var corners: PackedVector2Array = []
+	corners = PackedVector2Array()
 	corners.append(unique_points[0])
 	
 	for i in range(1, unique_points.size() - 1):
-		var direction_before = (unique_points[i] - unique_points[i - 1]).normalized()
-		var direction_after = (unique_points[i + 1] - unique_points[i]).normalized()
+		direction_before = (unique_points[i] - unique_points[i - 1]).normalized()
+		direction_after = (unique_points[i + 1] - unique_points[i]).normalized()
 		
 		if not direction_before.is_equal_approx(direction_after):
 			corners.append(unique_points[i])
@@ -948,25 +1063,36 @@ func extract_corner_waypoints(points: PackedVector2Array) -> PackedVector2Array:
 	return corners
 
 func save_changed_points(target_position: Vector2) -> void:  # saves the waypoints when rerouting a cable
+	var new_waypoints: PackedVector2Array
+	var legs: Array[PackedVector2Array]
+	var left_leg_idx: int
+	var incoming_heading: int
+	var leg: PackedVector2Array
+	var right_leg_idx: int
+	var full_path: PackedVector2Array
+	var global_points: PackedVector2Array
+	var corners: PackedVector2Array
+	var line: Line2D
+	
 	if not is_instance_valid(currentCable) or activeWayPointIndex < 0 or activeWayPointIndex >= cableWayPoints.size():
 		return
 	
 	if editing_legs.size() != cableWayPoints.size() - 1:
 		return
 	
-	var new_waypoints = cableWayPoints.duplicate()
+	new_waypoints = cableWayPoints.duplicate()
 	new_waypoints[activeWayPointIndex] = to_global(target_position)
-	var legs: Array[PackedVector2Array] = []
+	legs = []
 	legs.assign(editing_legs)
-	var left_leg_idx = activeWayPointIndex - 1
+	left_leg_idx = activeWayPointIndex - 1
 	
 	if left_leg_idx >= 0:
-		var incoming_heading = -1
+		incoming_heading = -1
 		
 		if left_leg_idx > 0:
 			incoming_heading = get_end_direction(legs[left_leg_idx - 1], -1)
 		
-		var leg = find_path(to_local(new_waypoints[left_leg_idx]), to_local(new_waypoints[left_leg_idx + 1]), incoming_heading)
+		leg = find_path(to_local(new_waypoints[left_leg_idx]), to_local(new_waypoints[left_leg_idx + 1]), incoming_heading)
 		
 		if leg.is_empty() and incoming_heading != -1:
 			leg = find_path(to_local(new_waypoints[left_leg_idx]), to_local(new_waypoints[left_leg_idx + 1]), -1)
@@ -976,15 +1102,15 @@ func save_changed_points(target_position: Vector2) -> void:  # saves the waypoin
 		
 		legs[left_leg_idx] = remove_collinear_points(leg)
 	
-	var right_leg_idx = activeWayPointIndex
+	right_leg_idx = activeWayPointIndex
 	
 	if right_leg_idx < legs.size():
-		var incoming_heading = -1
+		incoming_heading = -1
 		
 		if right_leg_idx > 0:
 			incoming_heading = get_end_direction(legs[right_leg_idx - 1], -1)
 			
-		var leg = find_path(to_local(new_waypoints[right_leg_idx]), to_local(new_waypoints[right_leg_idx + 1]), incoming_heading)
+		leg = find_path(to_local(new_waypoints[right_leg_idx]), to_local(new_waypoints[right_leg_idx + 1]), incoming_heading)
 		
 		if leg.is_empty() and incoming_heading != -1:
 			leg = find_path(to_local(new_waypoints[right_leg_idx]), to_local(new_waypoints[right_leg_idx + 1]), -1)
@@ -998,10 +1124,10 @@ func save_changed_points(target_position: Vector2) -> void:  # saves the waypoin
 	editing_legs = legs.duplicate()
 	cable_waypoints_dict[currentCable] = cableWayPoints.duplicate()
 	cable_legs_dict[currentCable] = legs.duplicate()
-	var full_path: PackedVector2Array = []
+	full_path = PackedVector2Array()
 	
 	for i in range(legs.size()):
-		var leg = legs[i]
+		leg = legs[i]
 		
 		if i == 0:
 			full_path.append_array(leg)
@@ -1011,16 +1137,16 @@ func save_changed_points(target_position: Vector2) -> void:  # saves the waypoin
 				full_path.append(leg[j])
 	
 	full_path = remove_collinear_points(full_path)
-	var global_points: PackedVector2Array = []
+	global_points = PackedVector2Array()
 	
 	for point in full_path:
 		global_points.append(to_global(point))
 	
-	var corners = extract_corner_waypoints(global_points)
+	corners = extract_corner_waypoints(global_points)
 	cable_corners_dict[currentCable] = corners
 	currentCable.set("corner_waypoints", corners)
 	
-	var line = _get_line2d(currentCable)
+	line = _get_line2d(currentCable)
 	
 	if line:
 		line.clear_points()
@@ -1031,13 +1157,19 @@ func save_changed_points(target_position: Vector2) -> void:  # saves the waypoin
 	lastSnappedPos = target_position
 
 func build_legs_from_waypoints(waypoints: PackedVector2Array) -> Array[PackedVector2Array]:  # builds the paths between the waypoinnts
-	var legs: Array[PackedVector2Array] = []
-	var heading = -1
+	var legs: Array[PackedVector2Array]
+	var heading: int
+	var from_position: Vector2
+	var to_position: Vector2
+	var leg: PackedVector2Array
+	
+	legs = []
+	heading = -1
 	
 	for i in range(waypoints.size() - 1):
-		var from_position = to_local(waypoints[i])
-		var to_position = to_local(waypoints[i + 1])
-		var leg = find_path(from_position, to_position, heading)
+		from_position = to_local(waypoints[i])
+		to_position = to_local(waypoints[i + 1])
+		leg = find_path(from_position, to_position, heading)
 		
 		if leg.is_empty() and heading != -1:
 			leg = find_path(from_position, to_position, -1)
@@ -1061,9 +1193,10 @@ func _layer_key(color: Color) -> String:  # converts the color into a html strin
 
 func get_layer(color: Color) -> Node2D:  # gets the selected layer 
 	var key = _layer_key(color)
+	var layer: Node2D
 	
 	if not layers.has(key):
-		var layer = Node2D.new()
+		layer = Node2D.new()
 		layer.name = "Layer_" + key
 		add_child(layer)
 		layers[key] = layer
@@ -1073,14 +1206,16 @@ func get_layer(color: Color) -> Node2D:  # gets the selected layer
 
 func _on_cable_layer_changed(active_color: Color) -> void: # does the visual changes when switching layers
 	var active_key = _layer_key(active_color)
+	var target_alpha: float
+	var tween: Tween
 	
 	for key in layers:
 		var layer: Node2D = layers[key]
-		var target_alpha: float = 1.0 if key == active_key else dimmedAlpha
+		target_alpha = 1.0 if key == active_key else dimmedAlpha
 		
 		if layer_tweens.has(key) and layer_tweens[key]:
 			layer_tweens[key].kill()
 		
-		var tween = create_tween()
+		tween = create_tween()
 		tween.tween_property(layer, "modulate:a", target_alpha, 0.12)
 		layer_tweens[key] = tween
