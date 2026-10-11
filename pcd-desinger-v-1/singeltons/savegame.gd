@@ -32,6 +32,7 @@ func save(slot: int = -1) -> void:
 		slot = Global.loaded_save_index
 	var data: Dictionary = {
 		"save_name": "Slot %d" % (slot + 1),
+		"timestamp": int(Time.get_unix_time_from_system()),
 		"money": Global.money,
 		"mode": Global.current_mode,
 		"state": _collect_state(),
@@ -76,21 +77,22 @@ func refresh_slots() -> void:
 		if data is Dictionary and not data.is_empty():
 			info["exists"] = true
 			info["name"] = data.get("save_name", "Slot %d" % (slot + 1))
+			info["timestamp"] = data.get("timestamp", 0)
 			info["money"] = data.get("money", 0.0)
 			info["mode"] = data.get("mode", Global.MODE.CARRER)
 		Global.save_games.append(info)
 
 func delete_slot(slot: int) -> void:
-	if OS.get_name() == "Web":
-		Engine.get_singleton("javaScript").eval("localStorage.removeItem('" + _slot_key(slot) + "'); sessionStorage.removeItem('" + _slot_key(slot) + "');")
-	elif FileAccess.file_exists(_slot_path(slot)):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(_slot_path(slot)))
+	if FileAccess.file_exists(_slot_path(slot)):
+		DirAccess.remove_absolute(_slot_path(slot))
 	refresh_slots()
 
 func _collect_state() -> Dictionary:
 	return {
-		"unlocked_techs": Global.unlocked_techs,
-		"unlocked_components": Global.unlocked_components
+		"money": Global.money,
+		"mode": Global.current_mode,
+		"unlocked_techs": Global.unlocked_techs.duplicate(),
+		"unlocked_components": Global.unlocked_components.duplicate(),
 	}
 
 func _reset_runtime_state() -> void:
@@ -105,6 +107,14 @@ func apply_pending_load() -> void:
 	Global.pending_load = {}
 	
 	Global.money = s.get("money", 0.0)
-	Global.current_mode = s.get("mode")
-	Global.unlocked_techs = s.get("unlocked_techs", [])
+	Global.current_mode = s.get("mode", Global.MODE.CARRER)
 	Global.unlocked_components = s.get("unlocked_components", [])
+	Global.unlocked_techs = s.get("unlocked_techs", [preload("res://ui/techtree/stages/base_tech.tres")])
+
+func start_new_game(slot: int) -> void:
+	Global.loaded_save_index = slot
+	_reset_runtime_state()
+	Global.money = 0.0
+	Global.pending_load = {}
+	autosave_enabled = true
+	get_tree().change_scene_to_file(GAME_SCENE)

@@ -5,7 +5,7 @@ func _on_start_pressed() -> void:
 		await $Klikkerdeklik.finished
 		
 	if get_tree():
-		get_tree().call_deferred("change_scene_to_file", "res://mainSystems/game.tscn")
+		get_tree().call_deferred("change_scene_to_file", "res://ui/SaveMenu.tscn")
 		
 		
 func _on_credits_pressed() -> void:

@@ -1,0 +1,355 @@
+[gd_scene format=3 uid="uid://vtr10o0wy70k"]
+
+[ext_resource type="Script" uid="uid://b1gqfqodb38d0" path="res://ui/scripts/save_menu.gd" id="1_0adfk"]
+
+[node name="Control" type="Control" unique_id=1272009708]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0adfk")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1954857987]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1225789037]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer" unique_id=528894910]
+custom_minimum_size = Vector2(1000, 800)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/ScrollContainer" unique_id=153292085]
+custom_minimum_size = Vector2(1000, 800)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Savegame" type="Panel" parent="CenterContainer/ScrollContainer/VBoxContainer" unique_id=1064645596]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame" unique_id=74015738]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame/ContainsSave" unique_id=1826453019]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 45.0
+offset_right = 199.0
+offset_bottom = 114.0
+theme_override_font_sizes/font_size = 50
+text = "Save 1"
+
+[node name="SaveTime" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame/ContainsSave" unique_id=1317331398]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 171.0
+offset_right = 349.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "Saved on 11-10-2026 10:10"
+
+[node name="GameMode" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame/ContainsSave" unique_id=897584962]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 45.0
+offset_right = 955.0
+offset_bottom = 79.0
+theme_override_font_sizes/font_size = 24
+text = "Game mode: Carrer"
+horizontal_alignment = 2
+
+[node name="MoneyInSave" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame/ContainsSave" unique_id=1791837702]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 171.0
+offset_right = 955.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="CreateNew" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame" unique_id=656450841]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame/CreateNew" unique_id=1429445197]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 83.5
+offset_right = 492.0
+offset_bottom = 166.5
+theme_override_font_sizes/font_size = 60
+text = "+ Add new save"
+
+[node name="Savegame2" type="Panel" parent="CenterContainer/ScrollContainer/VBoxContainer" unique_id=1916214725]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame2" unique_id=1978320379]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame2/ContainsSave" unique_id=1680601096]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 45.0
+offset_right = 199.0
+offset_bottom = 114.0
+theme_override_font_sizes/font_size = 50
+text = "Save 1"
+
+[node name="SaveTime" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame2/ContainsSave" unique_id=1538632089]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 171.0
+offset_right = 349.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "Saved on 11-10-2026 10:10"
+
+[node name="GameMode" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame2/ContainsSave" unique_id=1542426596]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 45.0
+offset_right = 955.0
+offset_bottom = 79.0
+theme_override_font_sizes/font_size = 24
+text = "Game mode: Carrer"
+horizontal_alignment = 2
+
+[node name="MoneyInSave" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame2/ContainsSave" unique_id=1811905677]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 171.0
+offset_right = 955.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="CreateNew" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame2" unique_id=1332142006]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame2/CreateNew" unique_id=782328707]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 83.5
+offset_right = 492.0
+offset_bottom = 166.5
+theme_override_font_sizes/font_size = 60
+text = "+ Add new save"
+
+[node name="Savegame3" type="Panel" parent="CenterContainer/ScrollContainer/VBoxContainer" unique_id=572077209]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame3" unique_id=1366958658]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame3/ContainsSave" unique_id=30153201]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 45.0
+offset_right = 199.0
+offset_bottom = 114.0
+theme_override_font_sizes/font_size = 50
+text = "Save 1"
+
+[node name="SaveTime" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame3/ContainsSave" unique_id=1082944519]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 171.0
+offset_right = 349.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "Saved on 11-10-2026 10:10"
+
+[node name="GameMode" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame3/ContainsSave" unique_id=1046709338]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 45.0
+offset_right = 955.0
+offset_bottom = 79.0
+theme_override_font_sizes/font_size = 24
+text = "Game mode: Carrer"
+horizontal_alignment = 2
+
+[node name="MoneyInSave" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame3/ContainsSave" unique_id=1116178384]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 171.0
+offset_right = 955.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="CreateNew" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame3" unique_id=1408373801]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame3/CreateNew" unique_id=2012814816]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 83.5
+offset_right = 492.0
+offset_bottom = 166.5
+theme_override_font_sizes/font_size = 60
+text = "+ Add new save"
+
+[node name="Savegame4" type="Panel" parent="CenterContainer/ScrollContainer/VBoxContainer" unique_id=40305986]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame4" unique_id=182300228]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame4/ContainsSave" unique_id=1669638644]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 45.0
+offset_right = 199.0
+offset_bottom = 114.0
+theme_override_font_sizes/font_size = 50
+text = "Save 1"
+
+[node name="SaveTime" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame4/ContainsSave" unique_id=2110411048]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 171.0
+offset_right = 349.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "Saved on 11-10-2026 10:10"
+
+[node name="GameMode" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame4/ContainsSave" unique_id=1108645476]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 45.0
+offset_right = 955.0
+offset_bottom = 79.0
+theme_override_font_sizes/font_size = 24
+text = "Game mode: Carrer"
+horizontal_alignment = 2
+
+[node name="MoneyInSave" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame4/ContainsSave" unique_id=2136959310]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 171.0
+offset_right = 955.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="CreateNew" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame4" unique_id=2102317756]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame4/CreateNew" unique_id=1403308798]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 83.5
+offset_right = 492.0
+offset_bottom = 166.5
+theme_override_font_sizes/font_size = 60
+text = "+ Add new save"
+
+[node name="Savegame5" type="Panel" parent="CenterContainer/ScrollContainer/VBoxContainer" unique_id=712726542]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+
+[node name="ContainsSave" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame5" unique_id=707775280]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame5/ContainsSave" unique_id=1241598709]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 45.0
+offset_right = 199.0
+offset_bottom = 114.0
+theme_override_font_sizes/font_size = 50
+text = "Save 1"
+
+[node name="SaveTime" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame5/ContainsSave" unique_id=591455624]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 171.0
+offset_right = 349.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "Saved on 11-10-2026 10:10"
+
+[node name="GameMode" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame5/ContainsSave" unique_id=1894408824]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 45.0
+offset_right = 955.0
+offset_bottom = 79.0
+theme_override_font_sizes/font_size = 24
+text = "Game mode: Carrer"
+horizontal_alignment = 2
+
+[node name="MoneyInSave" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame5/ContainsSave" unique_id=1331956628]
+layout_mode = 0
+offset_left = 655.0
+offset_top = 171.0
+offset_right = 955.0
+offset_bottom = 205.0
+theme_override_font_sizes/font_size = 24
+text = "money: 999.999,00"
+horizontal_alignment = 2
+
+[node name="CreateNew" type="Control" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame5" unique_id=1553175742]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SaveName" type="Label" parent="CenterContainer/ScrollContainer/VBoxContainer/Savegame5/CreateNew" unique_id=413886417]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 83.5
+offset_right = 492.0
+offset_bottom = 166.5
+theme_override_font_sizes/font_size = 60
+text = "+ Add new save"
+
+[connection signal="gui_input" from="CenterContainer/ScrollContainer/VBoxContainer/Savegame" to="." method="_on_savegame_gui_input"]
+[connection signal="gui_input" from="CenterContainer/ScrollContainer/VBoxContainer/Savegame2" to="." method="_on_savegame_2_gui_input"]
+[connection signal="gui_input" from="CenterContainer/ScrollContainer/VBoxContainer/Savegame3" to="." method="_on_savegame_3_gui_input"]
+[connection signal="gui_input" from="CenterContainer/ScrollContainer/VBoxContainer/Savegame4" to="." method="_on_savegame_4_gui_input"]
+[connection signal="gui_input" from="CenterContainer/ScrollContainer/VBoxContainer/Savegame5" to="." method="_on_savegame_5_gui_input"]
