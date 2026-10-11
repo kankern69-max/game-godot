@@ -14,7 +14,7 @@ func _process(delta) -> void:
 		return
 	_autosave_timer += delta
 	if _autosave_timer >= AUTOSAVE_INTERVAL:
-		_autosave_timer == 0.0
+		_autosave_timer = 0.0
 		save()
 
 func _slot_path(slot: int) -> String:

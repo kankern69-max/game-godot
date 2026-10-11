@@ -7,6 +7,9 @@ signal componentPlaced
 signal component_unlocked(component_id: String)
 signal tech_unlocked(tech_id: String)
 
+var save_games: Array[Dictionary]
+var loaded_save_index: int
+var pending_load: Dictionary = {}
 
 enum MODE {SANDBOX, CARRER, SCIENCE}
 var current_mode: MODE = MODE.CARRER
@@ -24,7 +27,7 @@ var selected_component: Component
 const components_paths: Dictionary = {
 	"resistor_220": preload("res://components/component_resources/resistors/resistor_220.tres"),
 	"resistor_330": preload("res://components/component_resources/resistors/resistor_330.tres"), 
-	"resistor_1k": preload("res://components/component_resources/resistors/resistor_1k.tres"), 
+	"resistor_1k": preload("res://components/component_resources/resistors/resistor_1k.tres"),
 	"resistor_4k7": preload("res://components/component_resources/resistors/resistor_4k7.tres"),
 	"resistor_10k": preload("res://components/component_resources/resistors/resistor_10k.tres"), 
 	"resistor_100k": preload("res://components/component_resources/resistors/resistor_100k.tres"),
